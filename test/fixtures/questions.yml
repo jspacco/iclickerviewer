@@ -1,0 +1,39 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  response_a: 1
+  response_b: 1
+  response_c: 1
+  response_d: 1
+  response_e: 1
+  correct_a: 1
+  correct_b: 1
+  correct_c: 1
+  correct_d: 1
+  correct_e: 1
+  start: MyString
+  stop: MyString
+  num_seconds: 1
+  question_index: 1
+  is_deleted: MyString
+  session: one
+
+two:
+  name: MyString
+  response_a: 1
+  response_b: 1
+  response_c: 1
+  response_d: 1
+  response_e: 1
+  correct_a: 1
+  correct_b: 1
+  correct_c: 1
+  correct_d: 1
+  correct_e: 1
+  start: MyString
+  stop: MyString
+  num_seconds: 1
+  question_index: 1
+  is_deleted: MyString
+  session: two

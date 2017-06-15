@@ -1,0 +1,16 @@
+<h1>Courses#show</h1>
+<center><h1> <%= @course.folder_name %> </h1></center>
+<center><h1> <%= @course.term %> <%= @course.year %>
+  <%= @course.institution %> <%= @course.instructor %>
+</h1></center>
+
+<table border=1>
+  <% @classes.each do |sess| %>
+  <tr>
+    <td> <%= sess.date.strftime("%Y-%m-%d %H:%M") %> </td>
+    <td> <%= sess.name %> </td>
+    <td> <%= link_to sess.session_code, session_path(sess) %> </td>
+    <td> TODO: stats about num questions and correct answers </td>
+  </tr>
+  <% end %>
+</table>

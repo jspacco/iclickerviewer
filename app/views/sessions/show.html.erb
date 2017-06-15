@@ -1,0 +1,60 @@
+<!-- -->
+<h2>
+<center>
+  <%= @course.term %> <%= @course.year %>
+    <%= @course.institution %> <%= @course.instructor %>
+</center>
+<center> <%= @course.folder_name %> </center>
+<center>
+  <%= @session.name %> <br>
+  <%= @session.session_code %> <br>
+  <%= @session.date.strftime("%Y-%m-%d %H:%M") %><br>
+</center>
+</h2>
+
+<table border=1>
+  <tr>
+    <th colspan="6"></th>
+    <th colspan="6">correct answer(s)</th>
+  </tr>
+  <tr>
+    <th> # </th>
+    <th> screenshot </th>
+    <th> bar chart </th>
+    <th> start </th>
+    <th> stop </th>
+    <th> # secs </th>
+
+    <!-- TODO: votes and correct answers -->
+    <th> A </th>
+    <th> B </th>
+    <th> C </th>
+    <th> D </th>
+    <th> E </th>
+  </tr>
+  <% @questions.each do |question| %>
+  <tr>
+    <td> <%= question.question_index %> </td>
+    <!--
+    Paths to images are:
+    public/courses/UT.CSC108F16-L0101/Images/L1612020906_Q4.jpg
+    -->
+    <td class="imagecolumn">
+      <%= image_tag("/courses/%s/Images/%s_Q%d.jpg" %
+      [@course.folder_name, @session.session_code, question.question_index]) %>
+    </td>
+    <td class="imagecolumn">
+      <%= image_tag("/courses/%s/Images/%s_C%d.jpg" %
+      [@course.folder_name, @session.session_code, question.question_index]) %>
+    </td>
+    <td> <%= question.start %> </td>
+    <td> <%= question.stop %> </td>
+    <td> <%= question.num_seconds %> </td>
+<!--
+  Need a series of checkboxes that are linked to each question for updates
+  This will require some sophistication in the 
+-->
+    <td> <%= %> </td>
+  </tr>
+  <% end %>
+</table>

@@ -1,0 +1,22 @@
+<table border=1>
+  <tr>
+    <th> Course Code </th>
+    <th> Course </th>
+    <th> Term </th>
+    <th> Year </th>
+    <th> School </th>
+    <th> Instructor </th>
+  </tr>
+  <% @courses.each do |course| %>
+    <tr>
+      <td>
+        <%= link_to course.folder_name, course_path(course) %>
+      </td>
+      <td> <%= course.name %> </td>
+      <td> <%= course.term %> </td>
+      <td> <%= course.year %> </td>
+      <td> <%= course.institution %> </td>
+      <td> <%= course.instructor %> </td>
+    </tr>
+  <% end %>
+</table>

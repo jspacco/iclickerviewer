@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  session_code: MyString
+  name: MyString
+  participation: MyString
+  performance: MyString
+  min_response: MyString
+  min_response_string: MyString
+  date: 2017-06-14 16:18:46
+  course: one
+
+two:
+  session_code: MyString
+  name: MyString
+  participation: MyString
+  performance: MyString
+  min_response: MyString
+  min_response_string: MyString
+  date: 2017-06-14 16:18:46
+  course: two
