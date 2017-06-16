@@ -119,6 +119,7 @@ def parse_XML(filename, course)
         question_index: question_index)
       if question == nil
         question = Question.find_or_create_by(session: session,
+        name: question_name, start: start, stop: stop,
         question_index: question_index, num_seconds: num_seconds,
         response_a: response_a, response_b: response_b, response_c: response_c,
         response_d: response_d, response_e: response_e, correct_a: correct_a,
@@ -185,8 +186,7 @@ if __FILE__ == $0
   p "done with UT.CSC108F16-L0104"
   parse_course(root, 'KnoxCS141F16-1', 'CS1', 'Knox', 'fall', 2016, 'Budach')
   p "done with KnoxCS141F16-1"
-  # TODO Download clicker data from Z: drive.
-#  parse_course(root, 'KnoxCS141W17-2', 'CS1', 'Knox', 'winter', 2017, 'Spacco')
-#  p "done with KnoxCS141W17-2"
+  parse_course(root, 'KnoxCS141W17-2', 'CS1', 'Knox', 'winter', 2017, 'Spacco')
+  p "done with KnoxCS141W17-2"
 
 end
