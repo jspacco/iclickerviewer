@@ -1,4 +1,10 @@
-<!-- -->
+<!--
+TODO:
+* make the label a clickable part of the checkbox
+* mark questions as wrong or spurious (model change)
+* mark paired questions (model change)
+* mark individual questions (model change)
+-->
 <h2>
 <center>
   <%= @course.term %> <%= @course.year %>
@@ -19,18 +25,18 @@
     <th> # </th>
     <th> screenshot </th>
     <th> bar chart </th>
-    <th> correct answer </th>
+    <th> correct answer(s) </th>
     <th> start </th>
     <th> stop </th>
     <th> # secs </th>
   </tr>
+  <!--
+  Paths to images are:
+  public/courses/UT.CSC108F16-L0101/Images/L1612020906_Q4.jpg
+  -->
   <% @questions.each do |question| %>
   <tr>
     <td> <%= question.question_index %> </td>
-    <!--
-    Paths to images are:
-    public/courses/UT.CSC108F16-L0101/Images/L1612020906_Q4.jpg
-    -->
     <td class="imagecolumn">
       <%= image_tag("/courses/%s/Images/%s_Q%d.jpg" %
       [@course.folder_name, @session.session_code, question.question_index]) %>
@@ -41,58 +47,56 @@
     </td>
     <td>
       <table>
-<!--
-  Need a series of checkboxes that are linked to each question for updates
-  This will require some sophistication in the.
-
-  Editing will re-direct back to this page.
-
-  Mark which questions have been edited.
-
--->
         <tr>
-          <th> A </th>
-          <th> B </th>
-          <th> C </th>
-          <th> D </th>
-          <th> E </th>
+          <th> <%= label_tag "%d-A" % question.id, 'A' %> </th>
+          <th> <%= label_tag "%d-B" % question.id, 'B' %> </th>
+          <th> <%= label_tag "%d-C" % question.id, 'C' %> </th>
+          <th> <%= label_tag "%d-D" % question.id, 'D' %> </th>
+          <th> <%= label_tag "%d-E" % question.id, 'E' %> </th>
         </tr>
         <tr>
           <td>
             <!--
-            We create a hash of arrays that looks like this:
+            For checkboxes, we create a hash of arrays that looks like this:
 
-            correct_answers[question_id] = ['a', 'b']
+            correct_answers[7] = ['a', 'b']
 
-            We can use this in the controller to decide what the user has clicked.
+            This means that question_id 7 has been marked with A and B as correct
+            answers. We can use this in the controller to decide what the
+            user has clicked for correct answers.
             -->
             <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'a',
-              checked?(question.correct_a)
+              'A',
+              checked?(question.correct_a),
+              id: "%d-A" % question.id
             %>
           </td>
           <td>
             <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'b',
-              checked?(question.correct_b)
+              'B',
+              checked?(question.correct_b),
+              id: "%d-B" % question.id
             %>
           </td>
           <td>
             <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'c',
-              checked?(question.correct_c)
+              'C',
+              checked?(question.correct_c),
+              id: "%d-C" % question.id
             %>
           </td>
           <td>
             <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'd',
-              checked?(question.correct_d)
+              'D',
+              checked?(question.correct_d),
+              id: "%d-D" % question.id
             %>
           </td>
           <td>
             <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'e',
-              checked?(question.correct_e)
+              'E',
+              checked?(question.correct_e),
+              id: "%d-E" % question.id
             %>
           </td>
         </tr>
