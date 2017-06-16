@@ -59,32 +59,39 @@
         </tr>
         <tr>
           <td>
-            <%= check_box_tag "correct_answers[]",
-              question.id,
+            <!--
+            We create a hash of arrays that looks like this:
+
+            correct_answers[question_id] = ['a', 'b']
+
+            We can use this in the controller to decide what the user has clicked.
+            -->
+            <%= check_box_tag "correct_answers[%d][]" % question.id,
+              'a',
               checked?(question.correct_a)
             %>
           </td>
           <td>
-            <%= check_box_tag "correct_answers[]",
-              question.id,
+            <%= check_box_tag "correct_answers[%d][]" % question.id,
+              'b',
               checked?(question.correct_b)
             %>
           </td>
           <td>
-            <%= check_box_tag "correct_answers[]",
-              question.id,
+            <%= check_box_tag "correct_answers[%d][]" % question.id,
+              'c',
               checked?(question.correct_c)
             %>
           </td>
           <td>
-            <%= check_box_tag "correct_answers[]",
-              question.id,
+            <%= check_box_tag "correct_answers[%d][]" % question.id,
+              'd',
               checked?(question.correct_d)
             %>
           </td>
           <td>
-            <%= check_box_tag "correct_answers[]",
-              question.id,
+            <%= check_box_tag "correct_answers[%d][]" % question.id,
+              'e',
               checked?(question.correct_e)
             %>
           </td>
