@@ -177,15 +177,16 @@ end
 if __FILE__ == $0
   root = '/Users/jspacco/projects/clickers/data/'
 
-  # folders = ['UT.CSC108F16-L0101', 'CS141Sec1']
-
-  # parse_course(root, 'UT.CSC108F16-L0101', 'CS1', 'Toronto', 'fall', 2016, 'Petersen')
-
+  parse_course(root, 'UT.CSC108F16-L0101', 'CS1', 'Toronto', 'fall', 2016, 'Tong')
+  p "done with UT.CSC108F16-L0101"
   parse_course(root, 'UT.CSC108F16-L0102', 'CS1', 'Toronto', 'fall', 2016, 'Petersen')
   p "done with UT.CSC108F16-L0102"
-  parse_course(root, 'UT.CSC108F16-L0104', 'CS1', 'Toronto', 'fall', 2016, 'Petersen')
+  parse_course(root, 'UT.CSC108F16-L0104', 'CS1', 'Toronto', 'fall', 2016, 'Dema')
   p "done with UT.CSC108F16-L0104"
-  parse_course(root, 'CS141Sec1', 'CS1', 'Knox', 'winter', 2017, 'Spacco')
-  p "done with CS141Sec1"
+  parse_course(root, 'KnoxCS141F16-1', 'CS1', 'Knox', 'fall', 2016, 'Budach')
+  p "done with KnoxCS141F16-1"
+  # TODO Download clicker data from Z: drive.
+#  parse_course(root, 'KnoxCS141W17-2', 'CS1', 'Knox', 'winter', 2017, 'Spacco')
+#  p "done with KnoxCS141W17-2"
 
 end
