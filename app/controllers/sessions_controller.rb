@@ -1,15 +1,9 @@
 class SessionsController < ApplicationController
   def show
-    @session = Session.find_by(id: params[:id])
-    @course = Course.find_by(id: @session.course_id)
-    @questions = Question.where(session_id: @session.id)
+    get_questions_course_session
   end
 
   def update
-    # Updating a session means updating its questions
-    @session = Session.find_by(id: params[:id])
-    @course = Course.find_by(id: @session.course_id)
-
     # Update every question with at least one answer checked
     # FIXME This will not work for clicker questions that have no correct answers,
     #   because unchecking all checkboxed will not show up in the post/patch params
@@ -37,13 +31,20 @@ class SessionsController < ApplicationController
       question.save
     end
 
-    # Finally, look up the questions we just updated to make them available to
-    #   to the view. We are going to re-direct to the show view, but NOT the
-    #   show controller.
-    @questions = Question.where(session_id: @session.id)
+    # Finally, look up the course, session, and questions we just updated to make
+    #   them available to to the view. We are going to re-direct to the show view,
+    #   but NOT the show controller.
+    get_questions_course_session
 
     # Basically, this is a re-direct ONLY for rendering!
     #   It does NOT call call the show method in this file.
     render :show
+  end
+  private
+  def get_questions_course_session
+    # Look up the session, course, and questions
+    @session = Session.find_by(id: params[:id])
+    @course = Course.find_by(id: @session.course_id)
+    @questions = Question.where(session_id: @session.id)
   end
 end
