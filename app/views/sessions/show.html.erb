@@ -12,25 +12,17 @@
 </center>
 </h2>
 
+<%= form_tag(session_path(@session), method: :patch) do %>
+<%= submit_tag 'Update correct answers' %>
 <table border=1>
-  <tr>
-    <th colspan="6"></th>
-    <th colspan="6">correct answer(s)</th>
-  </tr>
   <tr>
     <th> # </th>
     <th> screenshot </th>
     <th> bar chart </th>
+    <th> correct answer </th>
     <th> start </th>
     <th> stop </th>
     <th> # secs </th>
-
-    <!-- TODO: votes and correct answers -->
-    <th> A </th>
-    <th> B </th>
-    <th> C </th>
-    <th> D </th>
-    <th> E </th>
   </tr>
   <% @questions.each do |question| %>
   <tr>
@@ -47,14 +39,65 @@
       <%= image_tag("/courses/%s/Images/%s_C%d.jpg" %
       [@course.folder_name, @session.session_code, question.question_index]) %>
     </td>
+    <td>
+      <table>
+<!--
+  Need a series of checkboxes that are linked to each question for updates
+  This will require some sophistication in the.
+
+  Editing will re-direct back to this page.
+
+  Mark which questions have been edited.
+
+-->
+        <tr>
+          <th> A </th>
+          <th> B </th>
+          <th> C </th>
+          <th> D </th>
+          <th> E </th>
+        </tr>
+        <tr>
+          <td>
+            <%= check_box_tag "correct_answers[]",
+              question.id,
+              checked?(question.correct_a)
+            %>
+          </td>
+          <td>
+            <%= check_box_tag "correct_answers[]",
+              question.id,
+              checked?(question.correct_b)
+            %>
+          </td>
+          <td>
+            <%= check_box_tag "correct_answers[]",
+              question.id,
+              checked?(question.correct_c)
+            %>
+          </td>
+          <td>
+            <%= check_box_tag "correct_answers[]",
+              question.id,
+              checked?(question.correct_d)
+            %>
+          </td>
+          <td>
+            <%= check_box_tag "correct_answers[]",
+              question.id,
+              checked?(question.correct_e)
+            %>
+          </td>
+        </tr>
+      </table>
+    </td>
     <td> <%= question.start %> </td>
     <td> <%= question.stop %> </td>
     <td> <%= question.num_seconds %> </td>
-<!--
-  Need a series of checkboxes that are linked to each question for updates
-  This will require some sophistication in the 
--->
-    <td> <%= %> </td>
   </tr>
   <% end %>
 </table>
+
+<%= submit_tag 'Update correct answers' %>
+
+<% end %>
