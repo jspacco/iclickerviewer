@@ -1,5 +1,5 @@
 # README
---
+
 ## TODO (code)
 * mark paired CQs (model and UI)
 * mark individual CQs (model and UI)
@@ -7,9 +7,10 @@
 * identify that two questions are "the same" across courses
   * many-to-many model
 * back buttons and/or breadcrumbs
+* are helpers usable in controllers or just in views?
 * session#show: correct stats when we have correct answers
+* session#show: aggregate stats at the top (times, percentages)
 * overall stats for courses (course#index and course#show)
-* re-run parser to get start/stop for questions
 * comment feature for other faculty
   * talk to other faculty about what they want to do with each question
   * durable links to questions for comments linking to questions from outside the   Rails app
