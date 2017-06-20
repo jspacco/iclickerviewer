@@ -6,6 +6,8 @@
     <th> Year </th>
     <th> School </th>
     <th> Instructor </th>
+    <th> avg num questions / class </th>
+    <th> avg num secs / question </th>
   </tr>
   <% @courses.each do |course| %>
     <tr>
@@ -17,6 +19,8 @@
       <td> <%= course.year %> </td>
       <td> <%= course.institution %> </td>
       <td> <%= course.instructor %> </td>
+      <td> <%= @all_class_stats[course.id][:avg_num_questions].round(1) %> </td>
+      <td> <%= @all_class_stats[course.id][:avg_time].round(1) %> </td>
     </tr>
   <% end %>
 </table>

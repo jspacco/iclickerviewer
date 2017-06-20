@@ -46,5 +46,14 @@ class SessionsController < ApplicationController
     @session = Session.find_by(id: params[:id])
     @course = Course.find_by(id: @session.course_id)
     @questions = Question.where(session_id: @session.id)
+    # Average time taken per clicker question
+    total_time = 0.0
+    num_questions = 0.0
+    @questions.each do |q|
+      total_time += q.num_seconds
+      num_questions += 1
+    end
+    @avg_time = (total_time / num_questions).round(0)
+
   end
 end

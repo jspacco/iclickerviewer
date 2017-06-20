@@ -11,6 +11,11 @@
 </center>
 </h2>
 
+<h3>
+  <center>
+  Average time per clicker question:<br> <%= @avg_time %> seconds
+  </center>
+</h3>
 <%= form_tag(session_path(@session), method: :patch) do %>
 <%= submit_tag 'Update correct answers' %>
 <table border=1>
@@ -102,6 +107,7 @@
     <td> <%= question.start %> </td>
     <td> <%= question.stop %> </td>
     <td> <%= question.num_seconds %> </td>
+    <td> <%= correct_pct(question) %> </td>
   </tr>
   <% end %>
 </table>

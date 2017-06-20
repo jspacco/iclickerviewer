@@ -1,22 +1,28 @@
-<!--
-TODO:
-* overall stats for the class (mean/max/min/median # CQs,
-  length of CQs, fraction of CQs with 1 vs 2 votes)
-* total number of questions
--->
-<h1>Courses#show</h1>
-<center><h1> <%= @course.folder_name %> </h1></center>
-<center><h1> <%= @course.term %> <%= @course.year %>
-  <%= @course.institution %> <%= @course.instructor %>
-</h1></center>
+<center>
+  <h2>Courses#show</h2>
+  <h1> <%= @course.folder_name %> </h1>
+  <h1> <%= @course.term %> <%= @course.year %>
+    <%= @course.institution %> <%= @course.instructor %>
+  </h1>
+  <%= @class_stats[:avg_time].round(1) %>
+  <%= @class_stats[:num_questions] %>
+</center>
 
 <table border=1>
+  <tr>
+    <th> date </th>
+    <th> session name </th>
+    <th> link to session </th>
+    <th> num questions </th>
+    <th> avg num secs / question </th>
+  </tr>
   <% @classes.each do |sess| %>
   <tr>
     <td> <%= sess.date.strftime("%Y-%m-%d %H:%M") %> </td>
     <td> <%= sess.name %> </td>
     <td> <%= link_to sess.session_code, session_path(sess) %> </td>
-    <td> TODO: stats about num questions and correct answers </td>
+    <td> <%= @each_class_stats[sess.id][:num_questions] %> </td>
+    <td> <%= @each_class_stats[sess.id][:avg_time].round(1) %> </td>
   </tr>
   <% end %>
 </table>
