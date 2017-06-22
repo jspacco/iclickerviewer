@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
   end
 
   def update
-    # Update every question with at least one answer checked
+    # Update every question containing at least one correct answer checked
     # FIXME This will not work for clicker questions that have no correct answers,
     #   because unchecking all checkboxed will not show up in the post/patch params
     #   at alll.
@@ -37,7 +37,7 @@ class SessionsController < ApplicationController
     get_questions_course_session
 
     # Basically, this is a re-direct ONLY for rendering!
-    #   It does NOT call call the show method in this file.
+    #   It does NOT call the show method in this file.
     render :show
   end
   private
