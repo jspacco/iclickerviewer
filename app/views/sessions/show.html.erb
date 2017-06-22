@@ -1,32 +1,30 @@
 <h2>
 <center>
-  <%= @course.term %> <%= @course.year %>
-    <%= @course.institution %> <%= @course.instructor %>
-</center>
-<center> <%= @course.folder_name %> </center>
-<center>
+  <%= @course.term %>
+  <%= @course.year %> <%= @course.institution %> <br>
+  <%= @course.instructor %> <br>
+  <%= @course.folder_name %> <br>
   <%= @session.name %> <br>
   <%= @session.session_code %> <br>
   <%= @session.date.strftime("%Y-%m-%d %H:%M") %><br>
+  Average time per clicker question:<br> <%= @avg_time %> seconds
 </center>
 </h2>
 
-<h3>
-  <center>
-  Average time per clicker question:<br> <%= @avg_time %> seconds
-  </center>
-</h3>
 <%= form_tag(session_path(@session), method: :patch) do %>
 <%= submit_tag 'Update correct answers' %>
 <table border=1>
   <tr>
-    <th> # </th>
+    <th> ques # </th>
+    <th> pair # </th>
+    <th> q type </th>
     <th> screenshot </th>
     <th> bar chart </th>
-    <th> correct answer(s) </th>
+    <th> correct<br> answer(s) </th>
     <th> start </th>
     <th> stop </th>
     <th> # secs </th>
+    <th> correct<br> % </th>
   </tr>
   <!--
   Paths to images are:
@@ -34,7 +32,28 @@
   -->
   <% @questions.each do |question| %>
   <tr>
-    <td> <%= question.question_index %> </td>
+    <td align="center"> <b> <%= question.question_index %> </b> </td>
+    <td>
+      <select name="question_pair">
+        <option value=""> none </option>
+        <% @questions.each do |q| %>
+        <% if q.question_index == question.question_index then next end %>
+        <% selected = q.question_pair == question.question_index ? "selected" : "" %>
+        <option value=<%='"%s" %s' % [q.question_index, selected] %>>
+        <%= q.question_index %>
+        </option>
+        <% end %>
+      </select>
+     </td>
+    <td>
+      <select name="question_type">
+        <option value="0" <%= selected_num(0, question.question_type)%> > unknown </option>
+        <option value="1" <%= selected_num(1, question.question_type)%> > individual </option>
+        <option value="2" <%= selected_num(2, question.question_type)%> > paired </option>
+        <option value="3" <%= selected_num(3, question.question_type)%> > error </option>
+        <option value="4" <%= selected_num(4, question.question_type)%> > non-MCQ </option>
+      </select>
+    </td>
     <td class="imagecolumn">
       <% question_img_url = "/courses/%s/Images/%s_Q%d.jpg" %
         [@course.folder_name, @session.session_code, question.question_index]

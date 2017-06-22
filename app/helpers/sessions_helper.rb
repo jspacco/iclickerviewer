@@ -12,4 +12,11 @@ module SessionsHelper
       question.response_c + question.response_d + question.response_e
     return pct_string(total_correct, total_responses)
   end
+  def selected_num(expected, actual)
+    if expected.to_i == actual.to_i
+      return "selected"
+    else
+      return ""
+    end
+  end
 end
