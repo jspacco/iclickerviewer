@@ -178,15 +178,32 @@ end
 if __FILE__ == $0
   root = '/Users/jspacco/projects/clickers/data/'
 
-  parse_course(root, 'UT.CSC108F16-L0101', 'CS1', 'Toronto', 'fall', 2016, 'Tong')
-  p "done with UT.CSC108F16-L0101"
-  parse_course(root, 'UT.CSC108F16-L0102', 'CS1', 'Toronto', 'fall', 2016, 'Petersen')
-  p "done with UT.CSC108F16-L0102"
-  parse_course(root, 'UT.CSC108F16-L0104', 'CS1', 'Toronto', 'fall', 2016, 'Dema')
-  p "done with UT.CSC108F16-L0104"
-  parse_course(root, 'KnoxCS141F16-1', 'CS1', 'Knox', 'fall', 2016, 'Budach')
-  p "done with KnoxCS141F16-1"
-  parse_course(root, 'KnoxCS141W17-2', 'CS1', 'Knox', 'winter', 2017, 'Spacco')
-  p "done with KnoxCS141W17-2"
+  # parse_course(root, 'UT.CSC108F16-L0101', 'CS1', 'Toronto', 'fall', 2016, 'Tong')
+  # p "done with UT.CSC108F16-L0101"
+  # parse_course(root, 'UT.CSC108F16-L0102', 'CS1', 'Toronto', 'fall', 2016, 'Petersen')
+  # p "done with UT.CSC108F16-L0102"
+  # parse_course(root, 'UT.CSC108F16-L0104', 'CS1', 'Toronto', 'fall', 2016, 'Dema')
+  # p "done with UT.CSC108F16-L0104"
+  # parse_course(root, 'KnoxCS141F16-1', 'CS1', 'Knox', 'fall', 2016, 'Budach')
+  # p "done with KnoxCS141F16-1"
+  # parse_course(root, 'KnoxCS141W17-2', 'CS1', 'Knox', 'winter', 2017, 'Spacco')
+  # p "done with KnoxCS141W17-2"
+
+  parse_course(root, 'UIC.CS261F16', 'CS261', 'UIC', 'fall', 2016, 'Taylor')
+  p "done with UIC.CS261F16"
+  parse_course(root, 'UIC.CS261S17', 'CS261', 'UIC', 'spring', 2016, 'Taylor')
+  p "done with UIC.CS261S17"
+  parse_course(root, 'UIC.CS111S16', 'CS111', 'UIC', 'spring', 2016, 'Taylor')
+  p "done with UIC.CS111S16"
+  parse_course(root, 'UIC.CS361F15', 'CS361', 'UIC', 'fall', 2015, 'Taylor')
+  p "done with UIC.CS361F15"
+  parse_course(root, 'UIC.CS361S17', 'CS361', 'UIC', 'spring', 2017, 'Taylor')
+  p "done with UIC.CS361S17"
+  parse_course(root, 'UIC.CS362F16', 'CS362', 'UIC', 'fall', 2016, 'Taylor')
+  p "done with UIC.CS362F16"
+  parse_course(root, 'UIC.CS385F16', 'CS385', 'UIC', 'fall', 2016, 'Taylor')
+  p "done with UIC.CS385F16"
+  parse_course(root, 'UIC.CS385S16', 'CS385', 'UIC', 'spring', 2016, 'Taylor')
+  p "done with UIC.CS385S16"
 
 end
