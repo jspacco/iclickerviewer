@@ -5,42 +5,8 @@ class SessionsController < ApplicationController
 
   def update
     Question.where(session_id: params[:id]).each do |question|
-      # x = params[:questions][question.id]
-      # puts "FOO %s FOO" % question.id
-      # puts "BAR %s BAR" % params[:questions].keys
-      # puts "BAZ %s BAZ" % params[:questions].values
-      # puts "BAN %s BAN" % params[:questions][question.id.to_s]
       question.update_attributes(question_params(question))
     end
-
-
-    # Update every question containing at least one correct answer checked
-    # FIXME This will not work for clicker questions that have no correct answers,
-    #   because unchecking all checkboxed will not show up in the post/patch params
-    #   at all.
-    # params[:correct_answers].each do |question_id, answers|
-    #   question = Question.find_by(id: question_id)
-    #   # First, assign all correct answers to 0
-    #   question.correct_a = question.correct_b = question.correct_c =
-    #     question.correct_d = question.correct_e = 0
-    #   # Now, re-assign any answers listed as correct answers to 1
-    #   answers.each do |ans|
-    #     case ans
-    #     when 'a', 'A'
-    #       question.correct_a = 1
-    #     when 'b', 'B'
-    #       question.correct_b = 1
-    #     when 'c', 'C'
-    #       question.correct_c = 1
-    #     when 'd', 'D'
-    #       question.correct_d = 1
-    #     when 'e', 'E'
-    #       question.correct_e = 1
-    #     end
-    #   end
-    #   question.save
-    # end
-
     # Finally, look up the course, session, and questions we just updated to make
     #   them available to to the view. We are going to re-direct to the show view,
     #   but NOT the show controller.
