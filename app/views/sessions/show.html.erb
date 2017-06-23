@@ -31,28 +31,28 @@
   public/courses/UT.CSC108F16-L0101/Images/L1612020906_Q4.jpg
   -->
   <% @questions.each do |question| %>
+  <%= fields_for "questions[]", question do |q| %>
   <tr>
     <td align="center"> <b> <%= question.question_index %> </b> </td>
     <td>
-      <select name="question_pair">
-        <option value=""> none </option>
-        <% @questions.each do |q| %>
-        <% if q.question_index == question.question_index then next end %>
-        <% selected = q.question_pair == question.question_index ? "selected" : "" %>
-        <option value=<%='"%s" %s' % [q.question_index, selected] %>>
-        <%= q.question_index %>
-        </option>
-        <% end %>
-      </select>
+
      </td>
     <td>
-      <select name="question_type">
+      <%= q.select :question_type, [
+        ["unknown", 0],
+        ["individual", 1],
+        ["paired", 2],
+        ["non-MCQ", 3],
+        ["error", 4]
+      ]
+      %>
+      <!-- <select name="questions[][question_type]">
         <option value="0" <%= selected_num(0, question.question_type)%> > unknown </option>
         <option value="1" <%= selected_num(1, question.question_type)%> > individual </option>
         <option value="2" <%= selected_num(2, question.question_type)%> > paired </option>
         <option value="3" <%= selected_num(3, question.question_type)%> > error </option>
         <option value="4" <%= selected_num(4, question.question_type)%> > non-MCQ </option>
-      </select>
+      </select> -->
     </td>
     <td class="imagecolumn">
       <% question_img_url = "/courses/%s/Images/%s_Q%d.jpg" %
@@ -69,57 +69,18 @@
     <td>
       <table>
         <tr>
-          <th> <%= label_tag "%d-A" % question.id, 'A' %> </th>
-          <th> <%= label_tag "%d-B" % question.id, 'B' %> </th>
-          <th> <%= label_tag "%d-C" % question.id, 'C' %> </th>
-          <th> <%= label_tag "%d-D" % question.id, 'D' %> </th>
-          <th> <%= label_tag "%d-E" % question.id, 'E' %> </th>
+          <th> <%= q.label :correct_a, "A" %> </th>
+          <th> <%= q.label :correct_b, "B" %> </th>
+          <th> <%= q.label :correct_c, "C" %> </th>
+          <th> <%= q.label :correct_d, "D" %> </th>
+          <th> <%= q.label :correct_e, "E" %> </th>
         </tr>
         <tr>
-          <td>
-            <!--
-            For checkboxes, we create a hash of arrays that looks like this:
-
-            correct_answers[7] = ['a', 'b']
-
-            This means that question_id 7 has been marked with A and B as correct
-            answers. We can use this in the controller to decide what the
-            user has clicked for correct answers.
-            -->
-            <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'A',
-              checked?(question.correct_a),
-              id: "%d-A" % question.id
-            %>
-          </td>
-          <td>
-            <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'B',
-              checked?(question.correct_b),
-              id: "%d-B" % question.id
-            %>
-          </td>
-          <td>
-            <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'C',
-              checked?(question.correct_c),
-              id: "%d-C" % question.id
-            %>
-          </td>
-          <td>
-            <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'D',
-              checked?(question.correct_d),
-              id: "%d-D" % question.id
-            %>
-          </td>
-          <td>
-            <%= check_box_tag "correct_answers[%d][]" % question.id,
-              'E',
-              checked?(question.correct_e),
-              id: "%d-E" % question.id
-            %>
-          </td>
+          <td> <%= q.check_box :correct_a %> </td>
+          <td> <%= q.check_box :correct_b %> </td>
+          <td> <%= q.check_box :correct_c %> </td>
+          <td> <%= q.check_box :correct_d %> </td>
+          <td> <%= q.check_box :correct_e %> </td>
         </tr>
       </table>
     </td>
@@ -128,6 +89,7 @@
     <td> <%= question.num_seconds %> </td>
     <td> <%= correct_pct(question) %> </td>
   </tr>
+  <% end %>
   <% end %>
 </table>
 
