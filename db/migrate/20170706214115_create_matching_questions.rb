@@ -7,6 +7,9 @@ class CreateMatchingQuestions < ActiveRecord::Migration[5.1]
       t.timestamps
     end
 
-    add_index :matching_questions, [:question_id, :matching_question_id], unique: true
+    add_index :matching_questions,
+      [:question_id, :matching_question_id],
+      unique: true,
+      name: "matching_question_index"
   end
 end

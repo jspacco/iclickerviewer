@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170622184857) do
+ActiveRecord::Schema.define(version: 20170706214115) do
 
   create_table "courses", force: :cascade do |t|
     t.string "name"
@@ -21,6 +21,14 @@ ActiveRecord::Schema.define(version: 20170622184857) do
     t.string "folder_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "matching_questions", force: :cascade do |t|
+    t.integer "question_id"
+    t.integer "matching_question_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["question_id", "matching_question_id"], name: "matching_question_index", unique: true
   end
 
   create_table "questions", force: :cascade do |t|
