@@ -16,8 +16,8 @@
 <table border=1>
   <tr>
     <th> ques # </th>
-    <th> pair # </th>
     <th> q type </th>
+    <th> pair # </th>
     <th> screenshot </th>
     <th> bar chart </th>
     <th> correct<br> answer(s) </th>
@@ -35,9 +35,6 @@
   <tr>
     <td align="center"> <b> <%= question.question_index %> </b> </td>
     <td>
-
-     </td>
-    <td>
       <%= q.select :question_type, [
         ["unknown", 0],
         ["individual", 1],
@@ -46,6 +43,9 @@
         ["error", 4]
       ]
       %>
+    </td>
+    <td>
+      <%= q.select :question_pair, question_pair_options(q.object, @questions) %>
     </td>
     <td class="imagecolumn">
       <% question_img_url = "/courses/%s/Images/%s_Q%d.jpg" %

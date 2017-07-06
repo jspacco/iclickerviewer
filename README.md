@@ -5,12 +5,16 @@
   * unknown, individual, spurious, paired, non-MCQ
     * unknown (have not processed)
     * individual (only one vote)
-    * spurious (mis-click, spurious click, not a clicker question)
-    * non-MCQ use of clicker (basically an in-class activity that used the clicker as a timer)
+    * error (mis-click, spurious click, not a clicker question)
+    * non-MCQ use of clicker (i.e. in-class activity that used the clicker as a timer)
     * paired CQ
       * partner question is a separate column that defaults to NULL
   * can we use JS to enforce some properties, like anytime you choose a paired partner, the pair automatically become "pair" and cannot be changed
   * using before_save in the model to convert empty string to nil
+* color backgrounds grey that have not been set yet (i.e. no correct answer,
+  no pair for a paired question, etc)
+* JS: when setting a pair, automatically change question_type to paired
+  * automatically set the other pair?
 * settings (hide/show spurious, etc)
 * identify that two questions are "the same" across courses
   * many-to-many model

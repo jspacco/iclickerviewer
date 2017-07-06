@@ -20,8 +20,14 @@ class SessionsController < ApplicationController
   private
 
   def question_params(question)
+    # FIXME Is setting empty strings to nil even necessary?
+    if params[:questions][question.id.to_s][:question_pair] == ""
+      params[:questions][question.id.to_s][:question_pair] = nil
+    end
+
+    # TODO Document require vs permit, as well as how :questions gets us the array.
     return params.require(:questions).require(question.id.to_s).permit(:correct_a,
-      :correct_b, :correct_c, :correct_d, :correct_e, :question_type)
+      :correct_b, :correct_c, :correct_d, :correct_e, :question_type, :question_pair)
   end
 
   def get_questions_course_session
