@@ -15,8 +15,21 @@
 <%= submit_tag 'Update correct answers' %>
 <table border=1>
   <tr>
-    <th> ques # </th>
-    <th> q type </th>
+    <th class="tooltip"> ID
+      <span class="tooltiptext"> Database primary key for this question. Unique value. </span>
+    </th>
+    <th class="tooltip"> ques #
+      <span class="tooltiptext"> Question number relative to this session only </span>
+    </th>
+    <th class="tooltip"> q type
+      <span class="tooltiptext"> Type of question. Possibilities are<br>
+        0: unknown<br>
+        1: individual<br>
+        2: paired<br>
+        3: non-MCQ<br>
+        4: error<br>
+      </span>
+    </th>
     <th> pair # </th>
     <th> screenshot </th>
     <th> bar chart </th>
@@ -24,8 +37,14 @@
     <th> start </th>
     <th> stop </th>
     <th> # secs </th>
-    <th> correct<br> % </th>
+    <th class="tooltip"> correct<br> %
+      <span class="tooltiptext">Percent of answers that were correct</span>
+    </th>
+    <th class="tooltip"> matching<br>question
+      <span class="tooltiptext">Enter the course name and question ID </span>
+    </th>
   </tr>
+</thead>
   <!--
   Paths to images are:
   public/courses/UT.CSC108F16-L0101/Images/L1612020906_Q4.jpg
@@ -33,6 +52,7 @@
   <% @questions.each do |question| %>
   <%= fields_for "questions[]", question do |q| %>
   <tr>
+    <td align="center"> <%= question.id %> </td>
     <td align="center"> <b> <%= question.question_index %> </b> </td>
     <td>
       <%= q.select :question_type, [

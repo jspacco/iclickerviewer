@@ -2,14 +2,14 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 .imagecolumn {
-    width: 300px;
-    //height: 370px;
+  width: 300px;
+  //height: 370px;
 }
 
 /* resize images */
 .imagecolumn img {
-    width: 100%;
-    height: auto;
+  width: 100%;
+  height: auto;
 }
 
 tr.r0 td {
@@ -32,4 +32,40 @@ tr.individual td {
 }
 tr.unknown td {
   background-color: #ffffff;
+}
+
+// Tooltips
+.tooltip{
+  position:relative;
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+}
+.tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -60px;
+}
+.tooltip:hover span.tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
 }
