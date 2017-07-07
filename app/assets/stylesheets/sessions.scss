@@ -35,7 +35,7 @@ tr.unknown td {
 }
 
 // Tooltips
-.tooltip{
+.tooltip {
   position:relative;
   cursor:pointer;
   color:blue;
@@ -51,21 +51,27 @@ tr.unknown td {
   padding: 5px 0;
   position: absolute;
   z-index: 1;
+  // default is to place tooltip to the top
   bottom: 150%;
   left: 50%;
   margin-left: -60px;
 }
+.right {
+  // Position the tooltip to the right
+  bottom: unset;
+  margin-left: unset;
+  top: -10px;
+  left: 105%;
+}
+.left {
+  // Position the tooltip to the left
+  bottom: unset;
+  margin-left: unset;
+  left: unset;
+  top: -10px;
+  right: 105%;
+}
 .tooltip:hover span.tooltiptext {
   visibility: visible;
   opacity: 1;
-}
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: black transparent transparent transparent;
 }
