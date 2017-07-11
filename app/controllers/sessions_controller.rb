@@ -8,13 +8,21 @@ class SessionsController < ApplicationController
       question.update_attributes(question_params(question))
       # TODO more elegant way to create self-referential many-to-many
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
-      if matching_question_id != nil
+      if matching_question_id
         # Create matching questions in both directions if they don't already exist.
         # [question_id, matching_question_id] and [matching_question_id, question_id]
         MatchingQuestion.find_or_create_by(question_id: question.id,
           matching_question_id: matching_question_id)
         MatchingQuestion.find_or_create_by(question_id: matching_question_id,
           matching_question_id: question.id)
+      end
+      # Delete any matching questions that are to be deleted.
+      to_delete = params[:questions][question.id.to_s][:delete_matching_questions]
+      if to_delete
+        to_delete.each do |delete_matching_question_id|
+          MatchingQuestion.find_by(question_id: question.id,
+            matching_question_id: delete_matching_question_id).destroy
+        end
       end
     end
     # Finally, look up the course, session, and questions we just updated to make
@@ -45,11 +53,6 @@ class SessionsController < ApplicationController
     @session = Session.find_by(id: params[:id])
     @course = Course.find_by(id: @session.course_id)
     @questions = Question.where(session_id: @session.id)
-    @all_questions = []
-    Question.find_each do |q|
-      # @all_questions.push([q.id.to_s, q.id.to_s])
-      @all_questions.push(q)
-    end
     # Average time taken per clicker question
     total_time = 0.0
     num_questions = 0.0

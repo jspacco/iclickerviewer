@@ -117,19 +117,21 @@
     <td> <%= question.num_seconds %> </td>
     <td> <%= correct_pct(question) %> </td>
     <td>
-      <%= q.text_field :matching_questions, :value => '' %>
-      <%# q.select :matching_questions,
-        options_from_collection_for_select(@all_questions, "id", "id"),
-        include_blank: true %>
-      <%# select_tag :matching_questions,
-        options_from_collection_for_select(@all_questions, "id", "id"),
-        include_blank: true %>
-      <%# q.select :matching_questions,
-        @all_questions,
-        include_blank: true %>
-      <%# q.select :id,
-        @all_questions {|x| [x.id, x.id]}, {}, :multiple => true
-        %>
+      <%# Listing the IDs of the current matching questions, with a checkbox that
+        can delete each one. Was not able to figure out how to use the check_box
+        method for things like this, since we would be deleting a self-referential
+        association through a join table.
+      %>
+      <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: q.object.id).length > 0 %>
+      <% MatchingQuestion.where(question_id: q.object.id).each do |mq| %>
+        <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][][#{mq.matching_question_id}]",
+          mq.matching_question_id %>
+        <%= label_tag "questions[#{q.object.id}][delete_matching_questions][][#{mq.matching_question_id}]",
+          mq.matching_question_id %>
+        <br>
+      <% end %>
+      <br><br>
+      add: <%= q.text_field :matching_questions, :value => '' %>
     </td>
   </tr>
   <% end %>
