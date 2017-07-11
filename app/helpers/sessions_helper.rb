@@ -17,7 +17,7 @@ module SessionsHelper
   end
 
   def question_pair_options(question, all_questions)
-    result = [["", ""]]
+    result = []
     all_questions.each do |q|
       # Skip questions that are marked individual, error, or non-MCQ
       if ![1,3,4].include?(question.question_type) &&

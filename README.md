@@ -18,6 +18,9 @@
 * settings (hide/show spurious, etc)
 * identify that two questions are "the same" across courses
   * many-to-many model
+  * look up matching_questions and show their IDs
+  * checkbox to delete existing relationships
+  * JS to show images from other courses and enter this info into DB
 * Somehow link from CQ to slide, and from slide to CQ
   * embedded PDF slide display tool
 * accounts to prevent randos from changing our data
