@@ -11,6 +11,8 @@
       * partner question is a separate column that defaults to NULL
   * can we use JS to enforce some properties, like anytime you choose a paired partner, the pair automatically become "pair" and cannot be changed
   * using before_save in the model to convert empty string to nil
+* FIXME: add quiz as a possible question_type
+* FIXME: sort by question_index in session#show
 * color backgrounds grey that have not been set yet (i.e. no correct answer,
   no pair for a paired question, etc)
 * JS: when setting a pair, automatically change question_type to paired
