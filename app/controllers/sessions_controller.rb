@@ -20,8 +20,12 @@ class SessionsController < ApplicationController
       to_delete = params[:questions][question.id.to_s][:delete_matching_questions]
       if to_delete
         to_delete.each do |delete_matching_question_id|
+          # Delete in both directions, [question_id, matching_question_id]
+          #   and also [matching_question_id, question_id]
           MatchingQuestion.find_by(question_id: question.id,
             matching_question_id: delete_matching_question_id).destroy
+          MatchingQuestion.find_by(question_id: delete_matching_question_id,
+            matching_question_id: question.id).destroy
         end
       end
     end
