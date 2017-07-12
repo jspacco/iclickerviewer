@@ -4,25 +4,34 @@
 #   Ensure the SQLite 3 gem is defined in your Gemfile
 #   gem 'sqlite3'
 #
-#default: &default
 default: &default
-  adapter: sqlite3
+  adapter: postgresql
+  encoding: unicode
+  username: iclickerviewer
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-#  pool: 1
-  timeout: 5000
+  host: localhost
+  database: iclickerviewer
+  password: <%= ENV['RAILS_DATABASE_PASSWORD'] %>
 
 development:
   <<: *default
-  # FIXME Why we need to use the full path here for command line programs?
-  # database: db/development.sqlite3
-  database: /Users/jspacco/projects/clickers/iclickerviewer/db/development.sqlite3
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: db/test.sqlite3
+  database: iclickerviewer
+  password: <%= ENV['RAILS_DATABASE_PASSWORD'] %>
+
+sqlite:
+  adapter: sqlite3
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+#  pool: 1
+  timeout: 5000
+# FIXME Why we need to use the full path here for command line programs?
+# database: db/development.sqlite3
+  database: /Users/jspacco/projects/clickers/iclickerviewer/db/development.sqlite3
 
 production:
   <<: *default

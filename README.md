@@ -24,6 +24,8 @@
 * Somehow link from CQ to slide, and from slide to CQ
   * embedded PDF slide display tool
 * accounts to prevent randos from changing our data
+* web-based importer for the zipfile
+  * basically a generalization of parse.rb
 * back buttons and/or breadcrumbs in the style or header info
 * are helpers usable in controllers or just in views?
   * What I was trying to do (global utility function) required using lib to create a module
