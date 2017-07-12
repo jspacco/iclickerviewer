@@ -121,11 +121,17 @@
         can delete each one. Was not able to figure out how to use the check_box
         method for things like this, since we would be deleting a self-referential
         association through a join table.
+
+        Also needed to specify the id of the checkbox explicitly, which is ungly,
+        because the check_box_tag method uses the name for both name and id and
+        I wanted a clickable label for each checkbox. There may be a better way
+        to do this.
       %>
       <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: q.object.id).length > 0 %>
       <% MatchingQuestion.where(question_id: q.object.id).each do |mq| %>
-        <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][][#{mq.matching_question_id}]",
-          mq.matching_question_id %>
+        <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
+          mq.matching_question_id, false,
+          {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
         <%= label_tag "questions[#{q.object.id}][delete_matching_questions][][#{mq.matching_question_id}]",
           mq.matching_question_id %>
         <br>
