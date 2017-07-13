@@ -34,5 +34,5 @@ sqlite:
   database: /Users/jspacco/projects/clickers/iclickerviewer/db/development.sqlite3
 
 production:
-  <<: *default
-  database: db/production.sqlite3
+  adapter: postgresql
+  pool: 5
