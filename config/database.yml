@@ -36,3 +36,4 @@ sqlite:
 production:
   adapter: postgresql
   pool: 5
+  encoding: unicode
