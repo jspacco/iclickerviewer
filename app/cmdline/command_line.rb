@@ -14,13 +14,14 @@ Bundler.require
 # Setup ActiveRecord
 require 'logger'
 ActiveRecord::Base.configurations = YAML.load_file('config/database.yml')
-database = :default
+database = ENV.key?('RAILS_ENV') ? ENV['RAILS_ENV'] : :default
+
 #ActiveRecord::Base.establish_connection(:development)
 # FIXME Command line Ruby doesn't seem to be able to substitute ERB syntax
 #   so we have to manually set the size of the database connection pool
 #   and the database password.
-ActiveRecord::Base.configurations[database.to_s]['pool'] = 5
-ActiveRecord::Base.configurations[database.to_s]['password'] = ENV['RAILS_DATABASE_PASSWORD']
+ActiveRecord::Base.configurations[database.to_s]['pool'] = 5 if !ActiveRecord::Base.configurations[database.to_s].key?('pool')
+ActiveRecord::Base.configurations[database.to_s]['password'] = ENV['RAILS_DATABASE_PASSWORD'] if !ActiveRecord::Base.configurations[database.to_s].key?('pool')
 
 # FIXME Read the database connection category from command line or env.
 ActiveRecord::Base.establish_connection(database)
