@@ -1,7 +1,11 @@
 class CoursesController < ApplicationController
   def index
     dburl = ENV['DATABASE_URL']
+    railsenv = ENV['RAILS_ENV']
+    rackenv = ENV['RACK_ENV']
     puts "WHERE IS THE GODDAM DB URL: #{dburl}"
+    puts "WHAT IS THE RAILS ENV? #{railsenv}"
+    puts "RACK UP ENV? #{rackenv}"
     @courses = Course.all
     # TODO avg number of CQs over all classes,
     #   avg time per CQ,
