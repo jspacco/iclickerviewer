@@ -1,5 +1,7 @@
 # Configuration for running from the command line with ActiveRecord
 
+puts "Dammit, is this being called?\n\n\n"
+
 # Require ActiveRecord
 require 'active_record'
 
