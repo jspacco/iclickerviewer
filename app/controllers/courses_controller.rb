@@ -1,5 +1,7 @@
 class CoursesController < ApplicationController
   def index
+    dburl = ENV['DATABASE_URL']
+    puts "WHERE IS THE GODDAM DB URL: #{dburl}"
     @courses = Course.all
     # TODO avg number of CQs over all classes,
     #   avg time per CQ,
