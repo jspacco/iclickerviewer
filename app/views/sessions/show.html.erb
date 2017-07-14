@@ -83,13 +83,13 @@
         include_blank: true %>
     </td>
     <td class="imagecolumn">
-      <% question_img_url = "/courses/%s/Images/%s_Q%d.jpg" %
+      <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
         [@course.folder_name, @session.session_code, question.question_index]
       %>
       <%= link_to(image_tag(question_img_url), question_img_url) %>
     </td>
     <td class="imagecolumn">
-      <% barchart_img_url = "/courses/%s/Images/%s_C%d.jpg" %
+      <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
         [@course.folder_name, @session.session_code, question.question_index]
       %>
       <%= link_to(image_tag(barchart_img_url), barchart_img_url) %>
