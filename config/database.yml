@@ -11,7 +11,7 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   host: localhost
   database: iclickerviewer
-  password: <%= ENV['RAILS_DATABASE_PASSWORD'] %>
+  password: iclickerviewer
 
 development:
   <<: *default
@@ -33,6 +33,8 @@ sqlite:
 # database: db/development.sqlite3
   database: /Users/jspacco/projects/clickers/iclickerviewer/db/development.sqlite3
 
+# Deploying to Heroku automatically uses a pre-configured DATABASE_URL variable
+#   to connect to postgres.
 production:
   adapter: postgresql
   pool: 5
