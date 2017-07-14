@@ -55,13 +55,17 @@
       <span class="tooltiptext">Percent of answers that were correct</span>
     </th>
     <th class="tooltip"> matching<br>question
-      <span class="tooltiptext left">Enter the course name and question ID </span>
+      <span class="tooltiptext left">Matching versions of this question
+        from other courses. Enter the question ID (database
+        primary key) of the matching question. Probably need to use two
+        different browser windows.
+      </span>
     </th>
   </tr>
 </thead>
   <!--
-  Paths to images are:
-  public/courses/UT.CSC108F16-L0101/Images/L1612020906_Q4.jpg
+  Images are stored in AWS S3 here with paths like this:
+  http://s3.amazonaws.com/iclickerviewer/UIC.CS361F15/Images/L1508241154_Q1.jpg
   -->
   <% @questions.each do |question| %>
   <%= fields_for "questions[]", question do |q| %>
@@ -71,10 +75,11 @@
     <td>
       <%= q.select :question_type, [
         ["unknown", 0],
-        ["individual", 1],
-        ["paired", 2],
-        ["non-MCQ", 3],
-        ["error", 4]
+        ["quiz", 1],
+        ["single", 2],
+        ["paired", 3],
+        ["non-MCQ", 4],
+        ["error", 5]
       ]
       %>
     </td>
