@@ -1,6 +1,6 @@
-class CreateSessions < ActiveRecord::Migration[5.1]
+class CreateClassPeriods < ActiveRecord::Migration[5.1]
   def change
-    create_table :sessions do |t|
+    create_table :class_periods do |t|
       t.string :session_code
       t.string :name
       t.string :participation

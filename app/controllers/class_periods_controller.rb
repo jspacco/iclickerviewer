@@ -1,10 +1,10 @@
-class SessionsController < ApplicationController
+class ClassPeriodsController < ApplicationController
   def show
-    get_questions_course_session
+    get_questions_course_class_period
   end
 
   def update
-    Question.where(session_id: params[:id]).each do |question|
+    Question.where(class_period_id: params[:id]).each do |question|
       question.update_attributes(question_params(question))
       # TODO more elegant way to create self-referential many-to-many
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
@@ -29,10 +29,10 @@ class SessionsController < ApplicationController
         end
       end
     end
-    # Finally, look up the course, session, and questions we just updated to make
+    # Finally, look up the course, class period, and questions we just updated to make
     #   them available to to the view. We are going to re-direct to the show view,
     #   but NOT the show controller.
-    get_questions_course_session
+    get_questions_course_class_period
 
     # Basically, this is a re-direct ONLY for rendering!
     #   It does NOT call the show method in this file.
@@ -52,11 +52,11 @@ class SessionsController < ApplicationController
       :correct_b, :correct_c, :correct_d, :correct_e, :question_type, :question_pair)
   end
 
-  def get_questions_course_session
-    # Look up the session, course, and questions
-    @session = Session.find_by(id: params[:id])
-    @course = Course.find_by(id: @session.course_id)
-    @questions = Question.where(session_id: @session.id)
+  def get_questions_course_class_period
+    # Look up the class period, course, and questions
+    @class_period = ClassPeriod.find_by(id: params[:id])
+    @course = Course.find_by(id: @class_period.course_id)
+    @questions = Question.where(class_period_id: @class_period.id)
     # Average time taken per clicker question
     total_time = 0.0
     num_questions = 0.0

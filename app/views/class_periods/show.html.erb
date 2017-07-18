@@ -4,14 +4,14 @@
   <%= @course.year %> <%= @course.institution %> <br>
   <%= @course.instructor %> <br>
   <%= @course.folder_name %> <br>
-  <%= @session.name %> <br>
-  <%= @session.session_code %> <br>
-  <%= @session.date.strftime("%Y-%m-%d %H:%M") %><br>
+  <%= @class_period.name %> <br>
+  <%= @class_period.session_code %> <br>
+  <%= @class_period.date.strftime("%Y-%m-%d %H:%M") %><br>
   Average time per clicker question:<br> <%= @avg_time %> seconds
 </center>
 </h2>
 
-<%= form_tag(session_path(@session), method: :patch) do %>
+<%= form_tag(class_period_path(@class_period), method: :patch) do %>
 <%= submit_tag 'Update correct answers' %>
 <table border=1>
   <tr>
@@ -19,7 +19,7 @@
       <span class="tooltiptext right"> Database primary key for this question. </span>
     </th>
     <th class="tooltip"> ques #
-      <span class="tooltiptext top"> Question number relative to <i>this session only</i> </span>
+      <span class="tooltiptext top"> Question number relative to <i>this class period only</i> </span>
     </th>
     <th class="tooltip"> q type
       <span class="tooltiptext top"> Type of question. Possibilities are<br>
@@ -89,13 +89,13 @@
     </td>
     <td class="imagecolumn">
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
-        [@course.folder_name, @session.session_code, question.question_index]
+        [@course.folder_name, @class_period.session_code, question.question_index]
       %>
       <%= link_to(image_tag(question_img_url), question_img_url) %>
     </td>
     <td class="imagecolumn">
       <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
-        [@course.folder_name, @session.session_code, question.question_index]
+        [@course.folder_name, @class_period.session_code, question.question_index]
       %>
       <%= link_to(image_tag(barchart_img_url), barchart_img_url) %>
     </td>

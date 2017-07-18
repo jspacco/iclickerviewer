@@ -51,15 +51,15 @@ ActiveRecord::Schema.define(version: 20170718155221) do
     t.integer "correct_d"
     t.integer "correct_e"
     t.string "is_deleted"
-    t.integer "session_id"
+    t.integer "class_period_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "question_type"
     t.integer "question_pair"
-    t.index ["session_id"], name: "index_questions_on_session_id"
+    t.index ["class_period_id"], name: "index_questions_on_class_period_id"
   end
 
-  create_table "sessions", force: :cascade do |t|
+  create_table "class_periods", force: :cascade do |t|
     t.string "session_code"
     t.string "name"
     t.string "participation"
@@ -70,7 +70,7 @@ ActiveRecord::Schema.define(version: 20170718155221) do
     t.integer "course_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_sessions_on_course_id"
+    t.index ["course_id"], name: "index_class_periods_on_course_id"
   end
 
   create_table "users", force: :cascade do |t|
