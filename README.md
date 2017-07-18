@@ -3,8 +3,9 @@
 ## TODO (code)
 * accounts to prevent randos from changing our data
   * salt, hashing, sessions, all that stuff
-* FIXME: add quiz as a possible question_type
+* TODO: figure out how to use rails test
 * FIXME: sort by question_index in session#show
+  * does not seem to be an issue anymore?
 * color backgrounds grey that have not been set yet (i.e. no correct answer,
   no pair for a paired question, etc)
 * JS: when setting a pair, automatically change question_type to paired
@@ -17,7 +18,7 @@
   * embedded PDF slide display tool
 * web-based importer for the zipfile
   * basically a generalization of parse.rb
-  * FIXME: command_line.rb and parse.rb were moved and won't load anymore
+* FIXME: command_line.rb and parse.rb were moved and won't load anymore
 * back buttons and/or breadcrumbs in the style or header info
 * are helpers usable in controllers or just in views?
   * What I was trying to do (global utility function) required using lib to create a module
@@ -43,6 +44,8 @@
 ## TODO (deployment)
 * streamline uploading of database
 * figure out why heroku rake db:migrate isn't working
+  * fixed this by changing the migrations to go in order of the foreign keys,
+  but still not sure why this was necessary on heroku but not locally.
 
 ## TODO (design)
 * a logo?

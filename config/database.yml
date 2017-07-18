@@ -21,8 +21,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: iclickerviewer
-  password: <%= ENV['RAILS_DATABASE_PASSWORD'] %>
+  database: iclickerviewer_test
 
 sqlite:
   adapter: sqlite3
