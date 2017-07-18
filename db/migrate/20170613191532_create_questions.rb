@@ -19,7 +19,7 @@ class CreateQuestions < ActiveRecord::Migration[5.1]
       t.string :is_deleted
       t.integer :question_type
       t.integer :question_pair, default: :null
-      t.references :session, foreign_key: true
+      t.references :class_period, foreign_key: true
 
       t.timestamps
     end

@@ -20,7 +20,7 @@
   <tr>
     <td> <%= sess.date.strftime("%Y-%m-%d %H:%M") %> </td>
     <td> <%= sess.name %> </td>
-    <td> <%= link_to sess.session_code, session_path(sess) %> </td>
+    <td> <%= link_to sess.session_code, class_period_path(sess) %> </td>
     <td> <%= @each_class_stats[sess.id][:num_questions] %> </td>
     <td> <%= @each_class_stats[sess.id][:avg_time].round(1) %> </td>
   </tr>
