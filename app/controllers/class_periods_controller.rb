@@ -5,8 +5,6 @@ class ClassPeriodsController < ApplicationController
 
   def update
     Question.where(class_period_id: params[:id]).each do |question|
-      question.update_attributes(question_params(question))
-      # TODO more elegant way to create self-referential many-to-many
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
       if matching_question_id
         # Create matching questions in both directions if they don't already exist.
@@ -28,6 +26,12 @@ class ClassPeriodsController < ApplicationController
             matching_question_id: question.id).destroy
         end
       end
+      # TODO more elegant way to create self-referential many-to-many.
+      # Delete the matching_questions key from params, now that we've already
+      #   used it. This allows us to use update_attributes without getting
+      #   an error for "Unpermitted paramter".
+      params[:questions][question.id.to_s].delete(:matching_questions)
+      question.update_attributes(question_params(question))
     end
     # Finally, look up the course, class period, and questions we just updated to make
     #   them available to to the view. We are going to re-direct to the show view,
@@ -56,7 +60,7 @@ class ClassPeriodsController < ApplicationController
     # Look up the class period, course, and questions
     @class_period = ClassPeriod.find_by(id: params[:id])
     @course = Course.find_by(id: @class_period.course_id)
-    @questions = Question.where(class_period_id: @class_period.id)
+    @questions = Question.where(class_period_id: @class_period.id).order(:question_index)
     # Average time taken per clicker question
     total_time = 0.0
     num_questions = 0.0

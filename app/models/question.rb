@@ -1,5 +1,5 @@
 class Question < ApplicationRecord
-  belongs_to :session
+  belongs_to :class_period
   has_many :matching_questions
   has_many :question, :through => :matching_questions
 
