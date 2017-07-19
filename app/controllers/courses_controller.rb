@@ -1,6 +1,6 @@
 class CoursesController < ApplicationController
   def index
-    @courses = Course.all
+    @courses = Course.all.order(:folder_name)
     # TODO avg number of CQs over all classes,
     #   avg time per CQ,
     #   pairing/individual stats???
@@ -13,7 +13,7 @@ class CoursesController < ApplicationController
   def show
     @course = Course.find(params[:id])
     # TODO sort class periods by date
-    @classes = ClassPeriod.where(course_id: @course.id)
+    @classes = ClassPeriod.where(course_id: @course.id).order(:session_code)
     @class_stats = get_class_stats(@course, @classes)
     @each_class_stats = Hash.new
     @classes.each do |sess|
