@@ -1,4 +1,4 @@
-module SessionsHelper
+module ClassPeriodsHelper
   # include Utilities
 
   def correct_pct(question)
@@ -19,8 +19,9 @@ module SessionsHelper
   def question_pair_options(question, all_questions)
     result = []
     all_questions.each do |q|
-      # Skip questions that are marked individual, error, or non-MCQ
-      if ![1,3,4].include?(question.question_type) &&
+      # Skip questions that are marked quiz, single, error, or non-MCQ
+      # FIXME These numbers are hard-coded in views/class_periods/show.html.erb
+      if ![1,2,4,5].include?(question.question_type) &&
         question.question_index != q.question_index
         result.push([q.question_index.to_s, q.question_index.to_s])
       end
