@@ -3,8 +3,9 @@
 ## TODO (code)
 * accounts to prevent randos from changing our data
   * salt, hashing, sessions, all that stuff
-* TODO: sql script to copy DB to another DB to be uploaded without the votes
+* TODO: commands to blow up remote heroku DB and replace with new one
 * TODO: upload images to s3, and set stupid permissions correctly
+  * http://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjectUsingRuby.html
 * TODO: figure out how to use rails test
 * color backgrounds grey that have not been set yet (i.e. no correct answer,
   no pair for a paired question, etc)
