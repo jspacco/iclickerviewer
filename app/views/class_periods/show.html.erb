@@ -85,9 +85,11 @@
       %>
     </td>
     <td>
+<%# HACK: creating this.oldvalue in the DOM to store the previously selected value %>
       <%= q.select :question_pair, question_pair_options(q.object, @questions),
         { include_blank: true },
-        { onChange: "question_pair_handler( #{q.object.question_index}, $(this).val() );",
+        { onclick: "this.old_question_pair = $(this).val();",
+          onchange: "question_pair_handler( #{q.object.question_index}, $(this).val(), this.old_question_pair );",
           class: "question_pair_#{q.object.question_index}" } %>
     </td>
     <td class="imagecolumn">
