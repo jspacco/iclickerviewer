@@ -81,12 +81,14 @@
         ["paired", 3],
         ["non-MCQ", 4],
         ["error", 5]
-      ]
+      ], {}, { class: "question_type_#{q.object.question_index}" }
       %>
     </td>
     <td>
       <%= q.select :question_pair, question_pair_options(q.object, @questions),
-        include_blank: true %>
+        { include_blank: true },
+        { onChange: "question_pair_handler( #{q.object.question_index}, $(this).val() );",
+          class: "question_pair_#{q.object.question_index}" } %>
     </td>
     <td class="imagecolumn">
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
