@@ -3,11 +3,11 @@ require 'rubygems'
 require 'nokogiri'
 require 'date'
 require_relative 'command_line'
-require_relative '../models/application_record'
-require_relative '../models/course'
-require_relative '../models/session'
-require_relative '../models/question'
-require_relative '../models/vote'
+require_relative '../app/models/application_record'
+require_relative '../app/models/course'
+require_relative '../app/models/class_period'
+require_relative '../app/models/question'
+require_relative '../app/models/vote'
 
 def get_resp(s)
   return s[0..(s.index("|")-1)].to_i
@@ -22,7 +22,7 @@ end
 
 def get_datetime(filename)
   # L1609120921.xml
-  # L == session
+  # L == class_period
   # 16 == 2016
   # 0912 == September 12
   # 0921 == 9:21am
@@ -38,7 +38,7 @@ def get_seconds(time)
   return hours.to_i * 3600 + minutes.to_i * 60 + seconds.to_i
 end
 
-def parse_XML(filename, course)
+def parse_XML(filename, course, parse_votes)
   # We should ignore these keys:
   # tscr, anspt
   page = Nokogiri::XML(open(filename))
@@ -46,17 +46,17 @@ def parse_XML(filename, course)
   datetime = get_datetime(filename)
   session_code = File.basename(filename, '.xml')
   $logger.debug("%s is the datetime of %s" % [datetime, session_code])
-  # Each file should only have one session in it
+  # Each file should only have one session (class_period) in it
   page.css('//ssn').each do |ssn|
     name = ssn['ssnn']
     min_response = ssn['minrep']
     participation = ssn['part']
     performance = ssn['perf']
     min_response_string = ssn['MinPart_S']
-    # Create the session if it doesn't exist
-    session = Session.find_by(session_code: session_code)
-    if session == nil
-      session = Session.find_or_create_by(session_code: session_code,
+    # Create the class_period if it doesn't exist
+    class_period = ClassPeriod.find_by(session_code: session_code)
+    if class_period == nil
+      class_period = ClassPeriod.find_or_create_by(session_code: session_code,
         name: name, date: datetime, min_response: min_response,
         participation: participation, performance: performance,
         min_response_string: min_response_string,
@@ -115,10 +115,10 @@ def parse_XML(filename, course)
         [response_a, response_b, response_c, response_d, response_e])
 
       # Create the question if it doesn't exist
-      question = Question.find_by(session_id: session.id,
+      question = Question.find_by(class_period_id: class_period.id,
         question_index: question_index)
       if question == nil
-        question = Question.find_or_create_by(session: session,
+        question = Question.find_or_create_by(class_period: class_period,
         name: question_name, start: start, stop: stop,
         question_index: question_index, num_seconds: num_seconds,
         response_a: response_a, response_b: response_b, response_c: response_c,
@@ -131,6 +131,10 @@ def parse_XML(filename, course)
         #   except for the correct answers?
       end
 
+      # Should we skip parsing votes?
+      if !parse_votes
+        return
+      end
       prob.css('v').each do |vote|
         clicker_id = vote['id']
         loaned_clicker_to = get_or_nil(vote['lto'])
@@ -158,7 +162,7 @@ def parse_XML(filename, course)
   end
 end
 
-def parse_course(root, folder, name, institution, term, year, instructor)
+def parse_course(root, folder, name, institution, term, year, instructor, parse_votes = true)
   # Create the course if it doesn't exist
   course = Course.find_by(folder_name: folder)
   if course == nil
@@ -171,7 +175,7 @@ def parse_course(root, folder, name, institution, term, year, instructor)
   # Iterate through the sessions
   session_path = "%s/%s/SessionData/*.xml" % [root, folder]
   Dir.glob(session_path) do |session_file|
-    parse_XML(session_file, course)
+    parse_XML(session_file, course, parse_votes)
   end
 end
 
@@ -189,21 +193,29 @@ if __FILE__ == $0
   # parse_course(root, 'KnoxCS141W17-2', 'CS1', 'Knox', 'winter', 2017, 'Spacco')
   # p "done with KnoxCS141W17-2"
 
-  parse_course(root, 'UIC.CS261F16', 'CS261', 'UIC', 'fall', 2016, 'Taylor')
-  p "done with UIC.CS261F16"
-  parse_course(root, 'UIC.CS261S17', 'CS261', 'UIC', 'spring', 2016, 'Taylor')
-  p "done with UIC.CS261S17"
-  parse_course(root, 'UIC.CS111S16', 'CS111', 'UIC', 'spring', 2016, 'Taylor')
-  p "done with UIC.CS111S16"
-  parse_course(root, 'UIC.CS361F15', 'CS361', 'UIC', 'fall', 2015, 'Taylor')
-  p "done with UIC.CS361F15"
-  parse_course(root, 'UIC.CS361S17', 'CS361', 'UIC', 'spring', 2017, 'Taylor')
-  p "done with UIC.CS361S17"
-  parse_course(root, 'UIC.CS362F16', 'CS362', 'UIC', 'fall', 2016, 'Taylor')
-  p "done with UIC.CS362F16"
-  parse_course(root, 'UIC.CS385F16', 'CS385', 'UIC', 'fall', 2016, 'Taylor')
-  p "done with UIC.CS385F16"
-  parse_course(root, 'UIC.CS385S16', 'CS385', 'UIC', 'spring', 2016, 'Taylor')
-  p "done with UIC.CS385S16"
+  # parse_course(root, 'UIC.CS261F16', 'CS261', 'UIC', 'fall', 2016, 'Taylor')
+  # p "done with UIC.CS261F16"
+  # parse_course(root, 'UIC.CS261S17', 'CS261', 'UIC', 'spring', 2016, 'Taylor')
+  # p "done with UIC.CS261S17"
+  # parse_course(root, 'UIC.CS111S16', 'CS111', 'UIC', 'spring', 2016, 'Taylor')
+  # p "done with UIC.CS111S16"
+  # parse_course(root, 'UIC.CS361F15', 'CS361', 'UIC', 'fall', 2015, 'Taylor')
+  # p "done with UIC.CS361F15"
+  # parse_course(root, 'UIC.CS361S17', 'CS361', 'UIC', 'spring', 2017, 'Taylor')
+  # p "done with UIC.CS361S17"
+  # parse_course(root, 'UIC.CS362F16', 'CS362', 'UIC', 'fall', 2016, 'Taylor')
+  # p "done with UIC.CS362F16"
+  # parse_course(root, 'UIC.CS385F16', 'CS385', 'UIC', 'fall', 2016, 'Taylor')
+  # p "done with UIC.CS385F16"
+  # parse_course(root, 'UIC.CS385S16', 'CS385', 'UIC', 'spring', 2016, 'Taylor')
+  # p "done with UIC.CS385S16"
+
+  # parse_course(root, 'UIC.CS450F15', 'CS450', 'UIC', 'fall', 2015, 'Taylor')
+  # p "done with UIC.CS450F15"
+
+  parse_course(root, 'UIC.CS450S17', 'CS450', 'UIC', 'spring', 2017, 'Taylor')
+  p "done with UIC.CS450S17"
+  parse_course(root, 'UIC.CS361S16', 'CS361', 'UIC', 'spring', 2016, 'Taylor')
+  p "done with UIC.CS361S16"
 
 end

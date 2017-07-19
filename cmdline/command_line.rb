@@ -18,8 +18,8 @@ database = ENV.key?('RAILS_ENV') ? ENV['RAILS_ENV'] : :default
 # FIXME Command line Ruby doesn't seem to be able to substitute ERB syntax
 #   so we have to manually set the size of the database connection pool
 #   and the database password.
-ActiveRecord::Base.configurations[database.to_s]['pool'] = 5 if !ActiveRecord::Base.configurations[database.to_s].key?('pool')
-ActiveRecord::Base.configurations[database.to_s]['password'] = ENV['RAILS_DATABASE_PASSWORD'] if !ActiveRecord::Base.configurations[database.to_s].key?('pool')
+ActiveRecord::Base.configurations[database.to_s]['pool'] = 5 # if !ActiveRecord::Base.configurations[database.to_s].key?('pool')
+# ActiveRecord::Base.configurations[database.to_s]['password'] = ENV['RAILS_DATABASE_PASSWORD'] if !ActiveRecord::Base.configurations[database.to_s].key?('pool')
 
 # FIXME Read the database connection category from command line or env.
 ActiveRecord::Base.establish_connection(database)

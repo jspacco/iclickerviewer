@@ -3,6 +3,8 @@
 ## TODO (code)
 * accounts to prevent randos from changing our data
   * salt, hashing, sessions, all that stuff
+* TODO: sql script to copy DB to another DB to be uploaded without the votes
+* TODO: upload images to s3, and set stupid permissions correctly
 * TODO: figure out how to use rails test
 * color backgrounds grey that have not been set yet (i.e. no correct answer,
   no pair for a paired question, etc)
