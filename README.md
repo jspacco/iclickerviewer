@@ -4,20 +4,19 @@
 * accounts to prevent randos from changing our data
   * salt, hashing, sessions, all that stuff
 * TODO: figure out how to use rails test
-* FIXME: sort by question_index in session#show
-  * does not seem to be an issue anymore?
 * color backgrounds grey that have not been set yet (i.e. no correct answer,
   no pair for a paired question, etc)
-* JS: when setting a pair, automatically change question_type to paired
-  * automatically set the other pair in the UI?
+* FIXME: disallow changing type when it is set to pair, or directly setting to pair
 * settings (hide/show spurious, etc)
 * identify that two questions are "the same" across courses
   * JS to show images from other courses, with a button to enter into the form
 * Update the column tooltips for sessions
-* Somehow link from CQ to slide, and from slide to CQ
+* TODO (longterm): Somehow link from CQ to slide, and from slide to CQ
   * embedded PDF slide display tool
-* web-based importer for the zipfile
+* TODO: web-based importer for the zipfile
   * basically a generalization of parse.rb
+  * would probably need to use heroku+s3 to upload images to s3 automatically,
+    which would be slow and would probably timeout often
 * FIXME: command_line.rb and parse.rb were moved and won't load anymore
 * back buttons and/or breadcrumbs in the style or header info
 * are helpers usable in controllers or just in views?
