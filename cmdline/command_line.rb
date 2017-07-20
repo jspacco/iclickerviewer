@@ -12,7 +12,7 @@ Bundler.require
 # Setup ActiveRecord
 require 'logger'
 ActiveRecord::Base.configurations = YAML.load_file('config/database.yml')
-database = ENV.key?('RAILS_ENV') ? ENV['RAILS_ENV'] : :default
+database = ENV.key?('RAILS_ENV') ? ENV['RAILS_ENV'] : :full
 
 #ActiveRecord::Base.establish_connection(:development)
 # FIXME Command line Ruby doesn't seem to be able to substitute ERB syntax
