@@ -1,0 +1,123 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+body {
+  padding-top: 60px;
+}
+
+section {
+  overflow: auto;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.center {
+  text-align: center;
+}
+
+.center h1 {
+  margin-bottom: 10px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1;
+}
+
+h1 {
+  font-size: 3em;
+  letter-spacing: -2px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.2em;
+  letter-spacing: -1px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: normal;
+  color: #777;
+}
+
+p {
+  font-size: 1.1em;
+  line-height: 1.7em;
+}
+
+/* For class_periods */
+.imagecolumn {
+  width: 300px;
+  //height: 370px;
+}
+
+/* resize images */
+.imagecolumn img {
+  width: 100%;
+  height: auto;
+}
+
+tr.r0 td {
+  background-color: #cc9999;
+}
+tr.r1 td {
+  background-color: #9999cc;
+}
+//tr.r2 td {
+//  background-color: #99cc99;
+//}
+tr.nonmcq td {
+  background-color: #9a9a9a;
+}
+tr.spurious td {
+  background-color: #a9a9a9;
+}
+tr.individual td {
+  background-color: #99cc99;
+}
+tr.unknown td {
+  background-color: #ffffff;
+}
+
+// Tooltips
+.mytooltip {
+  position:relative;
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+}
+.tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  // default is to place tooltip to the top
+  bottom: 150%;
+  left: 50%;
+  margin-left: -60px;
+}
+.right {
+  // Position the tooltip to the right
+  bottom: unset;
+  margin-left: unset;
+  top: -10px;
+  left: 105%;
+}
+.left {
+  // Position the tooltip to the left
+  bottom: unset;
+  margin-left: unset;
+  left: unset;
+  top: -10px;
+  right: 105%;
+}
+.mytooltip:hover span.tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

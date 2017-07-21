@@ -14,16 +14,17 @@
 * identify that two questions are "the same" across courses
   * JS to show images from other courses, with a button to enter into the form
 * Update the column tooltips for sessions
+* TODO: how does flash work in Rails?
 * TODO (longterm): Somehow link from CQ to slide, and from slide to CQ
   * embedded PDF slide display tool
 * TODO: web-based importer for the zipfile
   * basically a generalization of parse.rb
   * would probably need to use heroku+s3 to upload images to s3 automatically,
     which would be slow and would probably timeout often
-* FIXME: command_line.rb and parse.rb were moved and won't load anymore
 * back buttons and/or breadcrumbs in the style or header info
 * are helpers usable in controllers or just in views?
   * What I was trying to do (global utility function) required using lib to create a module
+* FIXME, low: use bootstrap tooltips instead of the ones I wrote
 * session#show: correct stats when we have correct answers
 * session#show: aggregate stats at the top (times, percentages)
 * overall stats for courses (course#index and course#show)

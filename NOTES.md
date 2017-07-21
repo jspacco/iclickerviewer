@@ -24,7 +24,8 @@ bin/rails g model vote clicker_id first_answer_time:float\
 CONTROLLERS
 ---
 bin/rails generate controller Courses
-bin/rails generate controller Sessions
+bin/rails generate controller ClassPeriods
+bin/rails generate controller Sessions new
 bin/rails generate controller Questions
 
 OTHER NOTES
@@ -39,24 +40,27 @@ OTHER NOTES
 * find_all_by has been replaced by where:
     https://stackoverflow.com/questions/12057790/have-find-by-in-rails-return-multiple-results
 
-* TODO: Rename Session to Class (session already means something)
-
 HEROKU
 ---
 * local postgres:
-  create role iclickerviewer with createdb login password 'iclicker!!!!';
+  create role iclickerviewer with createdb login password iclickerviewer;
 
 * heroku pg:info
-    * heroku pg:credentials postgresql-parallel-76813
-    * heroku pg:reset
-    * heroku pg:psql
+  * heroku pg:credentials postgresql-parallel-76813
+  * heroku pg:reset
+  * heroku pg:psql
+* to push from local DB to heroku:
+
+  PGUSER=iclickerviewer PGPASSWORD=iclickerviewer heroku pg:push iclickerviewer postgresql-parallel-76813
 
 * Had to re-name all of the migrations so that they happen in the order in which
   the primary keys are needed (i.e. courses, then sessions which ref courses,
   then questions which ref sessions, then votes which ref questions).
   * could be postgres v9.4 (local) vs postgres v9.6 (heroku)
 
-*
+* To create a single user in the Rails console (rails console full)
+
+User.new(name: "T Honor Goat", email: "thgoat@example.com", username: "thgoat", password: "tiberius99", password_confirmation: "tiberius99")
 
 Rails
 --
@@ -65,11 +69,9 @@ form_tag(session_path(@session), method: :patch)
   IS NOT THE SAME AS
 form_tag url: session_path(@session), method: :path
 
-The first one is correct, and creates a form for patching, which uses HTTP POST
-  but sets a special _method hidden parameter.
-The 2nd one creates a standard POST, and passes it a hash with keys "url" and "method"
-  and the given values. This is an example of a place where all of the syntactic
-  sugar provided by Ruby and Rails has definitely confused me.
+The first one is correct, and creates a form for patching, which uses HTTP POST but sets a special \_method hidden parameter.
+
+The 2nd one creates a standard POST, and passes it a hash with keys "url" and "method" and the given values. This is an example of a place where all of the syntactic sugar provided by Ruby and Rails has definitely confused me.
 
 * render :show in a controller re-directs the view ONLY. It does not call the
   show method of the controller, so any variables needed by the show view will need
@@ -100,4 +102,4 @@ The 2nd one creates a standard POST, and passes it a hash with keys "url" and "m
 * check autoloads path:
   bin/rails r 'puts ActiveSupport::Dependencies.autoload_paths'
 
-* 
+*

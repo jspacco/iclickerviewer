@@ -13,16 +13,16 @@
 </h2>
 
 <%= form_tag(class_period_path(@class_period), method: :patch) do %>
-<%= submit_tag 'Update correct answers' %>
+<%= submit_tag 'Update data' %>
 <table border=1>
   <tr>
-    <th class="tooltip"> ID
+    <th class="mytooltip"> ID
       <span class="tooltiptext right"> Database primary key for this question. </span>
     </th>
-    <th class="tooltip"> ques #
+    <th class="mytooltip"> ques #
       <span class="tooltiptext top"> Question number relative to <i>this class period only</i> </span>
     </th>
-    <th class="tooltip"> q type
+    <th class="mytooltip"> q type
       <span class="tooltiptext top"> Type of question. Possibilities are<br>
         0: unknown<br>
         1: individual<br>
@@ -31,31 +31,31 @@
         4: error<br>
       </span>
     </th>
-    <th class="tooltip"> pair #
+    <th class="mytooltip"> pair #
       <span class="tooltiptext top"> TODO </span>
     </th>
-    <th class="tooltip"> screenshot
+    <th class="mytooltip"> screenshot
       <span class="tooltiptext"> TODO </span>
     </th>
-    <th class="tooltip"> bar chart
+    <th class="mytooltip"> bar chart
       <span class="tooltiptext"> TODO </span>
     </th>
-    <th class="tooltip"> correct<br> answer(s)
+    <th class="mytooltip"> correct<br> answer(s)
       <span class="tooltiptext"> TODO </span>
     </th>
-    <th class="tooltip"> start
+    <th class="mytooltip"> start
       <span class="tooltiptext"> TODO </span>
     </th>
-    <th class="tooltip"> stop
+    <th class="mytooltip"> stop
       <span class="tooltiptext"> TODO </span>
     </th>
-    <th class="tooltip"> # secs
+    <th class="mytooltip"> # secs
       <span class="tooltiptext"> TODO </span>
     </th>
-    <th class="tooltip"> correct<br> %
+    <th class="mytooltip"> correct<br> %
       <span class="tooltiptext">Percent of answers that were correct</span>
     </th>
-    <th class="tooltip"> matching<br>question
+    <th class="mytooltip"> matching<br>question
       <span class="tooltiptext left">Matching versions of this question
         from other courses. Enter the question ID (database
         primary key) of the matching question. Probably need to use two
@@ -154,6 +154,6 @@
   <% end %>
 </table>
 
-<%= submit_tag 'Update correct answers' %>
+<%= submit_tag 'Update data' %>
 
 <% end %>
