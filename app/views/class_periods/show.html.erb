@@ -15,34 +15,31 @@
 <%# TODO: Make this an AJAX call! This is pretty ugly. %>
 <%= javascript_tag do %>
   var course_hash = <%=raw @course_hash.to_json %>;
-  window.onload = dynamic_image_handler(course_hash);
-  window.old_dynamic_course_selected = '';
-  window.old_dynamic_class_period_selected = '';
-  window.old_dynamic_question_selected = '';
+  window.onload = dynamic_image_handler(course_hash, true);
+  /*//window.old_dynamic_course_selected = '';
+  //window.old_dynamic_class_period_selected = '';
+  //window.old_dynamic_question_selected = '';*/
 <% end %>
 
+<h2>Quick viewer to preview questions from other classes; useful
+  for finding matching questions across classes.
+</h2>
 <table border="0">
 <tr>
   <td>
-    <select name="course" id="dynamic_course" onchange="dynamic_image_handler(course_hash)">
-      <option value=""></option>
-      <option value="1">1</option>
+    <select name="course" id="dynamic_course" onchange="dynamic_image_handler(course_hash, false)">
     </select>
   </td>
   <td>
-    <select name="class_period" id="dynamic_class_period" onchange="dynamic_image_handler(course_hash)">
-      <option value=""></option>
-      <option value="1">1</option>
+    <select name="class_period" id="dynamic_class_period" onchange="dynamic_image_handler(course_hash, false)">
     </select>
   </td>
   <td>
-    <select name="question" id="dynamic_question" onchange="dynamic_image_handler(course_hash)">
-      <option value=""></option>
-      <option value="1">1</option>
+    <select name="question" id="dynamic_question" onchange="dynamic_image_handler(course_hash, false)">
     </select>
   </td>
   <td>
-    <div id="dynamic_image">
+    <div id="dynamic_image" class="imagecolumn">
     </div>
   </td>
 </tr>

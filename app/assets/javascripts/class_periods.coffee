@@ -41,12 +41,10 @@ root.question_pair_handler =(question_index, question_pair, old_question_pair) -
         $(selected_pair).val("#{question_index}")
   return 0
 
-root.dynamic_image_handler =(course_hash) ->
-  #
-  # if course changed, then unset class and question
-  # if class changed, then unset question
-  # if question changed, don't bother
-
+#
+# Dynamically change the image preview at the top
+#
+root.dynamic_image_handler =(course_hash, first_load) ->
   jQuery ->
     dynamic_course = $("#dynamic_course")
     dynamic_class_period = $("#dynamic_class_period")
@@ -56,19 +54,9 @@ root.dynamic_image_handler =(course_hash) ->
     dynamic_class_period_selected = dynamic_class_period.val()
     dynamic_question_selected = dynamic_question.val()
 
-    # if is_defined(old_dynamic_question_selected) and old_dynamic_question_selected != dynamic_question_selected
-    #   # We can just change the question!
-    # else if is_defined(old_dynamic_class_period_selected) and old_dynamic_class_period_selected != dynamic_class_period_selected
-    #   # Change the class period, and set the question to the first one
-    # else
-    #   # Change the course, and set the class and the question to the first ones
-
-    # This is a hack, but we are using old_dynamic_course_selected == ''
-    #   to mean "first time the page loads"
-
     # Fill out list of courses only when the page first loads
     #   and the global vars remembering the previous selections are empty
-    if old_dynamic_course_selected == ''
+    if first_load
       dynamic_course.empty()
       for course in (x for own x of course_hash).sort()
         dynamic_course.append($('<option>', {
@@ -80,7 +68,7 @@ root.dynamic_image_handler =(course_hash) ->
     dynamic_course.val(dynamic_course_selected)
 
     # Refill only when the course changed, or on first load
-    if old_dynamic_course_selected == '' or old_dynamic_course_selected != dynamic_course_selected
+    if first_load or old_dynamic_course_selected != dynamic_course_selected
       dynamic_class_period.empty()
       for class_period in (x for own x of course_hash[dynamic_course_selected]).sort()
         dynamic_class_period.append($('<option>', {
@@ -93,18 +81,27 @@ root.dynamic_image_handler =(course_hash) ->
     dynamic_class_period.val(dynamic_class_period_selected)
 
     # Refill when course changed, or when class period changed, or on first load
-    if old_dynamic_question_selected == '' or old_dynamic_course_selected != dynamic_course_selected or old_dynamic_class_period_selected != dynamic_class_period_selected
+    if first_load or
+    old_dynamic_course_selected != dynamic_course_selected or
+    old_dynamic_class_period_selected != dynamic_class_period_selected
       dynamic_question.empty()
       for question_index in (k for own k of course_hash[dynamic_course_selected][dynamic_class_period_selected]).sort()
         question_id = course_hash[dynamic_course_selected][dynamic_class_period_selected][question_index]
         dynamic_question.append($('<option>', {
-          value: question_id,
+          value: question_index,
           text: "#{question_index} (#{question_id})"
         }));
       dynamic_question_selected = $("#dynamic_question option:first").val()
-    if dynamic_question_selected == ''
-      dynamic_question_selected = $("#dynamic_question option:first").val()
     dynamic_question.val(dynamic_question_selected)
+
+    # TODO: get the question_id
+    #if first_load or old_dynamic_course_selected != dynamic_course_selected or
+    console.log "course: #{dynamic_course_selected}, class: #{dynamic_class_period_selected}, question: #{dynamic_question_selected}"
+    question_id = course_hash[dynamic_course_selected][dynamic_class_period_selected][dynamic_question_selected]
+    addr = "https://s3.amazonaws.com/iclickerviewer/#{dynamic_course_selected}/Images/#{dynamic_class_period_selected}_Q#{dynamic_question_selected}.jpg"
+    console.log addr
+    $("#dynamic_image").empty().append("<img src=\"#{addr}\"/>")
+
 
     root.old_dynamic_course_selected = dynamic_course_selected
     root.old_dynamic_class_period_selected = dynamic_class_period_selected
