@@ -12,19 +12,18 @@
 </center>
 </h2>
 
-<%# TODO: Make this an AJAX call! This is pretty ugly. %>
+<%# TODO: Make this an AJAX call! This is a pretty ugly hack %>
 <%= javascript_tag do %>
   var course_hash = <%=raw @course_hash.to_json %>;
   window.onload = dynamic_image_handler(course_hash, true);
-  /*//window.old_dynamic_course_selected = '';
-  //window.old_dynamic_class_period_selected = '';
-  //window.old_dynamic_question_selected = '';*/
 <% end %>
 
-<h2>Quick viewer to preview questions from other classes; useful
+<table frame=box rules=none>
+<tr>
+  <td colspan="4">Quick viewer to preview questions from other classes; useful
   for finding matching questions across classes.
-</h2>
-<table border="0">
+  </td>
+</tr>
 <tr>
   <td>
     <select name="course" id="dynamic_course" onchange="dynamic_image_handler(course_hash, false)">
@@ -98,12 +97,17 @@
   </tr>
 </thead>
   <!--
-  Images are stored in AWS S3 here with paths like this:
+  Images are stored in AWS S3 with paths like this:
   http://s3.amazonaws.com/iclickerviewer/UIC.CS361F15/Images/L1508241154_Q1.jpg
   -->
   <% @questions.each do |question| %>
   <%= fields_for "questions[]", question do |q| %>
+  <% if q.object.question_type == 0 or (q.object.correct_a + q.object.correct_b +
+            q.object.correct_c + q.object.correct_d + q.object.correct_e) == 0 %>
+  <tr class="todo">
+  <% else %>
   <tr>
+  <% end %>
     <td align="center"> <%= question.id %> </td>
     <td align="center"> <b> <%= question.question_index %> </b> </td>
     <td>

@@ -7,11 +7,12 @@
   * http://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjectUsingRuby.html
 * TODO: figure out how to use rails test
 * TODO: "next class period" buttons
-* color backgrounds grey that have not been set yet (i.e. no correct answer,
-  no pair for a paired question, etc)
+* TODO: print stats about unprocessed data per course and per class period
 * FIXME: disallow changing type when it is set to pair, or directly setting to pair
 * settings (hide/show spurious, etc)
-* JS to show images from other courses, with a button to enter into the matching_questions form
+* TODO: quick previewer
+  * entry button
+  * some way to remember the currently selected thing in the URL
 * TODO: Update the column tooltips for sessions
 * TODO: how does flash work in Rails?
 * TODO (longterm): Somehow link from CQ to slide, and from slide to CQ
