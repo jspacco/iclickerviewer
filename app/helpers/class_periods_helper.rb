@@ -37,6 +37,17 @@ module ClassPeriodsHelper
     end
   end
 
+  def data_entered?(question)
+    if [4, 5].include?(question.question_type)
+      return true
+    end
+    if [1, 2, 3].include?(question.question_type)
+      return question.correct_a + question.correct_b + question.correct_c +
+      question.correct_d + question.correct_e != 0
+    end
+    return false
+  end
+
   private
   def pct_string(num, denom)
     "%s\%" % ((num.to_f / denom.to_f) * 100).round(1).to_s

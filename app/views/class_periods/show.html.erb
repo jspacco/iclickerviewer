@@ -102,11 +102,10 @@
   -->
   <% @questions.each do |question| %>
   <%= fields_for "questions[]", question do |q| %>
-  <% if q.object.question_type == 0 or (q.object.correct_a + q.object.correct_b +
-            q.object.correct_c + q.object.correct_d + q.object.correct_e) == 0 %>
-  <tr class="todo">
-  <% else %>
+  <% if data_entered?(q.object) %>
   <tr>
+  <% else %>
+  <tr class="todo">
   <% end %>
     <td align="center"> <%= question.id %> </td>
     <td align="center"> <b> <%= question.question_index %> </b> </td>
