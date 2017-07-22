@@ -45,6 +45,22 @@ class ClassPeriodsController < ApplicationController
 
   private
 
+  def get_course_hash
+    course_hash = Hash.new
+    Course.all.each do |course|
+      class_period_hash = Hash.new
+      ClassPeriod.where(course_id: course.id).each do |class_period|
+        question_hash = Hash.new
+        Question.where(class_period_id: class_period.id).each do |question|
+          question_hash[question.question_index] = question.id
+        end
+        class_period_hash[class_period.session_code] = question_hash
+      end
+      course_hash[course.folder_name] = class_period_hash
+    end
+    return course_hash
+  end
+
   def question_params(question)
     # FIXME Is setting empty strings to nil even necessary?
     if params[:questions][question.id.to_s][:question_pair] == ""
@@ -61,6 +77,8 @@ class ClassPeriodsController < ApplicationController
     @class_period = ClassPeriod.find_by(id: params[:id])
     @course = Course.find_by(id: @class_period.course_id)
     @questions = Question.where(class_period_id: @class_period.id).order(:question_index)
+    # Look up a hash from course_name => session_code (class_period) => question_index => question_id
+    @course_hash = get_course_hash
     # Average time taken per clicker question
     total_time = 0.0
     num_questions = 0.0

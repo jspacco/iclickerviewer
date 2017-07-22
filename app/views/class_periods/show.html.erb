@@ -12,6 +12,42 @@
 </center>
 </h2>
 
+<%# TODO: Make this an AJAX call! This is pretty ugly. %>
+<%= javascript_tag do %>
+  var course_hash = <%=raw @course_hash.to_json %>;
+  window.onload = dynamic_image_handler(course_hash);
+  window.old_dynamic_course_selected = '';
+  window.old_dynamic_class_period_selected = '';
+  window.old_dynamic_question_selected = '';
+<% end %>
+
+<table border="0">
+<tr>
+  <td>
+    <select name="course" id="dynamic_course" onchange="dynamic_image_handler(course_hash)">
+      <option value=""></option>
+      <option value="1">1</option>
+    </select>
+  </td>
+  <td>
+    <select name="class_period" id="dynamic_class_period" onchange="dynamic_image_handler(course_hash)">
+      <option value=""></option>
+      <option value="1">1</option>
+    </select>
+  </td>
+  <td>
+    <select name="question" id="dynamic_question" onchange="dynamic_image_handler(course_hash)">
+      <option value=""></option>
+      <option value="1">1</option>
+    </select>
+  </td>
+  <td>
+    <div id="dynamic_image">
+    </div>
+  </td>
+</tr>
+</table>
+
 <%= form_tag(class_period_path(@class_period), method: :patch) do %>
 <%= submit_tag 'Update data' %>
 <table border=1>
@@ -85,7 +121,7 @@
       %>
     </td>
     <td>
-<%# HACK: creating this.oldvalue in the DOM to store the previously selected value %>
+<%# HACK: creating this.old_question_pair in the DOM to store the previously selected value %>
       <%= q.select :question_pair, question_pair_options(q.object, @questions),
         { include_blank: true },
         { onclick: "this.old_question_pair = $(this).val();",
