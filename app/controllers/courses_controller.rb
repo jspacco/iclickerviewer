@@ -1,4 +1,5 @@
 class CoursesController < ApplicationController
+  include ApplicationHelper
   def index
     @courses = Course.all.order(:folder_name)
     # TODO avg number of CQs over all classes,
@@ -8,6 +9,7 @@ class CoursesController < ApplicationController
     @courses.each do |course|
       @all_class_stats[course.id] = get_class_stats(course.id)
     end
+    get_updated_stats
   end
 
   def show
@@ -22,6 +24,7 @@ class CoursesController < ApplicationController
       class_hash[:avg_time] = Question.where(class_period_id: sess.id).sum(:num_seconds).to_f / class_hash[:num_questions]
       @each_class_stats[sess.id] = class_hash
     end
+    get_updated_stats
   end
 
   private
@@ -44,5 +47,32 @@ class CoursesController < ApplicationController
     class_stats[:avg_time] = total_time / num_questions
     class_stats[:avg_num_questions] = num_questions / classes.length
     return class_stats
+  end
+
+  def get_updated_stats
+    # course_id => [updated, total] for each class overall
+    @question_updated_counts = Hash.new
+    # session_code => [updated, total] for each class period
+    @class_period_updated_counts = Hash.new
+    Course.all.each do |course|
+      classes_updated = 0
+      classes_total = 0
+      ClassPeriod.where(course_id: course.id).each do |class_period|
+        updated = 0
+        total = 0
+        Question.where(class_period_id: class_period.id).each do |question|
+          if data_entered?(question)
+            updated += 1
+          end
+          total += 1
+        end
+        @question_updated_counts[class_period.session_code] = [total - updated, total]
+        if updated == total
+          classes_updated += 1
+        end
+        classes_total += 1
+      end
+      @class_period_updated_counts[course.id] = [classes_total - classes_updated, classes_total]
+    end
   end
 end

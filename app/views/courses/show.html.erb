@@ -14,7 +14,8 @@
     <th> class period name </th>
     <th> link to class period </th>
     <th> num questions </th>
-    <th> avg num secs / question </th>
+    <th> avg num secs<br> / question </th>
+    <th> num classes to update <br> / num classes</th>
   </tr>
   <% @classes.each do |sess| %>
   <tr>
@@ -23,6 +24,13 @@
     <td> <%= link_to sess.session_code, class_period_path(sess) %> </td>
     <td> <%= @each_class_stats[sess.id][:num_questions] %> </td>
     <td> <%= @each_class_stats[sess.id][:avg_time].round(1) %> </td>
+    <% if @question_updated_counts[sess.session_code][0] > 0 %>
+    <td class="todo">
+    <% else %>
+    <td>
+    <% end %>
+      <%= to_s_fraction(@question_updated_counts[sess.session_code]) %>
+    </td>
   </tr>
   <% end %>
 </table>

@@ -1,4 +1,5 @@
 class ClassPeriodsController < ApplicationController
+  include ApplicationHelper
   def show
     get_questions_course_class_period
   end

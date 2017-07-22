@@ -62,26 +62,8 @@ tr.todo td {
   background-color: #cccccc;
 }
 
-tr.r0 td {
-  background-color: #cc9999;
-}
-tr.r1 td {
-  background-color: #9999cc;
-}
-//tr.r2 td {
-//  background-color: #99cc99;
-//}
-tr.nonmcq td {
-  background-color: #9a9a9a;
-}
-tr.spurious td {
-  background-color: #a9a9a9;
-}
-tr.individual td {
-  background-color: #99cc99;
-}
-tr.unknown td {
-  background-color: #ffffff;
+td.todo {
+  background-color: #cccccc;
 }
 
 // Tooltips

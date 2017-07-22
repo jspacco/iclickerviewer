@@ -12,7 +12,9 @@
 </center>
 </h2>
 
-<%# TODO: Make this an AJAX call! This is a pretty ugly hack %>
+<%# TODO: Make this an AJAX call. Inlining it is not elegant.
+http://railscasts.com/episodes/324-passing-data-to-javascript
+%>
 <%= javascript_tag do %>
   var course_hash = <%=raw @course_hash.to_json %>;
   window.onload = dynamic_image_handler(course_hash, true);
