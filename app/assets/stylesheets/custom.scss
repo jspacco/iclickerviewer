@@ -13,6 +13,20 @@ textarea {
   resize: vertical;
 }
 
+.nextlink {
+  cursor: pointer;
+  text-align: center;
+  color: blue;
+  text-decoration: underline;
+  font-size: 3em;
+}
+
+.lastclassperiod {
+  text-align: center;
+  color: black;
+  font-size: 3em;
+}
+
 .center {
   text-align: center;
 }
@@ -66,6 +80,7 @@ td.todo {
   background-color: #cccccc;
 }
 
+// TODO: use Bootstrap's tooltips instead of our own
 // Tooltips
 .mytooltip {
   position:relative;

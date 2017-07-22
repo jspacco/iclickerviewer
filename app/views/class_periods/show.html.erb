@@ -12,6 +12,17 @@
 </center>
 </h2>
 
+
+<% if @next_class_period != nil %>
+<div class="nextlink">
+  <%= link_to "> NEXT CLASS #{@next_class_period.session_code} >",
+      class_period_path(@next_class_period) %>
+<% else %>
+<div class="lastclassperiod">
+  Last class period for this course, yay!
+<% end %>
+</div>
+
 <%# TODO: Make this an AJAX call. Inlining it is not elegant.
 http://railscasts.com/episodes/324-passing-data-to-javascript
 %>

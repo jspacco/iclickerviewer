@@ -76,6 +76,8 @@ class ClassPeriodsController < ApplicationController
   def get_questions_course_class_period
     # Look up the class period, course, and questions
     @class_period = ClassPeriod.find_by(id: params[:id])
+    @next_class_period = ClassPeriod.where("session_code > ? and course_id = ?",
+      @class_period.session_code, @class_period.course_id).first
     @course = Course.find_by(id: @class_period.course_id)
     @questions = Question.where(class_period_id: @class_period.id).order(:question_index)
     # Look up a hash from course_name => session_code (class_period) => question_index => question_id
