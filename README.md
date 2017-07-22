@@ -7,7 +7,6 @@
   * http://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjectUsingRuby.html
 * TODO: figure out how to use rails test
 * TODO: "next class period" buttons
-* TODO: print stats about unprocessed data per course and per class period
 * FIXME: disallow changing type when it is set to pair, or directly setting to pair
 * settings (hide/show spurious, etc)
 * TODO: quick previewer
