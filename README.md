@@ -6,12 +6,12 @@
 * TODO: upload images to s3, and set stupid permissions correctly
   * http://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjectUsingRuby.html
 * TODO: figure out how to use rails test
-* TODO: "next class period" buttons
 * FIXME: disallow changing type when it is set to pair, or directly setting to pair
 * settings (hide/show spurious, etc)
 * TODO: quick previewer
   * entry button
-  * some way to remember the currently selected thing in the URL
+  * currently select items should be hidden input parameters to the form?
+    * or some kind of #parameter?
 * TODO: Update the column tooltips for sessions
 * TODO: how does flash work in Rails?
 * TODO (longterm): Somehow link from CQ to slide, and from slide to CQ

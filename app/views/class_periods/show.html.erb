@@ -33,7 +33,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
 <table frame=box rules=none>
 <tr>
-  <td colspan="4">Quick viewer to preview questions from other classes; useful
+  <td colspan="4"><b>QUICK PREVIEW</b> to preview questions from other classes; useful
   for finding matching questions across classes.
   </td>
 </tr>
@@ -104,8 +104,9 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     <th class="mytooltip"> matching<br>question
       <span class="tooltiptext left">Matching versions of this question
         from other courses. Enter the question ID (database
-        primary key) of the matching question. Probably need to use two
-        different browser windows.
+        primary key) of the matching question. You can use the "quick preview
+        viewer" above to find a question, and then use the button in this column
+        to say that these two questions are the same.
       </span>
     </th>
   </tr>
@@ -198,6 +199,10 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <% end %>
       <br><br>
       add: <%= q.text_field :matching_questions, :value => '' %>
+      <br>
+      <%= button_tag "use quick preview",
+      { :type => "button",
+        :onclick => "use_quick_preview(#{q.object.id})" } %>
     </td>
   </tr>
   <% end %>

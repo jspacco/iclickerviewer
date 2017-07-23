@@ -94,17 +94,20 @@ root.dynamic_image_handler =(course_hash, first_load) ->
       dynamic_question_selected = $("#dynamic_question option:first").val()
     dynamic_question.val(dynamic_question_selected)
 
-    # TODO: get the question_id
-    #if first_load or old_dynamic_course_selected != dynamic_course_selected or
-    console.log "course: #{dynamic_course_selected}, class: #{dynamic_class_period_selected}, question: #{dynamic_question_selected}"
+    # console.log "course: #{dynamic_course_selected}, class: #{dynamic_class_period_selected}, question: #{dynamic_question_selected}"
     question_id = course_hash[dynamic_course_selected][dynamic_class_period_selected][dynamic_question_selected]
+    root.question_id = question_id
     addr = "https://s3.amazonaws.com/iclickerviewer/#{dynamic_course_selected}/Images/#{dynamic_class_period_selected}_Q#{dynamic_question_selected}.jpg"
-    console.log addr
+    # console.log addr
     $("#dynamic_image").empty().append("<img src=\"#{addr}\"/>")
 
-
+    # TODO: put these in hidden inputs so that they survive page reloads
     root.old_dynamic_course_selected = dynamic_course_selected
     root.old_dynamic_class_period_selected = dynamic_class_period_selected
     root.old_dynamic_question_selected = dynamic_question_selected
 
+  return 0
+
+root.use_quick_preview =(question_id) ->
+  $("#questions_#{question_id}_matching_questions").val(root.question_id)
   return 0
