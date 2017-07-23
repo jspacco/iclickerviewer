@@ -51,8 +51,9 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     </select>
   </td>
   <td>
-    <div id="dynamic_image" class="imagecolumn">
-    </div>
+    <div class="imagecolumn">
+      <img id="dynamic_image" class="myImg"/>
+    <div>
   </td>
 </tr>
 </table>
@@ -214,30 +215,8 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <%= submit_tag 'Update data' %>
 <% end %>
 
-<!--
-Modal Image
-TODO: improve this giant hack
--->
+<!-- Modal Image -->
 <div id="myModal" class="modal">
   <!-- Modal Content (The Image) -->
   <img class="modal-content" id="img01">
 </div>
-<!--
-TODO: figure out how to move this into the coffeescript files
-Right now this refers to the existing myModal div above, so
-we are hard-coding this javascript in place. Probably should refactor
-into a big function that runs when the whole page loads.
--->
-<script>
-var modal = document.getElementById('myModal');
-modal.onclick=function(){
-  modal.style.display = "none";
-}
-// Get the image and insert it inside the modal
-var modalImg = $("#img01");
-$('.myImg').click(function(){
-    modal.style.display = "block";
-    var newSrc = this.src;
-    modalImg.attr('src', newSrc);
-});
-</script>

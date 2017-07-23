@@ -99,13 +99,28 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     root.question_id = question_id
     addr = "https://s3.amazonaws.com/iclickerviewer/#{dynamic_course_selected}/Images/#{dynamic_class_period_selected}_Q#{dynamic_question_selected}.jpg"
     # console.log addr
-    $("#dynamic_image").empty().append("<img src=\"#{addr}\"/>")
+    $("#dynamic_image").attr('src', addr)
 
     # TODO: put these in hidden inputs so that they survive page reloads
     root.old_dynamic_course_selected = dynamic_course_selected
     root.old_dynamic_class_period_selected = dynamic_class_period_selected
     root.old_dynamic_question_selected = dynamic_question_selected
 
+    # HACK: adding modal image click handlers here because they need to be
+    # loaded at page load time
+    if first_load
+      modal = $("#myModal")
+      modal.on "click", ->
+        modal.css('display', 'none')
+        return 0
+      # Get the image and insert it inside the modal
+      modalImg = $("#img01")
+      $('.myImg').click( ->
+        modal.css('display', 'block')
+        newSrc = this.src
+        modalImg.attr('src', newSrc)
+        return 0
+      )
   return 0
 
 root.use_quick_preview =(question_id) ->
