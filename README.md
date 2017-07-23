@@ -8,10 +8,7 @@
 * TODO: figure out how to use rails test
 * FIXME: disallow changing type when it is set to pair, or directly setting to pair
 * settings (hide/show spurious, etc)
-* TODO: quick previewer
-  * entry button
-  * currently select items should be hidden input parameters to the form?
-    * or some kind of #parameter?
+* TODO: store quick previewer choices across page reloads
 * TODO: Update the column tooltips for sessions
 * TODO: how does flash work in Rails?
 * TODO (longterm): Somehow link from CQ to slide, and from slide to CQ
@@ -19,8 +16,7 @@
 * TODO (lowpri): web-based importer for the zipfile
   * basically a generalization of parse.rb
 * TODO: breadcrumbs in header
-* are helpers usable in controllers or just in views?
-  * What I was trying to do (global utility function) required using lib to create a module
+  * go back to the current course
 * FIXME (lowpri): use bootstrap tooltips instead of the ones I wrote
 * session#show: correct stats when we have correct answers
 * session#show: aggregate stats at the top (times, percentages)
@@ -30,9 +26,6 @@
 * comment feature for other faculty
   * talk to other faculty about what they want to do with each question
   * durable links to questions for comments linking to questions from outside the Rails app (Google Docs, etc)
-* zoomable or modal pictures (low priority)
-  * https://www.w3schools.com/howto/howto_css_modal_images.asp
-  * https://www.w3schools.com/jquerymobile/tryit.asp?filename=tryjqmob_popup_image
 * fix full path needed in config/database.yml for sqlite3 when running cmdline
   * this may go away when we switch to mariadb or postgres
 * server-side logging for views (and controllers)
