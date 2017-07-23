@@ -143,17 +143,20 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           onchange: "question_pair_handler( #{q.object.question_index}, $(this).val(), this.old_question_pair );",
           class: "question_pair_#{q.object.question_index}" } %>
     </td>
+    <%#{}"#{@class_period.session_code}_Q#{question.question_index}"%>
     <td class="imagecolumn">
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
         [@course.folder_name, @class_period.session_code, question.question_index]
       %>
-      <%= link_to(image_tag(question_img_url), question_img_url) %>
+      <%= image_tag(question_img_url, :class => "myImg") %>
+      <%# link_to(image_tag(question_img_url), question_img_url) %>
     </td>
     <td class="imagecolumn">
       <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
         [@course.folder_name, @class_period.session_code, question.question_index]
       %>
-      <%= link_to(image_tag(barchart_img_url), barchart_img_url) %>
+      <%# link_to(image_tag(barchart_img_url), barchart_img_url) %>
+      <%= image_tag(barchart_img_url, :class => "myImg") %>
     </td>
     <td>
       <table>
@@ -208,7 +211,33 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
   <% end %>
   <% end %>
 </table>
-
 <%= submit_tag 'Update data' %>
-
 <% end %>
+
+<!--
+Modal Image
+TODO: improve this giant hack
+-->
+<div id="myModal" class="modal">
+  <!-- Modal Content (The Image) -->
+  <img class="modal-content" id="img01">
+</div>
+<!--
+TODO: figure out how to move this into the coffeescript files
+Right now this refers to the existing myModal div above, so
+we are hard-coding this javascript in place. Probably should refactor
+into a big function that runs when the whole page loads.
+-->
+<script>
+var modal = document.getElementById('myModal');
+modal.onclick=function(){
+  modal.style.display = "none";
+}
+// Get the image and insert it inside the modal
+var modalImg = $("#img01");
+$('.myImg').click(function(){
+    modal.style.display = "block";
+    var newSrc = this.src;
+    modalImg.attr('src', newSrc);
+});
+</script>
