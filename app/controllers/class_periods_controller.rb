@@ -46,10 +46,6 @@ class ClassPeriodsController < ApplicationController
 
     # Basically, this is a re-direct ONLY for rendering!
     #   It does NOT call the show method in this file.
-    puts "before redirect!"
-    puts "ivar course: #{@old_dynamic_course_selected}"
-    puts "ivar class: #{@old_dynamic_class_period_selected}"
-    puts "ivar ques: #{@old_dynamic_question_selected}"
     render :show
   end
 
