@@ -83,10 +83,10 @@ root.dynamic_image_handler =(course_hash, first_load) ->
         }));
       # If we refill the list of courses, just pick the first option
       if old_dynamic_course_selected != ''
-        console.log "use old dynamic course: #{old_dynamic_course_selected}"
+        # console.log "use old dynamic course: #{old_dynamic_course_selected}"
         dynamic_course_selected = old_dynamic_course_selected
       else
-        console.log "use first dynamic course: #{dynamic_course_selected}"
+        # console.log "use first dynamic course: #{dynamic_course_selected}"
         dynamic_course_selected = $("#dynamic_course option:first").val()
     dynamic_course.val(dynamic_course_selected)
 
@@ -101,7 +101,7 @@ root.dynamic_image_handler =(course_hash, first_load) ->
       dynamic_class_period_selected = $("#dynamic_class_period option:first").val()
     # If loading the page and a previous class period selection exists, use it
     if first_load and old_dynamic_class_period_selected != ''
-      console.log "use old dynamic class period: #{old_dynamic_class_period_selected}"
+      # console.log "use old dynamic class period: #{old_dynamic_class_period_selected}"
       dynamic_class_period_selected = old_dynamic_class_period_selected
     dynamic_class_period.val(dynamic_class_period_selected)
 
@@ -110,7 +110,7 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     course_changed or
     class_period_changed
       dynamic_question.empty()
-      for question_index in (k for own k of course_hash[dynamic_course_selected][dynamic_class_period_selected]).sort()
+      for question_index in (k for own k of course_hash[dynamic_course_selected][dynamic_class_period_selected]).sort(compare =(a,b) -> return +a - +b)
         question_id = course_hash[dynamic_course_selected][dynamic_class_period_selected][question_index]
         dynamic_question.append($('<option>', {
           value: question_index,
@@ -123,6 +123,7 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     dynamic_question.val(dynamic_question_selected)
 
     # console.log "course: #{dynamic_course_selected}, class: #{dynamic_class_period_selected}, question: #{dynamic_question_selected}"
+    # putting questio_id into the DOM as a global so that it can be used by use_quick_preview
     question_id = course_hash[dynamic_course_selected][dynamic_class_period_selected][dynamic_question_selected]
     root.question_id = question_id
     addr = "https://s3.amazonaws.com/iclickerviewer/#{dynamic_course_selected}/Images/#{dynamic_class_period_selected}_Q#{dynamic_question_selected}.jpg"
