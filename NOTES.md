@@ -98,8 +98,16 @@ The 2nd one creates a standard POST, and passes it a hash with keys "url" and "m
 
 * Not sure how to specify test vs development in database.yml; current everything
   is configured to use the default because otherwise test seems to be the default.
+  * Try setting RAILS_ENV=test when running
+
+* You can't open up page source in Chrome, and then reload the window showing the
+  page source. This doesn't actually reload the original page, and won't do what
+  I thought it did. There goes a day of my life :(
 
 * check autoloads path:
   bin/rails r 'puts ActiveSupport::Dependencies.autoload_paths'
+
+* javascript sort() method can take a function as a parameter, and use that function
+  like a compareTo method.
 
 *
