@@ -1,15 +1,20 @@
 class ClassPeriodsController < ApplicationController
   include ApplicationHelper
+  # -------------------------------------------------------------
+  # GET /class_periods/1
   def show
     get_questions_course_class_period
   end
 
+  # -------------------------------------------------------------
+  # POST /class_periods/1
   def update
     Question.where(class_period_id: params[:id]).each do |question|
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
       if matching_question_id
         # Create matching questions in both directions if they don't already exist.
         # [question_id, matching_question_id] and [matching_question_id, question_id]
+        # TODO: Transitive matching
         MatchingQuestion.find_or_create_by(question_id: question.id,
           matching_question_id: matching_question_id)
         MatchingQuestion.find_or_create_by(question_id: matching_question_id,
@@ -41,11 +46,16 @@ class ClassPeriodsController < ApplicationController
 
     # Basically, this is a re-direct ONLY for rendering!
     #   It does NOT call the show method in this file.
+    puts "before redirect!"
+    puts "ivar course: #{@old_dynamic_course_selected}"
+    puts "ivar class: #{@old_dynamic_class_period_selected}"
+    puts "ivar ques: #{@old_dynamic_question_selected}"
     render :show
   end
 
   private
 
+  # -------------------------------------------------------------
   def get_course_hash
     course_hash = Hash.new
     Course.all.each do |course|
@@ -62,6 +72,7 @@ class ClassPeriodsController < ApplicationController
     return course_hash
   end
 
+  # -------------------------------------------------------------
   def question_params(question)
     # FIXME Is setting empty strings to nil even necessary?
     if params[:questions][question.id.to_s][:question_pair] == ""
@@ -73,9 +84,30 @@ class ClassPeriodsController < ApplicationController
       :correct_b, :correct_c, :correct_d, :correct_e, :question_type, :question_pair)
   end
 
+  # -------------------------------------------------------------
   def get_questions_course_class_period
+    puts "course: #{params['old_dynamic_course_selected']}"
+    puts "class: #{params['old_dynamic_class_period_selected']}"
+    puts "question: #{params['old_dynamic_question_selected']}"
+    puts "has key? #{params.has_key?('old_dynamic_course_selected')}"
+    @old_dynamic_course_selected = ''
+    if params.has_key?('old_dynamic_course_selected')
+      @old_dynamic_course_selected = params['old_dynamic_course_selected']
+    end
+    @old_dynamic_class_period_selected = ''
+    if params.has_key?('old_dynamic_class_period_selected')
+      @old_dynamic_class_period_selected = params['old_dynamic_class_period_selected']
+    end
+    old_dynamic_question_selected = ''
+    if params.has_key?('old_dynamic_question_selected')
+      @old_dynamic_question_selected = params['old_dynamic_question_selected']
+    end
+    puts "ivar course: #{@old_dynamic_course_selected}"
+    puts "ivar class: #{@old_dynamic_class_period_selected}"
+    puts "ivar ques: #{@old_dynamic_question_selected}"
     # Look up the class period, course, and questions
     @class_period = ClassPeriod.find_by(id: params[:id])
+    # For making a link to the next class.
     @next_class_period = ClassPeriod.where("session_code > ? and course_id = ?",
       @class_period.session_code, @class_period.course_id).first
     @course = Course.find_by(id: @class_period.course_id)

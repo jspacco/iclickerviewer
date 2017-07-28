@@ -54,6 +54,27 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     dynamic_class_period_selected = dynamic_class_period.val()
     dynamic_question_selected = dynamic_question.val()
 
+    old_dynamic_course_selected = $("#old_dynamic_course_selected").val()
+    old_dynamic_class_period_selected = $("#old_dynamic_class_period_selected").val()
+    old_dynamic_question_selected = $("#old_dynamic_question_selected").val()
+
+    course_changed = dynamic_course_selected != old_dynamic_course_selected
+    class_period_changed = dynamic_class_period_selected != old_dynamic_class_period_selected
+    question_changed = dynamic_question_selected != old_dynamic_question_selected
+
+    console.log window.old_dynamic_course_selected
+
+    console.log "dynamic_course_selected: #{dynamic_course_selected}"
+    console.log "dynamic_class_period_selected: #{dynamic_class_period_selected}"
+    console.log "dynamic_question_selected: #{dynamic_question_selected}"
+    console.log "old_dynamic_course_selected: #{old_dynamic_course_selected}"
+    console.log "old_dynamic_class_period_selected: #{old_dynamic_class_period_selected}"
+    console.log "old_dynamic_question_selected: #{old_dynamic_question_selected}"
+
+    console.log "course_changed: #{course_changed}"
+    console.log "class_period_changed: #{class_period_changed}"
+    console.log "question_changed: #{question_changed}"
+
     # Fill out list of courses only when the page first loads
     #   and the global vars remembering the previous selections are empty
     if first_load
@@ -63,28 +84,38 @@ root.dynamic_image_handler =(course_hash, first_load) ->
           value: course,
           text: course
         }));
-      # If we refill, just pick the first option
-      dynamic_course_selected = $("#dynamic_course option:first").val()
+      # If we refill the list of courses, just pick the first option
+      if old_dynamic_course_selected != ''
+        console.log "use old dynamic course: #{old_dynamic_course_selected}"
+        dynamic_course_selected = old_dynamic_course_selected
+      else
+        console.log "use first dynamic course: #{dynamic_course_selected}"
+        dynamic_course_selected = $("#dynamic_course option:first").val()
     dynamic_course.val(dynamic_course_selected)
 
     # Refill only when the course changed, or on first load
-    if first_load or old_dynamic_course_selected != dynamic_course_selected
+    if first_load or course_changed
       dynamic_class_period.empty()
       for class_period in (x for own x of course_hash[dynamic_course_selected]).sort()
         dynamic_class_period.append($('<option>', {
           value: class_period,
           text: class_period
         }));
-      # If we refill, just pick the first option
       dynamic_class_period_selected = $("#dynamic_class_period option:first").val()
-    # Select the selected class period
+    # If loading the page and a previous class period selection exists, use it
+    if first_load and old_dynamic_class_period_selected != ''
+      console.log "use old dynamic class period: #{old_dynamic_class_period_selected}"
+      dynamic_class_period_selected = old_dynamic_class_period_selected
     dynamic_class_period.val(dynamic_class_period_selected)
 
     # Refill when course changed, or when class period changed, or on first load
     if first_load or
-    old_dynamic_course_selected != dynamic_course_selected or
-    old_dynamic_class_period_selected != dynamic_class_period_selected
+    course_changed or
+    class_period_changed
       dynamic_question.empty()
+      # console.log "dynamic_course_selected #{dynamic_course_selected}"
+      # console.log "dynamic_class_period_selected #{dynamic_class_period_selected}"
+      # console.log "dynamic_question_selected #{dynamic_question_selected}"
       for question_index in (k for own k of course_hash[dynamic_course_selected][dynamic_class_period_selected]).sort()
         question_id = course_hash[dynamic_course_selected][dynamic_class_period_selected][question_index]
         dynamic_question.append($('<option>', {
@@ -92,6 +123,9 @@ root.dynamic_image_handler =(course_hash, first_load) ->
           text: "#{question_index} (#{question_id})"
         }));
       dynamic_question_selected = $("#dynamic_question option:first").val()
+    # If loading the page and a previous question selection exists, use it
+    if first_load and old_dynamic_question_selected != ''
+      dynamic_question_selected = old_dynamic_question_selected
     dynamic_question.val(dynamic_question_selected)
 
     # console.log "course: #{dynamic_course_selected}, class: #{dynamic_class_period_selected}, question: #{dynamic_question_selected}"
@@ -102,6 +136,14 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     $("#dynamic_image").attr('src', addr)
 
     # TODO: put these in hidden inputs so that they survive page reloads
+    $("#old_dynamic_course_selected").val(dynamic_course_selected)
+    $("#old_dynamic_class_period_selected").val(dynamic_class_period_selected)
+    $("#old_dynamic_question_selected").val(dynamic_question_selected)
+
+    # console.log($("#old_dynamic_course_selected").val())
+    # console.log($("#old_dynamic_class_period_selected").val())
+    # console.log($("#old_dynamic_question_selected").val())
+
     root.old_dynamic_course_selected = dynamic_course_selected
     root.old_dynamic_class_period_selected = dynamic_class_period_selected
     root.old_dynamic_question_selected = dynamic_question_selected
@@ -116,9 +158,10 @@ root.dynamic_image_handler =(course_hash, first_load) ->
       # Get the image and insert it inside the modal
       modalImg = $("#img01")
       $('.myImg').click( ->
+        # Basically, if an image with class myImg is clicked,
+        # set it to the src of the modal image and display it.
         modal.css('display', 'block')
-        newSrc = this.src
-        modalImg.attr('src', newSrc)
+        modalImg.attr('src', this.src)
         return 0
       )
   return 0
