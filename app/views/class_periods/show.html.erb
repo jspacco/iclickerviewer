@@ -72,7 +72,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <input type="hidden" id="old_dynamic_course_selected" name="old_dynamic_course_selected" value=""/>
 <input type="hidden" id="old_dynamic_class_period_selected" name="old_dynamic_class_period_selected" value=""/>
 <input type="hidden" id="old_dynamic_question_selected" name="old_dynamic_question_selected" value=""/>
-<%= submit_tag 'Update data' %>
+<%= submit_tag 'Update data', class: "updatebutton"%>
 <table border=1>
   <tr>
     <th class="mytooltip"> ID
@@ -222,7 +222,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
   <% end %>
   <% end %>
 </table>
-<%= submit_tag 'Update data' %>
+<%= submit_tag 'Update data', class: "updatebutton" %>
 <% end %>
 
 <!-- Modal Image -->
