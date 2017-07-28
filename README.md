@@ -8,7 +8,10 @@
 * TODO: figure out how to use rails test
 * FIXME: disallow changing type when it is set to pair, or directly setting to pair
 * settings (hide/show spurious, etc)
-* TODO: store quick previewer choices across page reloads
+* TODO: matching_questions
+  * can be either identical or modified, property of the many-to-many row
+  * FIXME: transitive relationships for matches, and for identical/modified
+* TODO: mark correct answer when pairing
 * TODO: Update the column tooltips for sessions
 * TODO: how does flash work in Rails?
 * TODO (longterm): Somehow link from CQ to slide, and from slide to CQ
@@ -17,6 +20,8 @@
   * basically a generalization of parse.rb
 * TODO: breadcrumbs in header
   * go back to the current course
+* TODO: filter by instructor, filter by class, select a group of classes
+* TODO: collapsible full list of stuff
 * FIXME (lowpri): use bootstrap tooltips instead of the ones I wrote
 * session#show: correct stats when we have correct answers
 * session#show: aggregate stats at the top (times, percentages)
@@ -30,9 +35,11 @@
   * this may go away when we switch to mariadb or postgres
 * server-side logging for views (and controllers)
 * upload Dan Z's data
+
 ## TODO (logistics)
 * email Dave, Leo, other collaborators
 * IRB at Knox
+* two 450s and classes from Prague are 361s16 (Kanich)
 
 ## TODO (deployment)
 * streamline uploading of database
@@ -43,6 +50,16 @@
 ## TODO (design)
 * a logo?
 * CSS of some kind?
+
+## Queries
+* What's the average diff correct between first and second question?
+  * split that out by class
+  * split out by difficulty
+* What's the distribution of easy/medium/hard questions?
+  * across classes
+* Identify questions where right answer percent goes down or is flat
+  * not as exciting if it 90% stays flat
+* Good question is something where there's an increase
 
 ### Boilerplate README
 This README would normally document whatever steps are necessary to get the
