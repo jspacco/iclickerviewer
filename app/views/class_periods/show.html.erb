@@ -15,8 +15,9 @@
 
 <% if @next_class_period != nil %>
 <div class="nextlink">
-  <%= link_to "> NEXT CLASS #{@next_class_period.session_code} >",
-      class_period_path(@next_class_period) %>
+  <%= button_tag "> NEXT CLASS #{@next_class_period.session_code} >",
+  { :type => "button",
+      :onclick => "next_class_button_handler('#{class_period_path(@next_class_period)}')" } %>
 <% else %>
 <div class="lastclassperiod">
   Last class period for this course, yay!
@@ -156,19 +157,16 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           onchange: "question_pair_handler( #{q.object.question_index}, $(this).val(), this.old_question_pair );",
           class: "question_pair_#{q.object.question_index}" } %>
     </td>
-    <%#{}"#{@class_period.session_code}_Q#{question.question_index}"%>
     <td class="imagecolumn">
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
         [@course.folder_name, @class_period.session_code, question.question_index]
       %>
       <%= image_tag(question_img_url, :class => "myImg") %>
-      <%# link_to(image_tag(question_img_url), question_img_url) %>
     </td>
     <td class="imagecolumn">
       <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
         [@course.folder_name, @class_period.session_code, question.question_index]
       %>
-      <%# link_to(image_tag(barchart_img_url), barchart_img_url) %>
       <%= image_tag(barchart_img_url, :class => "myImg") %>
     </td>
     <td>

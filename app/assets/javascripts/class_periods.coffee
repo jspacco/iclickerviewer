@@ -152,6 +152,25 @@ root.dynamic_image_handler =(course_hash, first_load) ->
       )
   return 0
 
+#
+# Copy the question_id (db primary key) from the quick preview image
+#   to the text input to signify matching questions.
+#
 root.use_quick_preview =(question_id) ->
   $("#questions_#{question_id}_matching_questions").val(root.question_id)
   return 0
+
+#
+# Button handler for the "NEXT CLASS" button.
+# Redirect to the next class period, but after setting the currently selected
+#   quick preview image options to get parameters, so that the page for
+#   the next class period loads with the same quick preview image selected.
+#
+root.next_class_button_handler = (url) ->
+  course = $("#dynamic_course").val()
+  class_period = $("#dynamic_class_period").val()
+  question = $("#dynamic_question").val()
+  addr = "#{url}?old_dynamic_course_selected=#{course}"+
+    "&old_dynamic_class_period_selected=#{class_period}"+
+    "&old_dynamic_question_selected=#{question}"
+  window.location.href = addr
