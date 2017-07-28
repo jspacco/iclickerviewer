@@ -61,20 +61,17 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     course_changed = dynamic_course_selected != old_dynamic_course_selected
     class_period_changed = dynamic_class_period_selected != old_dynamic_class_period_selected
     question_changed = dynamic_question_selected != old_dynamic_question_selected
-
-    console.log window.old_dynamic_course_selected
-
+    ###
     console.log "dynamic_course_selected: #{dynamic_course_selected}"
     console.log "dynamic_class_period_selected: #{dynamic_class_period_selected}"
     console.log "dynamic_question_selected: #{dynamic_question_selected}"
     console.log "old_dynamic_course_selected: #{old_dynamic_course_selected}"
     console.log "old_dynamic_class_period_selected: #{old_dynamic_class_period_selected}"
     console.log "old_dynamic_question_selected: #{old_dynamic_question_selected}"
-
     console.log "course_changed: #{course_changed}"
     console.log "class_period_changed: #{class_period_changed}"
     console.log "question_changed: #{question_changed}"
-
+    ###
     # Fill out list of courses only when the page first loads
     #   and the global vars remembering the previous selections are empty
     if first_load
@@ -113,9 +110,6 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     course_changed or
     class_period_changed
       dynamic_question.empty()
-      # console.log "dynamic_course_selected #{dynamic_course_selected}"
-      # console.log "dynamic_class_period_selected #{dynamic_class_period_selected}"
-      # console.log "dynamic_question_selected #{dynamic_question_selected}"
       for question_index in (k for own k of course_hash[dynamic_course_selected][dynamic_class_period_selected]).sort()
         question_id = course_hash[dynamic_course_selected][dynamic_class_period_selected][question_index]
         dynamic_question.append($('<option>', {
@@ -135,18 +129,9 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     # console.log addr
     $("#dynamic_image").attr('src', addr)
 
-    # TODO: put these in hidden inputs so that they survive page reloads
     $("#old_dynamic_course_selected").val(dynamic_course_selected)
     $("#old_dynamic_class_period_selected").val(dynamic_class_period_selected)
     $("#old_dynamic_question_selected").val(dynamic_question_selected)
-
-    # console.log($("#old_dynamic_course_selected").val())
-    # console.log($("#old_dynamic_class_period_selected").val())
-    # console.log($("#old_dynamic_question_selected").val())
-
-    root.old_dynamic_course_selected = dynamic_course_selected
-    root.old_dynamic_class_period_selected = dynamic_class_period_selected
-    root.old_dynamic_question_selected = dynamic_question_selected
 
     # HACK: adding modal image click handlers here because they need to be
     # loaded at page load time

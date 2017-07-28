@@ -23,43 +23,18 @@
 <% end %>
 </div>
 
-<%# TODO: Make this an AJAX call. Inlining it is not elegant.
+<%# TODO: Make course_hash an AJAX call. Inlining it is not elegant.
 http://railscasts.com/episodes/324-passing-data-to-javascript
 %>
-<p> old dynamic course selected: <%= @old_dynamic_course_selected %>
-</p>
-<p> old dynamic course selected (esc-js): <%= escape_javascript(@old_dynamic_course_selected) %>
-</p>
-<script type="text/javascript">
-  <%#
-    puts "\n\n\n" + @old_dynamic_course_selected + "\n\n\n"
-  %>
-  //console.log("1-2-3 <%=j @old_dynamic_course_selected %>");
-  //console.log("goddamit <%=j @old_dynamic_course_selected %>");
-  //window.old_dynamic_course_selected = "<%=j @old_dynamic_course_selected %>";
-  //window.old_dynamic_class_period_selected = "<%=j @old_dynamic_class_period_selected %>";
-  //window.old_dynamic_question_selected = "<%= @old_dynamic_question_selected %>";
-</script>
-
 <%= javascript_tag do %>
-  //console.log("1-2-3 <%=raw @old_dynamic_course_selected%>");
-  //console.log("goddamit <%=j @old_dynamic_course_selected%>");
-  window.old_dynamic_course_selected = "<%=j @old_dynamic_course_selected %>";
-  window.old_dynamic_class_period_selected = "<%=j @old_dynamic_class_period_selected %>";
-  window.old_dynamic_question_selected = "<%=j @old_dynamic_question_selected %>";
+  $(document).ready(function() {
+    $("#old_dynamic_course_selected").val("<%=j @old_dynamic_course_selected%>");
+    $("#old_dynamic_class_period_selected").val("<%=j @old_dynamic_class_period_selected%>");
+    $("#old_dynamic_question_selected").val("<%=j @old_dynamic_question_selected%>");
+  });
+
   var course_hash = <%=raw @course_hash.to_json.gsub("\n", '') %>;
   window.onload = dynamic_image_handler(course_hash, true);
-
-/*
-  $( document ).ready(function() {
-    console.log("old course selected is <%= @old_dynamic_course_selected %>");
-    $("#old_dynamic_course_selected").val("<%= @old_dynamic_course_selected %>");
-    //$("#old_dynamic_course_selected").val("bla");
-    console.log("foo "+ $("#old_dynamic_course_selected").val());
-    $("#old_dynamic_class_period_selected").val("<%= @old_dynamic_class_period_selected %>");
-    $("#old_dynamic_question_selected").val("<%= @old_dynamic_question_selected %>");
-  });
-*/
 <% end %>
 
 <table frame=box rules=none>
