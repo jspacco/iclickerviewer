@@ -1,0 +1,112 @@
+<div>
+TODO: next question
+</div>
+
+<div>
+TODO: quick preview
+</div>
+
+<%#
+  TODO
+  Show actual matches in DB
+  Show potential matches, probably from a text file stored in the cloud
+    that is computed offline and then stored
+  Handle the upload button
+
+  Information to show for matches:
+    Course
+    session (code and also as a date)
+    ID
+    question_index
+    image
+    barchart
+    identical or modified
+
+%>
+
+<%= form_tag(question_path(@class_period), {method: :patch}) do %>
+<%# form_for(@question, { url: question_path(@question), method: :patch }) do |q| %>
+<%= submit_tag 'Update data', class: "updatebutton"%>
+<table border=1>
+  <tr>
+    <%= render partial: "question_header" %>
+  </tr>
+</thead>
+  <% @questions.each do |question| %>
+  <%= fields_for "questions[]", question do |q| %>
+  <tr>
+    <td align="center"> <%= question.id %> </td>
+    <td align="center"> <b> <%= question.question_index %> </b> </td>
+    <td>
+      <%= pair_type(question) %>
+    </td>
+    <td>
+      <%= question.question_pair %>
+    </td>
+    <td class="imagecolumn">
+      <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
+        [@course.folder_name, @class_period.session_code, question.question_index]
+      %>
+      <%= image_tag(question_img_url, :class => "myImg") %>
+    </td>
+    <td class="imagecolumn">
+      <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
+        [@course.folder_name, @class_period.session_code, question.question_index]
+      %>
+      <%= image_tag(barchart_img_url, :class => "myImg") %>
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th> <%= q.label :correct_a, "A" %> </th>
+          <th> <%= q.label :correct_b, "B" %> </th>
+          <th> <%= q.label :correct_c, "C" %> </th>
+          <th> <%= q.label :correct_d, "D" %> </th>
+          <th> <%= q.label :correct_e, "E" %> </th>
+        </tr>
+        <tr>
+          <td> <%= q.check_box :correct_a %> </td>
+          <td> <%= q.check_box :correct_b %> </td>
+          <td> <%= q.check_box :correct_c %> </td>
+          <td> <%= q.check_box :correct_d %> </td>
+          <td> <%= q.check_box :correct_e %> </td>
+        </tr>
+      </table>
+    </td>
+    <td> <%= question.start %> </td>
+    <td> <%= question.stop %> </td>
+    <td> <%= question.num_seconds %> </td>
+    <td> <%# correct_pct(@question) %> </td>
+    <td>
+      <%# Listing the IDs of the current matching questions, with a checkbox that
+        can delete each one. Was not able to figure out how to use the check_box
+        method for things like this, since we would be deleting a self-referential
+        association through a join table.
+
+        Also needed to specify the id of the checkbox explicitly, which is ungly,
+        because the check_box_tag method uses the name for both name and id and
+        I wanted a clickable label for each checkbox. There may be a better way
+        to do this.
+      %>
+      <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: question.id).length > 0 %>
+      <% MatchingQuestion.where(question_id: question.id).each do |mq| %>
+        <%= check_box_tag "#{question.id}",
+          mq.matching_question_id, false,
+          {:id => "questions_#{question.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
+        <%= label_tag "questions[#{question.id}][delete_matching_questions][][#{mq.matching_question_id}]",
+          mq.matching_question_id %>
+        <br>
+      <% end %>
+      <br><br>
+      add: <%= q.text_field :matching_questions, :value => '' %>
+      <br>
+      <%# button_tag "use quick preview",
+      { :type => "button",
+        :onclick => "use_quick_preview(#{@question.id})" } %>
+    </td>
+  </tr>
+  <% end %>
+  <% end %>
+</table>
+<%= submit_tag 'Update data', class: "updatebutton" %>
+<% end %>

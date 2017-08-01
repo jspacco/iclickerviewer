@@ -136,8 +136,12 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
   <% else %>
   <tr class="todo">
   <% end %>
-    <td align="center"> <%= question.id %> </td>
-    <td align="center"> <b> <%= question.question_index %> </b> </td>
+    <td align="center">
+      <%= link_to question.id, question_path(question) %>
+    </td>
+    <td align="center">
+      <b> <%= link_to question.question_index, question_path(question) %> </b>
+    </td>
     <td>
       <%= q.select :question_type, [
         ["unknown", 0],
