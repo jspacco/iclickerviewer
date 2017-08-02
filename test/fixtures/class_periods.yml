@@ -1,21 +1,21 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  session_code: MyString
-  name: MyString
-  participation: MyString
-  performance: MyString
-  min_response: MyString
-  min_response_string: MyString
-  date: 2017-06-14 16:18:46
+  session_code: L1609010905
+  name: Session 1
+  participation: 1
+  performance: -1
+  min_response: 4
+  min_response_string: this field is never used
+  date: 2016-09-01 09:05:00
   course: one
 
 two:
-  session_code: MyString
-  name: MyString
-  participation: MyString
-  performance: MyString
-  min_response: MyString
-  min_response_string: MyString
-  date: 2017-06-14 16:18:46
-  course: two
+  session_code: L1609030905
+  name: Session 2
+  participation: 1
+  performance: -1
+  min_response: 4
+  min_response_string: this field is never used
+  date: 2016-09-03 09:05:00
+  course: one

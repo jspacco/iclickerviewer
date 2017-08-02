@@ -1,39 +1,112 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+#
+# one, two are paired
+# three is a single question
+#
+# TODO: single question, errors, multiple correct answers
+#
 one:
-  name: MyString
-  response_a: 1
-  response_b: 1
-  response_c: 1
-  response_d: 1
-  response_e: 1
-  correct_a: 1
-  correct_b: 1
-  correct_c: 1
-  correct_d: 1
+  name: Question 1
+  response_a: 3
+  response_b: 10
+  response_c: 5
+  response_d: 8
+  response_e: 20
+  correct_a: 0
+  correct_b: 0
+  correct_c: 0
+  correct_d: 0
   correct_e: 1
-  start: MyString
-  stop: MyString
-  num_seconds: 1
+  start: 09:17:34
+  stop: 09:18:54
+  num_seconds: 80
   question_index: 1
-  is_deleted: MyString
-  session: one
+  is_deleted: N
+  question_type: 3
+  question_pair: 2
+  class_period: one
 
 two:
-  name: MyString
+  name: Question 2
   response_a: 1
-  response_b: 1
+  response_b: 5
   response_c: 1
-  response_d: 1
-  response_e: 1
-  correct_a: 1
-  correct_b: 1
-  correct_c: 1
-  correct_d: 1
+  response_d: 8
+  response_e: 31
+  correct_a: 0
+  correct_b: 0
+  correct_c: 0
+  correct_d: 0
   correct_e: 1
-  start: MyString
-  stop: MyString
-  num_seconds: 1
+  start: 09:18:59
+  stop: 09:20:01
+  num_seconds: 62
+  question_index: 2
+  is_deleted: N
+  question_type: 3
+  question_pair: 1
+  class_period: one
+
+three:
+  name: Question 3
+  response_a: 10
+  response_b: 5
+  response_c: 1
+  response_d: 8
+  response_e: 31
+  correct_a: 1
+  correct_b: 0
+  correct_c: 0
+  correct_d: 0
+  correct_e: 0
+  start: 09:21:00
+  stop: 09:22:05
+  num_seconds: 65
+  question_index: 3
+  is_deleted: N
+  question_type: 2
+  question_pair:
+  class_period: one
+
+four:
+  name: Question 1
+  response_a: 40
+  response_b: 5
+  response_c: 5
+  response_d: 10
+  response_e: 20
+  correct_a: 1
+  correct_b: 0
+  correct_c: 0
+  correct_d: 0
+  correct_e: 0
+  start: 10:01:00
+  stop: 10:02:05
+  num_seconds: 65
   question_index: 1
-  is_deleted: MyString
-  session: two
+  is_deleted: N
+  question_type: 3
+  question_pair: 2
+  class_period: two
+
+four:
+  name: Question 2
+  response_a: 60
+  response_b: 5
+  response_c: 0
+  response_d: 5
+  response_e: 10
+  correct_a: 1
+  correct_b: 0
+  correct_c: 0
+  correct_d: 0
+  correct_e: 0
+  start: 10:03:00
+  stop: 10:04:05
+  num_seconds: 65
+  question_index: 2
+  is_deleted: N
+  question_type: 3
+  question_pair: 1
+  class_period: two
