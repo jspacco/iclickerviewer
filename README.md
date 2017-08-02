@@ -18,7 +18,8 @@
     * single-row of DB?
     * how to handle new file uploads?
     * put on S3? (probably the right move)
-* TODO: mark correct answer when pairing
+* FIXME: question_type should default to 0, not to the empty string
+* TODO (lowpri): mark correct answer when pairing
 * TODO: Update the column tooltips for sessions
 * TODO: how does flash work in Rails?
 * TODO (longterm): Somehow link from CQ to slide, and from slide to CQ

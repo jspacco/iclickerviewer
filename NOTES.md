@@ -62,6 +62,12 @@ HEROKU
   then questions which ref sessions, then votes which ref questions).
   * could be postgres v9.4 (local) vs postgres v9.6 (heroku)
 
+* Check rails config:
+  RAILS_ENV=production rake about
+
+* The power of renaming a migration:
+  https://stackoverflow.com/questions/753919/run-a-single-migration-file
+
 * To create a single user in the Rails console (rails console full)
 
 User.new(name: "T Honor Goat", email: "thgoat@example.com", username: "thgoat", password: "tiberius99", password_confirmation: "tiberius99")
@@ -128,5 +134,14 @@ The 2nd one creates a standard POST, and passes it a hash with keys "url" and "m
   needs to be modified or emptied because it may try to insert rows that violate
   foreign key constraints.
 
+* To dump database to fixtures:
+  https://gist.github.com/iiska/1527911
+
 * To list everything in an AWS S3 bucket:
   https://stackoverflow.com/questions/3337912/quick-way-to-list-all-files-in-amazon-s3-bucket
+
+* Model Callbacks, hopefully will make matching_questions easier to manage
+  https://stackoverflow.com/questions/24310533/symmetrical-self-referential-habtm-relationship
+
+* different kinds of updates in ActiveRecord
+  http://www.davidverhasselt.com/set-attributes-in-activerecord/
