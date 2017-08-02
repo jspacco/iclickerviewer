@@ -11,6 +11,13 @@
 * TODO: matching_questions
   * can be either identical or modified, property of the many-to-many row
   * FIXME: transitive relationships for matches, and for identical/modified
+  * run phashion offline and produce a list of possible matches in a big text file
+    * /path/to/file/img1.jpg => /path/to/file/img2.jpg
+    * put in the session?
+    * check into github?
+    * single-row of DB?
+    * how to handle new file uploads?
+    * put on S3? (probably the right move)
 * TODO: mark correct answer when pairing
 * TODO: Update the column tooltips for sessions
 * TODO: how does flash work in Rails?

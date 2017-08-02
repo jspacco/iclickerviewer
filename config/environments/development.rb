@@ -52,6 +52,6 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  # Shut off active record logging, temporarity
+  # XXX Shut off active record logging, temporarity
   config.active_record.logger = nil
 end

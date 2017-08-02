@@ -53,6 +53,10 @@ HEROKU
 
   PGUSER=iclickerviewer PGPASSWORD=iclickerviewer heroku pg:push iclickerviewer postgresql-parallel-76813
 
+* To connect command line to Heroku:
+  https://devcenter.heroku.com/articles/connecting-to-heroku-postgres-databases-from-outside-of-heroku
+  DATABASE_URL=$(heroku config:get DATABASE_URL -a your-app) your_process
+
 * Had to re-name all of the migrations so that they happen in the order in which
   the primary keys are needed (i.e. courses, then sessions which ref courses,
   then questions which ref sessions, then votes which ref questions).
