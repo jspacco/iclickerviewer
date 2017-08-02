@@ -9,16 +9,15 @@ class ClassPeriodsController < ApplicationController
   # -------------------------------------------------------------
   # POST /class_periods/1
   def update
+    # TODO Can we iterate through questions listed in parameters, not all
+    #   questions from DB? One issue is how to know that something has been
+    #   unchecked, if that is the only change. The current approach is a
+    #   conservative approach.
     Question.where(class_period_id: params[:id]).each do |question|
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
       if matching_question_id
-        # Create matching questions in both directions if they don't already exist.
-        # [question_id, matching_question_id] and [matching_question_id, question_id]
-        # TODO: Transitive matching
         MatchingQuestion.find_or_create_by(question_id: question.id,
           matching_question_id: matching_question_id)
-        MatchingQuestion.find_or_create_by(question_id: matching_question_id,
-          matching_question_id: question.id)
       end
       # Delete any matching questions that are to be deleted.
       to_delete = params[:questions][question.id.to_s][:delete_matching_questions]
@@ -28,8 +27,6 @@ class ClassPeriodsController < ApplicationController
           #   and also [matching_question_id, question_id]
           MatchingQuestion.find_by(question_id: question.id,
             matching_question_id: delete_matching_question_id).destroy
-          MatchingQuestion.find_by(question_id: delete_matching_question_id,
-            matching_question_id: question.id).destroy
         end
       end
       # TODO more elegant way to create self-referential many-to-many.

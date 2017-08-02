@@ -3,6 +3,6 @@ class Question < ApplicationRecord
   has_many :matching_questions
   has_many :question, :through => :matching_questions
 
-  has_many :inverse_matching_questions, :class_name => "MatchingQuestion", :foreign_key => "matching_question_id"
-  has_many :inverse_question, :through => :inverse_matching_questions, :source => :question
+  has_many :mirror_matching_questions, :class_name => "MatchingQuestion", :foreign_key => "matching_question_id"
+  has_many :mirror_question, :through => :mirror_matching_questions, :source => :question
 end
