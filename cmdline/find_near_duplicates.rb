@@ -11,10 +11,6 @@ require 'phashion'
 #
 
 def image?(file)
-  # (file.to_s.end_with?(".gif") or
-  # file.to_s.end_with?(".png") or
-  # file.to_s.end_with?(".jpg") or
-  # file.to_s.end_with?(".jpeg")) and
   return (file.to_s. =~ /_Q\d+\.jpg/) != nil
 end
 
@@ -35,40 +31,25 @@ end
 
 # puts image?('/Users/jspacco/projects/clickers/iclickerviewer/public/courses/UIC.CS361F16/Images/L1611180856_Q7.jpg')
 
-def main
-  images = Hash.new
-  get_file_names('/Users/jspacco/projects/clickers/iclickerviewer/public/courses/UIC.CS361F16', images)
-  get_file_names('/Users/jspacco/projects/clickers/iclickerviewer/public/courses/UIC.CS361S17', images)
-  puts images.length
-  matches = find_near_duplicates(images)
-  done = Set.new
-  matches.each do |f1, f2|
-    if done.include?(f1)
-      next
-    end
-    done << f1
-    done << f2
-    puts "#{short_file_name(f1)} #{short_file_name(f2)}"
-  end
-end
-
 def find_near_duplicates(images)
-  matches = Hash.new
+  # matches = Hash.new
+  # matches = Set.new
   done = Hash.new
   images.each do |f1, img1|
     images.each do |f2, img2|
-      if f1 == f2 or done[f1] == f2 or done [f2] == f1
+      if f1 == f2 or done[f1] == f2 or done[f2] == f1
         next
       end
+      # puts "comparing #{f1.gsub(/.*\//, '')} with #{f2.gsub(/.*\//, '')}"
       done[f1] = f2
       done[f2] = f1
       if img1.duplicate? img2
-        matches[f1] = f2
-        matches[f2] = f1
+        dist = img1.distance_from(img2)
+        puts "#{f1} #{f2} #{dist}"
       end
     end
   end
-  return matches
+  # return matches
 end
 
 def short_file_name(filename)
@@ -90,13 +71,13 @@ def remove_non_ascii(str, replacement="")
   return str.gsub(/[\u0080-\u00ff]/, replacement)
 end
 
-def ocr2(dir, result)
-  puts dir
+def ocr(dir, result)
+  # puts dir
   Dir[dir + '/*'].each do |f|
     # puts "the file is #{f}"
     if File.directory?(f)
       # puts "recurse"
-      ocr2(f, result)
+      ocr(f, result)
     elsif image?(f)
       system("tesseract #{f} output")
       raw_text = File.read('output.txt')
@@ -116,12 +97,12 @@ def ocr2(dir, result)
   end
 end
 
-def ocr(dir, result)
+def ocr2(dir, result)
   Dir[dir + '/*'].each do |f|
     # puts "the file is #{f}"
     if File.directory?(f)
       # puts "recurse"
-      ocr(f, result)
+      ocr2(f, result)
     elsif image?(f)
       # FIXME: can't get RTesseract to install
       # image = RTesseract.new(f)
@@ -130,11 +111,27 @@ def ocr(dir, result)
   end
 end
 
+def main
+  images1 = Hash.new
+  folders = [ ['KnoxCS141F16-1', 'KnoxCS141W17-2'],
+    # 'UIC.CS261S17', 'UIC.CS362F16', 'UIC.CS111S16'
+    ['UIC.CS361S17', 'UIC.CS361F15', 'UIC.CS361S16', 'UIC361S17']
+    ['UIC.CS385S16', 'UIC.CS385S16'],
+    ['UT.CSC108F16-L0104', 'UT.CSC108F16-L0101', 'UT.CSC108F16-L0102']
+  ]
+  # get_file_names('/Users/jspacco/projects/clickers/iclickerviewer/public/courses/UIC.CS361F16', images)
+  # get_file_names('/Users/jspacco/projects/clickers/iclickerviewer/public/courses/UIC.CS361S17', images)
+  get_file_names('/Users/jspacco/projects/clickers/iclickerviewer/public/courses', images)
+  $stderr.puts images.length
+  find_near_duplicates(images)
+end
+
 if __FILE__ == $0
-  # main
-  ocr_text = Hash.new
-  ocr2('/Users/jspacco/projects/clickers/iclickerviewer/public/courses/UIC.CS361F16', ocr_text)
-  ocr_text.each do |file, text|
-    puts "#{file} := #{text}"
-  end
+  main
+  # ocr_text = Hash.new
+  # # ocr('/Users/jspacco/projects/clickers/iclickerviewer/public/courses/UIC.CS361F16', ocr_text)
+  # ocr('/Users/jspacco/projects/clickers/iclickerviewer/public/test', ocr_text)
+  # ocr_text.each do |file, text|
+  #   puts "#{file} := #{text}"
+  # end
 end

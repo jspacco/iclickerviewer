@@ -110,4 +110,19 @@ The 2nd one creates a standard POST, and passes it a hash with keys "url" and "m
 * javascript sort() method can take a function as a parameter, and use that function
   like a compareTo method.
 
-*
+* To install phashion, I needed to do 'brew install jpeg' because I got an error
+  about -ljpeg not being available. Phashion uses native (i.e. compiled C) libraries
+  that need to be installed for Ruby to use it. I also did
+  gem install phashion -v '1.2.0'
+  but I think that this also would have worked with the bundle installer.
+
+* You need to grant SUPERUSER to the postgres account to run any of the tests
+  https://stackoverflow.com/questions/30729723/ruby-on-rails-deleting-fixtures-with-foreign-keys
+  ALTER USER iclickerviewer WITH SUPERUSER;
+
+* For Rails testing, the test/fixtures folder is run to create things in the DB, so it
+  needs to be modified or emptied because it may try to insert rows that violate
+  foreign key constraints.
+
+* To list everything in an AWS S3 bucket:
+  https://stackoverflow.com/questions/3337912/quick-way-to-list-all-files-in-amazon-s3-bucket
