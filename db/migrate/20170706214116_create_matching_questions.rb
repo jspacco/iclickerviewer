@@ -3,7 +3,8 @@ class CreateMatchingQuestions < ActiveRecord::Migration[5.1]
     create_table :matching_questions do |t|
       t.integer :question_id
       t.integer :matching_question_id
-
+      t.integer :is_match
+      t.integer :match_type
       t.timestamps
     end
 
