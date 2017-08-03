@@ -37,7 +37,7 @@ def process_pairs(filename)
   return results
 end
 
-def to_sql(results)
+def to_database(results)
   done = Set.new
   results.each do |f, images|
     images.each do |src|
@@ -97,7 +97,7 @@ end
 def main
   results = process_pairs('OUT6')
   # to_html(results, 'file:///Users/jspacco/projects/clickers/iclickerviewer/public/courses')
-  to_sql(results)
+  to_database(results)
 end
 
 if __FILE__ == $0
