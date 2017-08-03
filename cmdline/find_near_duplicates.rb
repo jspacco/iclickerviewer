@@ -29,8 +29,6 @@ def get_image_hash(dir, result)
   end
 end
 
-# puts image?('/Users/jspacco/projects/clickers/iclickerviewer/public/courses/UIC.CS361F16/Images/L1611180856_Q7.jpg')
-
 def find_near_duplicates(images)
   result = ''
   done = Hash.new
@@ -82,11 +80,10 @@ def find_matching_questions(root, courses)
   courses.each do |folder|
     get_image_hash("#{root}/#{folder}", images)
   end
-  puts images.length
   # Now compare each image to every other image
   result = find_near_duplicates(images)
-  # Now put the result into the 
-  puts result
+  # Now put the result into the
+  return result
 end
 
 def main
@@ -95,9 +92,12 @@ def main
     ['KnoxCS141F16-1', 'KnoxCS141W17-2'],
     ['UIC.CS361S17', 'UIC.CS361F15', 'UIC.CS361S16', 'UIC361S17'],
     ['UIC.CS385S16', 'UIC.CS385S16'],
-    ['UT.CSC108F16-L0104', 'UT.CSC108F16-L0101', 'UT.CSC108F16-L0102']
+    ['UT.CSC108F16-L0104', 'UT.CSC108F16-L0101', 'UT.CSC108F16-L0102', 'UT.CSC108F14-dan']
   ]
-  find_matching_questions(root, folders[0])
+  folders.each do |subfolder|
+    res = find_matching_questions(root, subfolder)
+    puts res
+  end
 end
 
 if __FILE__ == $0

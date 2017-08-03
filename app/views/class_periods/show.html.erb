@@ -205,6 +205,8 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         because the check_box_tag method uses the name for both name and id and
         I wanted a clickable label for each checkbox. There may be a better way
         to do this.
+
+        TODO: Only matching_questions where is_match == 1!
       %>
       <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: q.object.id).length > 0 %>
       <% MatchingQuestion.where(question_id: q.object.id).each do |mq| %>

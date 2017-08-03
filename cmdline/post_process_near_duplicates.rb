@@ -6,7 +6,7 @@ def process_pairs(filename)
   File.open(filename, 'r') do |f|
     f.each_with_index do |line, index|
       next if index == 0
-      f1, f2 = line.strip.split
+      f1, f2, count = line.strip.split
       if done.include?(f1) and done.include?(f2)
         next
       end
@@ -37,6 +37,42 @@ def process_pairs(filename)
   return results
 end
 
+def to_sql(results)
+  done = Set.new
+  results.each do |f, images|
+    images.each do |src|
+      images.each do |dst|
+        src, dst = dst, src if src > dst
+        key = "#{src} #{dst}"
+        next if done.include? key
+        done << key
+        # KnoxCS141F16-1/Images/L1609151005_Q2.jpg
+        src_course, src_session_code, src_question_index = src.match(/(.*)\/Images\/(.*)\_Q(\d+)\.jpg/).captures
+        dst_course, dst_session_code, dst_question_index = dst.match(/(.*)\/Images\/(.*)\_Q(\d+)\.jpg/).captures
+
+        # course1 = Course.find_by(folder_name: src_course)
+        course1 = Course.find_by(folder_name: src_course)
+        class_period1 = ClassPeriod.find_by(session_code: src_session_code, course: course1)
+        q1 = Question.find_by(class_period: class_period1, question_index: src_question_index)
+        if q1 == nil
+          puts "missing src #{src_course} #{src_session_code} #{src_question_index}"
+          puts "dst #{dst_course} #{dst_session_code} #{dst_question_index}"
+        end
+
+        course2 = Course.find_by(folder_name: dst_course)
+        class_period2 = ClassPeriod.find_by(session_code: dst_session_code, course: course2)
+        q2 = Question.find_by(class_period: class_period2, question_index: dst_question_index)
+        if q2 == nil
+          puts "src #{src_course} #{src_session_code} #{src_question_index}"
+          puts "missing dst #{dst_course} #{dst_session_code} #{dst_question_index}"
+        end
+
+        match = MatchingQuestion.find_or_create_by(question: q1, matching_question: q2)
+      end
+    end
+  end
+end
+
 def to_html(results, prefix)
   puts "<html><head>"
   puts "</head><body>"
@@ -58,32 +94,12 @@ def to_html(results, prefix)
   puts "</table></body></html>"
 end
 
-if __FILE__ == $0
-  results = process_pairs('OUT3')
-  to_html(results, 'file:///Users/jspacco/projects/clickers/iclickerviewer/public/courses')
+def main
+  results = process_pairs('OUT6')
+  # to_html(results, 'file:///Users/jspacco/projects/clickers/iclickerviewer/public/courses')
+  to_sql(results)
 end
 
-#   done = Set.new
-#   File.open("OUT", "r") do |f|
-#     line_num = 1
-#     f.each_line do |line|
-#       row = "<tr><td>#{line_num}</td>"
-#       line_num += 1
-#       line.strip.split.each do |img|
-#         if not done.include?(img)
-#           i = img.rindex('/')
-#           if i == nil
-#             next
-#           end
-#           row += "<td> <img width=300 src=\"file:///#{img}\"/>"
-#           x = img[(i+1)..-1]
-#           row += "<br> #{x}</td>"
-#           done << img
-#         end
-#       end
-#       puts row + "</tr>"
-#     end
-#   end
-#   puts "</table>"
-#   puts "</body></html>"
-# end
+if __FILE__ == $0
+  main
+end

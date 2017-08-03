@@ -145,3 +145,6 @@ The 2nd one creates a standard POST, and passes it a hash with keys "url" and "m
 
 * different kinds of updates in ActiveRecord
   http://www.davidverhasselt.com/set-attributes-in-activerecord/
+
+* to run rails scripts from the command line:
+  rails r cmdline/post_process_near_duplicates.rb 
