@@ -120,63 +120,26 @@ TODO class for the td elements
       <%= image_tag(barchart_img_url, :class => "myImg") %>
     </td>
     <td> matches the question above?<br>
-      <table align="center">
-        <tr>
-          <%# labels %>
-          <td>
-            <%= label_tag "possible_matches[#{q.object.id}][is_match][][1]", 'yes' %>
-          </td>
-          <td>
-            <%= label_tag "possible_matches[#{q.object.id}][is_match][][0]", 'no' %>
-          </td>
-          <td>
-            <%= label_tag "possible_matches[#{q.object.id}][is_match][][]", 'unknown' %>
-          </td>
-        </tr>
-        <tr>
-          <%# radio buttons %>
-          <td>
-            <%# check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
-              mq.matching_question_id, false,
-              {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
-            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 1 %>
-          </td>
-          <td>
-            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 0 %>
-          </td>
-          <td>
-            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", nil %>
-          </td>
-        </tr>
-      </table>
+      <%= label_tag "possible_matches[#{q.object.id}][is_match][][]", 'unknown' %>
+      <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", nil %>
+      <br>
+      <%= label_tag "possible_matches[#{q.object.id}][is_match][][0]", 'no' %>
+      <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 0 %>
+      <br>
+      <%= label_tag "possible_matches[#{q.object.id}][is_match][][1]", 'yes' %>
+      <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 1 %>
+      <br>
     </td>
     <td> if a match, what kind of match?<br>
-      <table align="center">
-        <tr>
-          <%# labels %>
-          <td>
-            <%= label_tag "possible_matches[#{q.object.id}][match_type][][1]", 'yes' %>
-          </td>
-          <td>
-            <%= label_tag "possible_matches[#{q.object.id}][match_type][][0]", 'no' %>
-          </td>
-          <td>
-            <%= label_tag "possible_matches[#{q.object.id}][match_type][][]", 'unknown' %>
-          </td>
-        </tr>
-        <tr>
-          <%# radio buttons %>
-          <td>
-            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 1 %>
-          </td>
-          <td>
-            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 0 %>
-          </td>
-          <td>
-            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", nil %>
-          </td>
-        </tr>
-      </table>
+      <%= label_tag "possible_matches[#{q.object.id}][match_type][][]", 'unknown' %>
+      <%= radio_button_tag "possible_matches[#{q.object.id}][match_type][]", nil %>
+      <br>
+      <%= label_tag "possible_matches[#{q.object.id}][match_type][][0]", 'identical' %>
+      <%= radio_button_tag "possible_matches[#{q.object.id}][match_type][]", 0 %>
+      <br>
+      <%= label_tag "possible_matches[#{q.object.id}][match_type][][1]", 'modified' %>
+      <%= radio_button_tag "possible_matches[#{q.object.id}][match_type][]", 1 %>
+      <br>
     </td>
   </tr>
 <% end # foreach %>

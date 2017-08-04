@@ -14,13 +14,15 @@ class QuestionsController < ApplicationController
   private
 
   def get_values
-        question = Question.find_by(id: params[:id])
+    question = Question.find_by(id: params[:id])
     @questions = [question]
+    question_ids = [question.id]
     # pair question, if any
     pair = Question.find_by(class_period: question.class_period_id,
       question_type: 3, question_pair: question.question_index)
     if pair != nil
       @questions << pair
+      question_ids << pair.id
     end
 
     puts @questions
@@ -32,7 +34,8 @@ class QuestionsController < ApplicationController
     @next_question = Question.where("question_index > ? and class_period_id = ?",
       question.question_index, question.class_period_id).first
 
-    @possible_matches = question.matched_questions.where(:matching_questions => {:is_match => nil})
+
+    @possible_matches = question.matched_questions.where(:matching_questions => {:is_match => nil}).where.not(id: question_ids)
     @matched_questions = question.matched_questions.where(:matching_questions => {:is_match => 1})
     @nonmatching_questions = question.matched_questions.where(:matching_questions => {:is_match => 0})
 
