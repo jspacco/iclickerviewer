@@ -149,3 +149,14 @@ The 2nd one creates a standard POST, and passes it a hash with keys "url" and "m
 
 * to run rails scripts from the command line:
   rails r cmdline/post_process_near_duplicates.rb
+
+* To use a where clause on the many-to-many join table:
+https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-tables-in-rails
+  matches = q1.matched_questions.where(:matching_questions => {:is_match => 1})
+
+  This assumes that q1 is a Question, matched_questions is the symmetric name for
+  a self-join back to the Question table through the matching_questions table. So
+  we are applying a where clause to the matching_questions join table, not to either
+  Question (q1) or matched_questions (which also a Question because it's a self-join).
+
+  This trick with where clauses seems to work in general.

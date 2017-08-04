@@ -27,3 +27,16 @@ five:
 six:
   question: m3
   matched_question: m2
+
+# questions that don't match each other
+nomatch1:
+  question: nomatchq1
+  matched_question: nomatchq2
+  is_match: 0
+  match_type: 1
+
+nomtach2:
+  question: nomatchq2
+  matched_question: nomatchq1
+  is_match: 0
+  match_type: 1

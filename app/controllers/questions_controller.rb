@@ -1,8 +1,20 @@
 class QuestionsController < ApplicationController
   include ApplicationHelper
 
+  def update
+    puts "\nparams: #{params}\n"
+    get_values
+    render :show
+  end
+
   def show
-    question = Question.find_by(id: params[:id])
+    get_values
+  end
+
+  private
+
+  def get_values
+        question = Question.find_by(id: params[:id])
     @questions = [question]
     # pair question, if any
     pair = Question.find_by(class_period: question.class_period_id,
@@ -20,9 +32,10 @@ class QuestionsController < ApplicationController
     @next_question = Question.where("question_index > ? and class_period_id = ?",
       question.question_index, question.class_period_id).first
 
-    @matching_questions = question.matched_questions
+    @possible_matches = question.matched_questions.where(:matching_questions => {:is_match => nil})
+    @matched_questions = question.matched_questions.where(:matching_questions => {:is_match => 1})
+    @nonmatching_questions = question.matched_questions.where(:matching_questions => {:is_match => 0})
 
     # TODO: pull information out of slides
-
   end
 end

@@ -6,6 +6,10 @@ TODO: next question
 TODO: quick preview
 </div>
 
+<div>
+TODO: back button back to class period, next question buttons
+</div>
+
 <%= javascript_tag do %>
   window.onload = Shared.setup_modal_image();
 <% end %>
@@ -28,24 +32,26 @@ TODO: quick preview
 
 %>
 
-<%= form_tag(question_path(@class_period), {method: :patch}) do %>
+<%= form_tag(question_path(@questions.first), {method: :patch}) do %>
 <%= submit_tag 'Update data (does not work yet)', class: "updatebutton"%>
 <table border=1>
   <tr>
-    <%= render partial: "question_header" %>
+    <th> ID </th>
+    <th> course </th>
+    <th> class <br>period<br> code </th>
+    <th> index </th>
+    <th> image </th>
+    <th> barchart </th>
+    <th> matched questions </th>
   </tr>
 </thead>
   <% @questions.each do |question| %>
   <%= fields_for "questions[]", question do |q| %>
   <tr>
-    <td align="center"> <%= question.id %> </td>
+    <td align="center"> <b> <%= question.id %> </b> </td>
+    <td align="center"> <%= @course.folder_name %> TODO: LINK </td>
+    <td align="center"> <%= @class_period.session_code %> TODO: LINK </td>
     <td align="center"> <b> <%= question.question_index %> </b> </td>
-    <td>
-      <%= pair_type(question) %>
-    </td>
-    <td>
-      <%= question.question_pair %>
-    </td>
     <td class="imagecolumn">
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
         [@course.folder_name, @class_period.session_code, question.question_index]
@@ -58,92 +64,124 @@ TODO: quick preview
       %>
       <%= image_tag(barchart_img_url, :class => "myImg") %>
     </td>
-    <td>
-      <table>
-        <tr>
-          <th> <%= q.label :correct_a, "A" %> </th>
-          <th> <%= q.label :correct_b, "B" %> </th>
-          <th> <%= q.label :correct_c, "C" %> </th>
-          <th> <%= q.label :correct_d, "D" %> </th>
-          <th> <%= q.label :correct_e, "E" %> </th>
-        </tr>
-        <tr>
-          <td> <%= q.check_box :correct_a %> </td>
-          <td> <%= q.check_box :correct_b %> </td>
-          <td> <%= q.check_box :correct_c %> </td>
-          <td> <%= q.check_box :correct_d %> </td>
-          <td> <%= q.check_box :correct_e %> </td>
-        </tr>
-      </table>
-    </td>
-    <td> <%= question.start %> </td>
-    <td> <%= question.stop %> </td>
-    <td> <%= question.num_seconds %> </td>
-    <td> <%# correct_pct(@question) %> </td>
-    <td>
-      <%# Listing the IDs of the current matching questions, with a checkbox that
-        can delete each one. Was not able to figure out how to use the check_box
-        method for things like this, since we would be deleting a self-referential
-        association through a join table.
-
-        Also needed to specify the id of the checkbox explicitly, which is ungly,
-        because the check_box_tag method uses the name for both name and id and
-        I wanted a clickable label for each checkbox. There may be a better way
-        to do this.
-      %>
-      <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: question.id).length > 0 %>
-      <% MatchingQuestion.where(question_id: question.id).each do |mq| %>
-        <%= check_box_tag "#{question.id}",
-          mq.matching_question_id, false,
-          {:id => "questions_#{question.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
-        <%= label_tag "questions[#{question.id}][delete_matching_questions][][#{mq.matching_question_id}]",
-          mq.matching_question_id %>
-        <br>
-      <% end %>
-      <br><br>
-      add: <%= q.text_field :matching_questions, :value => '' %>
-      <br>
-      <%# button_tag "use quick preview",
-      { :type => "button",
-        :onclick => "use_quick_preview(#{@question.id})" } %>
-    </td>
+    <td> TODO: show definite matches using q (somehow) </td>
   </tr>
-  <% end %>
-  <% end %>
+  <% end # fields_for %>
+  <% end # foreach %>
 </table>
 <%= submit_tag 'Update data', class: "updatebutton" %>
-<% end %>
 
-<h3>
+
+<hr>
+<h1>
 Possible matches
-</h3>
-<table>
+</h1>
+<table border=1>
+  <thead>
+    <tr>
+      <th> ID </th>
+      <th> course </th>
+      <th> class <br>period<br> code </th>
+      <th> index </th>
+      <th> image </th>
+      <th> barchart </th>
+      <th> does this match? </th>
+      <th> type of match? </th>
+    </tr>
+  </thead>
 <%#
 TODO course, class_period, image index
 TODO filter out same image matches (if any)
 TODO option to mark "no match"
 TODO potential matches that we decided were not matches at the bottom
-TODO modal images (maybe factor into a more general coffeescript function)
 TODO integrate /question/:id with class_periods/:id
 TODO all question view, possible with insanely long lists of possible matches?
-
+TODO class for the td elements
 %>
-<% @matching_questions.each do |question| %>
+<% @possible_matches.each do |question| %>
+<%= fields_for "possible_matches[]", question do |q| %>
   <tr>
+    <td align="center"> <b> <%= question.id %> </b> </td>
+    <% class_period = ClassPeriod.find_by(id: question.class_period_id) %>
+    <% course = Course.find_by(id: class_period.course_id) %>
+    <td align="center"> <%= course.folder_name %> </td>
+    <td align="center"> <%= class_period.session_code %> </td>
+    <td align="center"> <b> <%= question.question_index %> </b> </td>
     <td class="imagecolumn">
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
-        [@course.folder_name, @class_period.session_code, question.question_index]
+        [course.folder_name, class_period.session_code, question.question_index]
       %>
       <%= image_tag(question_img_url, :class => "myImg") %>
     </td>
     <td class="imagecolumn">
       <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
-        [@course.folder_name, @class_period.session_code, question.question_index]
+        [course.folder_name, class_period.session_code, question.question_index]
       %>
       <%= image_tag(barchart_img_url, :class => "myImg") %>
     </td>
+    <td> matches the question above?<br>
+      <table align="center">
+        <tr>
+          <%# labels %>
+          <td>
+            <%= label_tag "possible_matches[#{q.object.id}][is_match][][1]", 'yes' %>
+          </td>
+          <td>
+            <%= label_tag "possible_matches[#{q.object.id}][is_match][][0]", 'no' %>
+          </td>
+          <td>
+            <%= label_tag "possible_matches[#{q.object.id}][is_match][][]", 'unknown' %>
+          </td>
+        </tr>
+        <tr>
+          <%# radio buttons %>
+          <td>
+            <%# check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
+              mq.matching_question_id, false,
+              {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
+            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 1 %>
+          </td>
+          <td>
+            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 0 %>
+          </td>
+          <td>
+            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", nil %>
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td> if a match, what kind of match?<br>
+      <table align="center">
+        <tr>
+          <%# labels %>
+          <td>
+            <%= label_tag "possible_matches[#{q.object.id}][match_type][][1]", 'yes' %>
+          </td>
+          <td>
+            <%= label_tag "possible_matches[#{q.object.id}][match_type][][0]", 'no' %>
+          </td>
+          <td>
+            <%= label_tag "possible_matches[#{q.object.id}][match_type][][]", 'unknown' %>
+          </td>
+        </tr>
+        <tr>
+          <%# radio buttons %>
+          <td>
+            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 1 %>
+          </td>
+          <td>
+            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", 0 %>
+          </td>
+          <td>
+            <%= radio_button_tag "possible_matches[#{q.object.id}][is_match][]", nil %>
+          </td>
+        </tr>
+      </table>
+    </td>
   </tr>
-<% end %>
+<% end # foreach %>
+<% end # fields_for %>
+<% end # form_tag %>
 </table>
 
 <!-- Modal Image -->

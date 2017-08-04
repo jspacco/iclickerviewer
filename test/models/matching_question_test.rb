@@ -136,4 +136,13 @@ class MatchingQuestionTest < ActiveSupport::TestCase
     assert mq1.name == q2.name || mq1.name == q3.name
     assert mq2.name == q2.name || mq2.name == q3.name
   end
+
+  test "many to many join with where clause" do
+    q1 = Question.find_by(name: 'Nomatch-1')
+    q2 = Question.find_by(name: 'Nomatch-2')
+    matches = q1.matched_questions.where(:matching_questions => {:is_match => 1})
+    # q1 and q2 are a potential match, but are not marked as a true match
+    # so this query should not return any results.
+    assert 0, matches.length
+  end
 end
