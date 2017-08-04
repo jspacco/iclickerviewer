@@ -3,6 +3,8 @@ class CreateMatchingQuestions < ActiveRecord::Migration[5.1]
     create_table :matching_questions do |t|
       t.integer :question_id
       t.integer :matching_question_id
+      # t.references :question, index: true, foreign_key: true
+      # t.references :matching_question, index: true
       t.integer :is_match
       t.integer :match_type
       t.timestamps

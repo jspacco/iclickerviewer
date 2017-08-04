@@ -208,8 +208,8 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
         TODO: Only matching_questions where is_match == 1!
       %>
-      <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: q.object.id).length > 0 %>
-      <% MatchingQuestion.where(question_id: q.object.id).each do |mq| %>
+      <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: q.object.id, is_match: 1).length > 0 %>
+      <% MatchingQuestion.where(question_id: q.object.id, is_match: 1).each do |mq| %>
         <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
           mq.matching_question_id, false,
           {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>

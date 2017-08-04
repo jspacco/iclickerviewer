@@ -96,7 +96,8 @@ The 2nd one creates a standard POST, and passes it a hash with keys "url" and "m
   https://stackoverflow.com/questions/1449459/how-do-i-make-a-column-unique-and-index-it-in-a-ruby-on-rails-migration
 
 * has_many self-referential inverse
-  http://railscasts.com/episodes/163-self-referential-association
+  * http://railscasts.com/episodes/163-self-referential-association
+  * https://collectiveidea.com/blog/archives/2015/07/30/bi-directional-and-self-referential-associations-in-rails
 
 * html multiple select using has_many through:
   https://stackoverflow.com/questions/8826407/rails-3-multiple-select-with-has-many-through-associations
@@ -147,4 +148,4 @@ The 2nd one creates a standard POST, and passes it a hash with keys "url" and "m
   http://www.davidverhasselt.com/set-attributes-in-activerecord/
 
 * to run rails scripts from the command line:
-  rails r cmdline/post_process_near_duplicates.rb 
+  rails r cmdline/post_process_near_duplicates.rb

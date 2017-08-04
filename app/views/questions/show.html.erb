@@ -25,8 +25,7 @@ TODO: quick preview
 %>
 
 <%= form_tag(question_path(@class_period), {method: :patch}) do %>
-<%# form_for(@question, { url: question_path(@question), method: :patch }) do |q| %>
-<%= submit_tag 'Update data', class: "updatebutton"%>
+<%= submit_tag 'Update data (does not work yet)', class: "updatebutton"%>
 <table border=1>
   <tr>
     <%= render partial: "question_header" %>

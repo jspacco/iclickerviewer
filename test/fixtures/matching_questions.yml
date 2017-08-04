@@ -4,6 +4,10 @@
 # These are all foreign keys
 #
 
-# one:
-#   question_id: 1
-#   matching_question_id: 1
+one:
+  question: m1
+  matched_question: m2
+
+two:
+  question: m2
+  matched_question: m1
