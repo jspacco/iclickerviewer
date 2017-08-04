@@ -137,19 +137,7 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     # HACK: adding modal image click handlers here because they need to be
     # loaded at page load time
     if first_load
-      modal = $("#myModal")
-      modal.on "click", ->
-        modal.css('display', 'none')
-        return 0
-      # Get the image and insert it inside the modal
-      modalImg = $("#img01")
-      $('.myImg').click( ->
-        # Basically, if an image with class myImg is clicked,
-        # set it to the src of the modal image and display it.
-        modal.css('display', 'block')
-        modalImg.attr('src', this.src)
-        return 0
-      )
+      Shared.setup_modal_image()
   return 0
 
 #
