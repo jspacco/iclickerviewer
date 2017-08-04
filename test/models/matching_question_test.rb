@@ -53,7 +53,7 @@ class MatchingQuestionTest < ActiveSupport::TestCase
 
     # Did matching q1 and q2 create a 2nd entry in matching_questions?
     m2 = MatchingQuestion.find_by(question: q2, matched_question: q1)
-    assert m2 != nil
+    assert_not_equal nil, m2
     mirror?(m1, m2)
 
     # Now update m1!
