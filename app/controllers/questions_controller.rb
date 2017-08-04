@@ -10,6 +10,7 @@ class QuestionsController < ApplicationController
     if pair != nil
       @questions << pair
     end
+
     puts @questions
 
     # Look up the class period, course, and questions
@@ -19,7 +20,8 @@ class QuestionsController < ApplicationController
     @next_question = Question.where("question_index > ? and class_period_id = ?",
       question.question_index, question.class_period_id).first
 
-    # TODO: use precomputed text files to find potential matches
+    @matching_questions = question.matched_questions
+
     # TODO: pull information out of slides
 
   end

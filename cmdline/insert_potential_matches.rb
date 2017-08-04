@@ -67,7 +67,7 @@ def to_database(results)
           puts "missing dst #{dst_course} #{dst_session_code} #{dst_question_index}"
         end
 
-        match = MatchingQuestion.find_or_create_by(question: q1, matching_question: q2)
+        match = MatchingQuestion.find_or_create_by(question: q1, matched_question: q2)
       end
     end
   end

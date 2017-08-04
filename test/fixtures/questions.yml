@@ -151,3 +151,23 @@ m2:
   question_type: 1
   question_pair:
   class_period: two
+m3:
+  name: Question 99-3
+  response_a: 3
+  response_b: 10
+  response_c: 5
+  response_d: 8
+  response_e: 20
+  correct_a: 0
+  correct_b: 0
+  correct_c: 0
+  correct_d: 0
+  correct_e: 1
+  start: 09:17:34
+  stop: 09:18:54
+  num_seconds: 80
+  question_index: 99
+  is_deleted: N
+  question_type: 1
+  question_pair:
+  class_period: two

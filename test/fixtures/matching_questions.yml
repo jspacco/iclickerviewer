@@ -11,3 +11,19 @@ one:
 two:
   question: m2
   matched_question: m1
+
+three:
+  question: m1
+  matched_question: m3
+
+four:
+  question: m3
+  matched_question: m1
+
+five:
+  question: m2
+  matched_question: m3
+
+six:
+  question: m3
+  matched_question: m2

@@ -109,7 +109,7 @@ class MatchingQuestionTest < ActiveSupport::TestCase
     # puts "q2 #{q2.id} #{q2.name}"
 
     matches = q1.matched_questions
-    assert_equal 1, matches.length
+    assert matches.length >= 1
 
     matchq = matches.first
     # puts "matchq's matches #{matchq.id} #{matchq.name}"
@@ -119,6 +119,21 @@ class MatchingQuestionTest < ActiveSupport::TestCase
     # puts "matchq.index #{matchq.question_index}, matchq.name #{matchq.name}"
     assert_equal q2, matchq
     assert_equal q1, matchq2
+  end
 
+  test "many to many join" do
+    q1 = Question.find_by(name: 'Question 99-1')
+    q2 = Question.find_by(name: 'Question 99-2')
+    q3 = Question.find_by(name: 'Question 99-3')
+
+    matches = q1.matched_questions
+    assert_equal 2, matches.length
+
+    mq1 = matches[0]
+    mq2 = matches[1]
+
+    # XXX Have to use || because or didn't work; unsure why
+    assert mq1.name == q2.name || mq1.name == q3.name
+    assert mq2.name == q2.name || mq2.name == q3.name
   end
 end

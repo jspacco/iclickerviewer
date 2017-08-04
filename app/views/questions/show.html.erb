@@ -6,6 +6,10 @@ TODO: next question
 TODO: quick preview
 </div>
 
+<%= javascript_tag do %>
+  window.onload = load_page_handler();
+<% end %>
+
 <%#
   TODO
   Show actual matches in DB
@@ -109,3 +113,41 @@ TODO: quick preview
 </table>
 <%= submit_tag 'Update data', class: "updatebutton" %>
 <% end %>
+
+<h3>
+Possible matches
+</h3>
+<table>
+<%#
+TODO course, class_period, image index
+TODO filter out same image matches (if any)
+TODO option to mark "no match"
+TODO potential matches that we decided were not matches at the bottom
+TODO modal images (maybe factor into a more general coffeescript function)
+TODO integrate /question/:id with class_periods/:id
+TODO all question view, possible with insanely long lists of possible matches?
+
+%>
+<% @matching_questions.each do |question| %>
+  <tr>
+    <td class="imagecolumn">
+      <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
+        [@course.folder_name, @class_period.session_code, question.question_index]
+      %>
+      <%= image_tag(question_img_url, :class => "myImg") %>
+    </td>
+    <td class="imagecolumn">
+      <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
+        [@course.folder_name, @class_period.session_code, question.question_index]
+      %>
+      <%= image_tag(barchart_img_url, :class => "myImg") %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<!-- Modal Image -->
+<div id="myModal" class="modal">
+  <!-- Modal Content (The Image) -->
+  <img class="modal-content" id="img01">
+</div>
