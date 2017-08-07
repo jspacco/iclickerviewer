@@ -9,6 +9,9 @@
     <th> avg num Qs<br> / class </th>
     <th> avg num secs<br> / question </th>
     <th> num Qs to update<br> / total Qs </th>
+    <th> num<br> matches </th>
+    <th> num<br> possible<br>matches </th>
+    <th> num<br> nonmatches </th>
   </tr>
   <% @courses.each do |course| %>
     <tr>
@@ -29,6 +32,10 @@
       <% end %>
         <%= to_s_fraction(@class_period_updated_counts[course.id]) %>
       </td>
+      <%# TODO: make a map from course_id to each of these values in courses_controller %>
+      <td> <%= @num_possible_matches %> </td>
+      <td> <%= @num_matches %> </td>
+      <td> <%= @num_nonmatches %> </td>
     </tr>
   <% end %>
 </table>

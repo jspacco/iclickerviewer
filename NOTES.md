@@ -160,3 +160,7 @@ https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-
   Question (q1) or matched_questions (which also a Question because it's a self-join).
 
   This trick with where clauses seems to work in general.
+
+* For joins, we really use getters, but getting the plurality correct is annoying:
+  https://stackoverflow.com/questions/25938632/rails-join-table-a-to-table-c-where-a-has-many-b-and-b-has-many-c
+  Note that its ':has_many :itemS, through: :boxes'; it has to be plural for this to work (apparently)

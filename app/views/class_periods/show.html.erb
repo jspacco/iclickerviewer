@@ -116,13 +116,26 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <span class="tooltiptext">Percent of answers that were correct</span>
     </th>
     <th class="mytooltip"> matching<br>question
-      <span class="tooltiptext left">Matching versions of this question
+      <span class="tooltiptext">Matching versions of this question
         from other courses. Enter the question ID (database
         primary key) of the matching question. You can use the "quick preview
         viewer" above to find a question, and then use the button in this column
         to say that these two questions are the same.
       </span>
     </th>
+    <th class="mytooltip"> num <br>matching<br>questions
+      <span class="tooltiptext"> TODO
+      </span>
+    </th>
+    <th class="mytooltip"> num <br>possible<br>matching<br>questions
+      <span class="tooltiptext"> TODO
+      </span>
+    </th>
+    <th class="mytooltip"> num <br>nonmatching<br>questions
+      <span class="tooltiptext left"> TODO
+      </span>
+    </th>
+
   </tr>
 </thead>
   <!--
@@ -224,6 +237,9 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       { :type => "button",
         :onclick => "use_quick_preview(#{q.object.id})" } %>
     </td>
+    <td> <%= @matches[question.id] %> </td>
+    <td> <%= @possible_matches[question.id] %> </td>
+    <td> <%= @nonmatches[question.id] %> </td>
   </tr>
   <% end %>
   <% end %>

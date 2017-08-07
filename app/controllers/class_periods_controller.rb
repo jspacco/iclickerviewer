@@ -4,6 +4,7 @@ class ClassPeriodsController < ApplicationController
   # GET /class_periods/1
   def show
     get_questions_course_class_period
+    get_match_stats(ClassPeriod.find_by(id: params[:id]))
   end
 
   # -------------------------------------------------------------
@@ -40,6 +41,7 @@ class ClassPeriodsController < ApplicationController
     #   them available to to the view. We are going to re-direct to the show view,
     #   but NOT the show controller.
     get_questions_course_class_period
+    get_match_stats(ClassPeriod.find_by(id: params[:id]))
 
     # Basically, this is a re-direct ONLY for rendering!
     #   It does NOT call the show method in this file.
@@ -47,6 +49,33 @@ class ClassPeriodsController < ApplicationController
   end
 
   private
+
+  # -------------------------------------------------------------
+  def get_match_stats(class_period)
+    @matches = Hash.new
+    class_period.questions.each do |q|
+      q.matched_questions.where(:matching_questions => {:is_match => 1}).each do |mq|
+        next if q.id == mq.id or q.class_period_id == mq.class_period_id
+        increment(@matches, q.id)
+      end
+    end
+
+    @possible_matches = Hash.new
+    class_period.questions.each do |q|
+      q.matched_questions.where(:matching_questions => {:is_match => nil}).each do |mq|
+        next if q.id == mq.id or q.class_period_id == mq.class_period_id
+        increment(@possible_matches, q.id)
+      end
+    end
+
+    @nonmatches = Hash.new
+    class_period.questions.each do |q|
+      q.matched_questions.where(:matching_questions => {:is_match => 0}).each do |mq|
+        next if q.id == mq.id or q.class_period_id == mq.class_period_id
+        increment(@nonmatches, q.id)
+      end
+    end
+  end
 
   # -------------------------------------------------------------
   def get_course_hash
@@ -79,10 +108,10 @@ class ClassPeriodsController < ApplicationController
 
   # -------------------------------------------------------------
   def get_questions_course_class_period
-    puts "course: #{params['old_dynamic_course_selected']}"
-    puts "class: #{params['old_dynamic_class_period_selected']}"
-    puts "question: #{params['old_dynamic_question_selected']}"
-    puts "has key? #{params.has_key?('old_dynamic_course_selected')}"
+    # puts "course: #{params['old_dynamic_course_selected']}"
+    # puts "class: #{params['old_dynamic_class_period_selected']}"
+    # puts "question: #{params['old_dynamic_question_selected']}"
+    # puts "has key? #{params.has_key?('old_dynamic_course_selected')}"
     @old_dynamic_course_selected = ''
     if params.has_key?('old_dynamic_course_selected')
       @old_dynamic_course_selected = params['old_dynamic_course_selected']
@@ -95,9 +124,9 @@ class ClassPeriodsController < ApplicationController
     if params.has_key?('old_dynamic_question_selected')
       @old_dynamic_question_selected = params['old_dynamic_question_selected']
     end
-    puts "ivar course: #{@old_dynamic_course_selected}"
-    puts "ivar class: #{@old_dynamic_class_period_selected}"
-    puts "ivar ques: #{@old_dynamic_question_selected}"
+    # puts "ivar course: #{@old_dynamic_course_selected}"
+    # puts "ivar class: #{@old_dynamic_class_period_selected}"
+    # puts "ivar ques: #{@old_dynamic_question_selected}"
     # Look up the class period, course, and questions
     @class_period = ClassPeriod.find_by(id: params[:id])
     # For making a link to the next class.

@@ -43,6 +43,10 @@
   * this may go away when we switch to mariadb or postgres
 * server-side logging for views (and controllers)
 * upload Dan Z's data
+* TODO: Fix helper methods so that they return values rather than
+  set instance variables, in order to make testing easier
+* TODO: can this be made into a callback or method of some kind?
+q.matched_questions.where(:matching_questions => {:is_match => nil})
 
 ## TODO (logistics)
 * email Dave, Leo, other collaborators

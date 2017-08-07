@@ -16,6 +16,9 @@
     <th> num questions </th>
     <th> avg num secs<br> / question </th>
     <th> num classes to update <br> / num classes</th>
+    <th> matches </th>
+    <th> possible matches </th>
+    <th> nonmatches </th>
   </tr>
   <% @classes.each do |sess| %>
   <tr>
@@ -31,6 +34,9 @@
     <% end %>
       <%= to_s_fraction(@question_updated_counts[sess.session_code]) %>
     </td>
+    <td> <%= @num_matches[sess.id] %> </td>
+    <td> <%= @num_possible_matches[sess.id] %> </td>
+    <td> <%= @num_nonmatches[sess.id] %> </td>
   </tr>
   <% end %>
 </table>
