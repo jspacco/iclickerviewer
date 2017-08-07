@@ -6,4 +6,9 @@ class ClassPeriodTest < ActiveSupport::TestCase
     class_period1 = ClassPeriod.find_by(session_code: 'class_period1')
     assert class_period1.session_code == 'class_period1'
   end
+
+  test "has many questions" do
+    class_period = ClassPeriod.find_by(session_code: 'class_period1')
+    assert class_period.questions.length > 0
+  end
 end
