@@ -1,0 +1,106 @@
+<div>
+TODO: next question
+</div>
+
+<div>
+TODO: quick preview
+</div>
+
+<div>
+TODO: back button back to class period, next question buttons
+</div>
+
+<%= javascript_tag do %>
+  window.onload = Shared.setup_modal_image();
+<% end %>
+
+<%#
+  TODO
+  Show actual matches in DB
+  Show potential matches, probably from a text file stored in the cloud
+    that is computed offline and then stored
+  Handle the upload button
+
+  Information to show for matches:
+    Course
+    session (code and also as a date)
+    ID
+    question_index
+    image
+    barchart
+    identical or modified
+
+%>
+
+<%= form_tag(question_path(@questions.first), {method: :patch}) do %>
+<%= submit_tag 'Update data (does not work yet)', class: "updatebutton"%>
+<table border=1>
+  <tr>
+    <th> ID </th>
+    <th> course </th>
+    <th> class <br>period<br> code </th>
+    <th> index </th>
+    <th> image </th>
+    <th> barchart </th>
+    <th> matched questions </th>
+  </tr>
+</thead>
+  <% @questions.each do |question| %>
+  <%= fields_for "questions[]", question do |q| %>
+  <tr>
+    <td align="center"> <b> <%= question.id %> </b> </td>
+    <td align="center"> <%= @course.folder_name %> TODO: LINK </td>
+    <td align="center"> <%= @class_period.session_code %> TODO: LINK </td>
+    <td align="center"> <b> <%= question.question_index %> </b> </td>
+    <td class="imagecolumn">
+      <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
+        [@course.folder_name, @class_period.session_code, question.question_index]
+      %>
+      <%= image_tag(question_img_url, :class => "myImg") %>
+    </td>
+    <td class="imagecolumn">
+      <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
+        [@course.folder_name, @class_period.session_code, question.question_index]
+      %>
+      <%= image_tag(barchart_img_url, :class => "myImg") %>
+    </td>
+    <td> TODO: show definite matches using q (somehow) </td>
+  </tr>
+  <% end # fields_for %>
+  <% end # foreach %>
+</table>
+<%= submit_tag 'Update data', class: "updatebutton" %>
+
+<hr>
+<h1>
+Actual matches
+</h1>
+<%= render partial: 'match_table',
+  locals: {:potential_matches => @matched_questions,
+  :matches_array => 'matches'} %>
+
+<hr>
+<h1>
+Possible matches
+</h1>
+<%= render partial: 'match_table',
+  locals: {:potential_matches => @possible_matches,
+  :matches_array => 'possible_matches'} %>
+
+<hr>
+<h1>
+Nonmatching Questions
+</h1>
+<%= render partial: 'match_table',
+  locals: {:potential_matches => @nonmatching_questions,
+  :matches_array => 'nonmatches'} %>
+
+
+
+<% end # form_tag %>
+
+<!-- Modal Image -->
+<div id="myModal" class="modal">
+  <!-- Modal Content (The Image) -->
+  <img class="modal-content" id="img01">
+</div>

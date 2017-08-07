@@ -11,7 +11,15 @@
 * TODO: matching_questions
   * can be either identical or modified, property of the many-to-many row
   * FIXME: transitive relationships for matches, and for identical/modified
-* TODO: mark correct answer when pairing
+  * run phashion offline and produce a list of possible matches in a big text file
+    * /path/to/file/img1.jpg => /path/to/file/img2.jpg
+    * put in the session?
+    * check into github?
+    * single-row of DB?
+    * how to handle new file uploads?
+    * put on S3? (probably the right move)
+* FIXME: question_type should default to 0, not to the empty string
+* TODO (lowpri): mark correct answer when pairing
 * TODO: Update the column tooltips for sessions
 * TODO: how does flash work in Rails?
 * TODO (longterm): Somehow link from CQ to slide, and from slide to CQ
@@ -35,6 +43,10 @@
   * this may go away when we switch to mariadb or postgres
 * server-side logging for views (and controllers)
 * upload Dan Z's data
+* TODO: Fix helper methods so that they return values rather than
+  set instance variables, in order to make testing easier
+* TODO: can this be made into a callback or method of some kind?
+q.matched_questions.where(:matching_questions => {:is_match => nil})
 
 ## TODO (logistics)
 * email Dave, Leo, other collaborators

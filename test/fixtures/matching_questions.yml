@@ -1,9 +1,42 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+#
+# These are all foreign keys
+#
+
 one:
-  question_id: 1
-  matching_question_id: 1
+  question: m1
+  matched_question: m2
 
 two:
-  question_id: 1
-  matching_question_id: 1
+  question: m2
+  matched_question: m1
+
+three:
+  question: m1
+  matched_question: m3
+
+four:
+  question: m3
+  matched_question: m1
+
+five:
+  question: m2
+  matched_question: m3
+
+six:
+  question: m3
+  matched_question: m2
+
+# questions that don't match each other
+nomatch1:
+  question: nomatchq1
+  matched_question: nomatchq2
+  is_match: 0
+  match_type: 1
+
+nomtach2:
+  question: nomatchq2
+  matched_question: nomatchq1
+  is_match: 0
+  match_type: 1

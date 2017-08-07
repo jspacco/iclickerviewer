@@ -4,21 +4,21 @@ class ClassPeriodsController < ApplicationController
   # GET /class_periods/1
   def show
     get_questions_course_class_period
+    get_match_stats(ClassPeriod.find_by(id: params[:id]))
   end
 
   # -------------------------------------------------------------
   # POST /class_periods/1
   def update
+    # TODO Can we iterate through questions listed in parameters, not all
+    #   questions from DB? One issue is how to know that something has been
+    #   unchecked, if that is the only change. The current approach is a
+    #   conservative approach.
     Question.where(class_period_id: params[:id]).each do |question|
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
       if matching_question_id
-        # Create matching questions in both directions if they don't already exist.
-        # [question_id, matching_question_id] and [matching_question_id, question_id]
-        # TODO: Transitive matching
         MatchingQuestion.find_or_create_by(question_id: question.id,
           matching_question_id: matching_question_id)
-        MatchingQuestion.find_or_create_by(question_id: matching_question_id,
-          matching_question_id: question.id)
       end
       # Delete any matching questions that are to be deleted.
       to_delete = params[:questions][question.id.to_s][:delete_matching_questions]
@@ -28,8 +28,6 @@ class ClassPeriodsController < ApplicationController
           #   and also [matching_question_id, question_id]
           MatchingQuestion.find_by(question_id: question.id,
             matching_question_id: delete_matching_question_id).destroy
-          MatchingQuestion.find_by(question_id: delete_matching_question_id,
-            matching_question_id: question.id).destroy
         end
       end
       # TODO more elegant way to create self-referential many-to-many.
@@ -43,17 +41,41 @@ class ClassPeriodsController < ApplicationController
     #   them available to to the view. We are going to re-direct to the show view,
     #   but NOT the show controller.
     get_questions_course_class_period
+    get_match_stats(ClassPeriod.find_by(id: params[:id]))
 
     # Basically, this is a re-direct ONLY for rendering!
     #   It does NOT call the show method in this file.
-    puts "before redirect!"
-    puts "ivar course: #{@old_dynamic_course_selected}"
-    puts "ivar class: #{@old_dynamic_class_period_selected}"
-    puts "ivar ques: #{@old_dynamic_question_selected}"
     render :show
   end
 
   private
+
+  # -------------------------------------------------------------
+  def get_match_stats(class_period)
+    @matches = Hash.new
+    class_period.questions.each do |q|
+      q.matched_questions.where(:matching_questions => {:is_match => 1}).each do |mq|
+        next if q.id == mq.id or q.class_period_id == mq.class_period_id
+        increment(@matches, q.id)
+      end
+    end
+
+    @possible_matches = Hash.new
+    class_period.questions.each do |q|
+      q.matched_questions.where(:matching_questions => {:is_match => nil}).each do |mq|
+        next if q.id == mq.id or q.class_period_id == mq.class_period_id
+        increment(@possible_matches, q.id)
+      end
+    end
+
+    @nonmatches = Hash.new
+    class_period.questions.each do |q|
+      q.matched_questions.where(:matching_questions => {:is_match => 0}).each do |mq|
+        next if q.id == mq.id or q.class_period_id == mq.class_period_id
+        increment(@nonmatches, q.id)
+      end
+    end
+  end
 
   # -------------------------------------------------------------
   def get_course_hash
@@ -86,10 +108,10 @@ class ClassPeriodsController < ApplicationController
 
   # -------------------------------------------------------------
   def get_questions_course_class_period
-    puts "course: #{params['old_dynamic_course_selected']}"
-    puts "class: #{params['old_dynamic_class_period_selected']}"
-    puts "question: #{params['old_dynamic_question_selected']}"
-    puts "has key? #{params.has_key?('old_dynamic_course_selected')}"
+    # puts "course: #{params['old_dynamic_course_selected']}"
+    # puts "class: #{params['old_dynamic_class_period_selected']}"
+    # puts "question: #{params['old_dynamic_question_selected']}"
+    # puts "has key? #{params.has_key?('old_dynamic_course_selected')}"
     @old_dynamic_course_selected = ''
     if params.has_key?('old_dynamic_course_selected')
       @old_dynamic_course_selected = params['old_dynamic_course_selected']
@@ -102,9 +124,9 @@ class ClassPeriodsController < ApplicationController
     if params.has_key?('old_dynamic_question_selected')
       @old_dynamic_question_selected = params['old_dynamic_question_selected']
     end
-    puts "ivar course: #{@old_dynamic_course_selected}"
-    puts "ivar class: #{@old_dynamic_class_period_selected}"
-    puts "ivar ques: #{@old_dynamic_question_selected}"
+    # puts "ivar course: #{@old_dynamic_course_selected}"
+    # puts "ivar class: #{@old_dynamic_class_period_selected}"
+    # puts "ivar ques: #{@old_dynamic_question_selected}"
     # Look up the class period, course, and questions
     @class_period = ClassPeriod.find_by(id: params[:id])
     # For making a link to the next class.

@@ -10,6 +10,7 @@ class CoursesController < ApplicationController
       @all_class_stats[course.id] = get_class_stats(course.id)
     end
     get_updated_stats
+    # get_match_stats(@course)
   end
 
   def show
@@ -25,6 +26,7 @@ class CoursesController < ApplicationController
       @each_class_stats[sess.id] = class_hash
     end
     get_updated_stats
+    get_match_stats(@course)
   end
 
   private
@@ -73,6 +75,38 @@ class CoursesController < ApplicationController
         classes_total += 1
       end
       @class_period_updated_counts[course.id] = [classes_total - classes_updated, classes_total]
+    end
+  end
+
+  def get_match_stats(course)
+    # TODO make this properly use active record joins
+    @num_possible_matches = Hash.new
+
+    course.questions.each do |q|
+      q.matched_questions.where(:matching_questions => {:is_match => nil}).each do |mq|
+        # TODO move this check into a callback for the matched_questions relation
+        next if q.id == mq.id or q.class_period_id == mq.class_period_id
+        increment(@num_possible_matches, q.class_period_id)
+        # @num_possible_matches += 1
+      end
+    end
+
+    @num_matches = Hash.new
+    course.questions.each do |q|
+      q.matched_questions.where(:matching_questions => {:is_match => 1}).each do |mq|
+        # TODO move this check into a callback for the matched_questions relation
+        next if q.id == mq.id or q.class_period_id == mq.class_period_id
+        increment(@num_matches, q.class_period_id)
+      end
+    end
+
+    @num_nonmatches = Hash.new
+    course.questions.each do |q|
+      q.matched_questions.where(:matching_questions => {:is_match => 0}).each do |mq|
+        # TODO move this check into a callback for the matched_questions relation
+        next if q.id == mq.id or q.class_period_id == mq.class_period_id
+        increment(@num_nonmatches, q.class_period_id)
+      end
     end
   end
 end

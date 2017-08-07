@@ -116,13 +116,26 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <span class="tooltiptext">Percent of answers that were correct</span>
     </th>
     <th class="mytooltip"> matching<br>question
-      <span class="tooltiptext left">Matching versions of this question
+      <span class="tooltiptext">Matching versions of this question
         from other courses. Enter the question ID (database
         primary key) of the matching question. You can use the "quick preview
         viewer" above to find a question, and then use the button in this column
         to say that these two questions are the same.
       </span>
     </th>
+    <th class="mytooltip"> num <br>matching<br>questions
+      <span class="tooltiptext"> TODO
+      </span>
+    </th>
+    <th class="mytooltip"> num <br>possible<br>matching<br>questions
+      <span class="tooltiptext"> TODO
+      </span>
+    </th>
+    <th class="mytooltip"> num <br>nonmatching<br>questions
+      <span class="tooltiptext left"> TODO
+      </span>
+    </th>
+
   </tr>
 </thead>
   <!--
@@ -136,8 +149,12 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
   <% else %>
   <tr class="todo">
   <% end %>
-    <td align="center"> <%= question.id %> </td>
-    <td align="center"> <b> <%= question.question_index %> </b> </td>
+    <td align="center">
+      <%= link_to question.id, question_path(question) %>
+    </td>
+    <td align="center">
+      <b> <%= link_to question.question_index, question_path(question) %> </b>
+    </td>
     <td>
       <%= q.select :question_type, [
         ["unknown", 0],
@@ -201,9 +218,11 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         because the check_box_tag method uses the name for both name and id and
         I wanted a clickable label for each checkbox. There may be a better way
         to do this.
+
+        TODO: Only matching_questions where is_match == 1!
       %>
-      <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: q.object.id).length > 0 %>
-      <% MatchingQuestion.where(question_id: q.object.id).each do |mq| %>
+      <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: q.object.id, is_match: 1).length > 0 %>
+      <% MatchingQuestion.where(question_id: q.object.id, is_match: 1).each do |mq| %>
         <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
           mq.matching_question_id, false,
           {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
@@ -218,6 +237,9 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       { :type => "button",
         :onclick => "use_quick_preview(#{q.object.id})" } %>
     </td>
+    <td> <%= @matches[question.id] %> </td>
+    <td> <%= @possible_matches[question.id] %> </td>
+    <td> <%= @nonmatches[question.id] %> </td>
   </tr>
   <% end %>
   <% end %>

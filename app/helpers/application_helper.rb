@@ -18,6 +18,18 @@ module ApplicationHelper
     return false
   end
 
+  def increment(hash, key)
+    if not hash.has_key? key
+      hash[key] = 0
+    end
+    hash[key] += 1
+  end
+
+  def nil_if_blank(value)
+    return nil if value == ''
+    return value
+  end
+
 =begin
 Given a list of two values, return them as a string representation
 of a fraction. For example, [3, 10] would be "3 / 10"

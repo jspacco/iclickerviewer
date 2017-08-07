@@ -43,6 +43,8 @@ ActiveRecord::Schema.define(version: 20170718155221) do
   create_table "matching_questions", force: :cascade do |t|
     t.integer "question_id"
     t.integer "matching_question_id"
+    t.integer "is_match"
+    t.integer "match_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["question_id", "matching_question_id"], name: "matching_question_index", unique: true
