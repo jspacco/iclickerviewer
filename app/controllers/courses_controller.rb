@@ -10,7 +10,7 @@ class CoursesController < ApplicationController
       @all_class_stats[course.id] = get_class_stats(course.id)
     end
     get_updated_stats
-    # get_match_stats(@course)
+    get_match_stats_all_courses
   end
 
   def show
@@ -75,6 +75,30 @@ class CoursesController < ApplicationController
         classes_total += 1
       end
       @class_period_updated_counts[course.id] = [classes_total - classes_updated, classes_total]
+    end
+  end
+
+  def get_match_stats_all_courses
+    # TODO Figure out how to query matched_questions and the mathing_questions
+    #   join table at the same time and use an if to check is_match
+    @num_possible_matches = Hash.new
+    @num_matches = Hash.new
+    @num_nonmatches = Hash.new
+    Course.all.each do |course|
+      course.questions.each do |q|
+        q.matched_questions.where(:matching_questions => {:is_match => nil}).each do |mq|
+          next if q.id == mq.id or q.class_period_id == mq.class_period_id
+          increment(@num_possible_matches, course.id)
+        end
+        q.matched_questions.where(:matching_questions => {:is_match => 1}).each do |mq|
+          next if q.id == mq.id or q.class_period_id == mq.class_period_id
+          increment(@num_matches, course.id)
+        end
+        q.matched_questions.where(:matching_questions => {:is_match => 0}).each do |mq|
+          next if q.id == mq.id or q.class_period_id == mq.class_period_id
+          increment(@num_nonmatches, course.id)
+        end
+      end
     end
   end
 

@@ -33,9 +33,9 @@
         <%= to_s_fraction(@class_period_updated_counts[course.id]) %>
       </td>
       <%# TODO: make a map from course_id to each of these values in courses_controller %>
-      <td> <%= @num_possible_matches %> </td>
-      <td> <%= @num_matches %> </td>
-      <td> <%= @num_nonmatches %> </td>
+      <td> <%= @num_possible_matches[course.id] %> </td>
+      <td> <%= @num_matches[course.id] %> </td>
+      <td> <%= @num_nonmatches[course.id] %> </td>
     </tr>
   <% end %>
 </table>
