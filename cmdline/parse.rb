@@ -4,6 +4,15 @@ require 'nokogiri'
 require 'date'
 require 'logger'
 
+# FIXME For some reason, we need to explicitly use DATABASE_URL in order to
+#   connect to Heroku. Setting DATABASE_URL is supposed to do this automagically,
+#   but for some reason it doesn't. Note that we are running command line
+#   and connecting to Heroku DB like this:
+#   DATABASE_URL=$(heroku config:get DATABASE_URL -a iclickerviewer) rails runner cmdline/parse.rb
+if ENV.has_key?('DATABASE_URL')
+  ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
+end
+
 # Set up a logger for command-line logging.
 $logger = Logger.new(STDOUT)
 # TODO set logger level from command line
@@ -136,31 +145,30 @@ def parse_XML(filename, course, parse_votes)
         #   except for the correct answers?
       end
 
-      # Should we skip parsing votes?
-      if !parse_votes
-        return
-      end
-      prob.css('v').each do |vote|
-        clicker_id = vote['id']
-        loaned_clicker_to = get_or_nil(vote['lto'])
-        first_answer_time = get_or_nil(vote['fanst'])
-        total_time = get_or_nil(vote['tm'])
-        first_response = get_or_nil(vote['fans'])
-        response = get_or_nil(vote['ans'])
-        num_attempts = 0
-        if vote['att'] != ''
-          num_attempts = vote['att'].to_i
-        end
-        $logger.debug("%d %s %s %s %s %s" % [num_attempts, clicker_id,
-          first_response, response, first_answer_time, total_time])
+      # Should we parse the votes, or skip parsing votes?
+      if parse_votes
+        prob.css('v').each do |vote|
+          clicker_id = vote['id']
+          loaned_clicker_to = get_or_nil(vote['lto'])
+          first_answer_time = get_or_nil(vote['fanst'])
+          total_time = get_or_nil(vote['tm'])
+          first_response = get_or_nil(vote['fans'])
+          response = get_or_nil(vote['ans'])
+          num_attempts = 0
+          if vote['att'] != ''
+            num_attempts = vote['att'].to_i
+          end
+          $logger.debug("%d %s %s %s %s %s" % [num_attempts, clicker_id,
+            first_response, response, first_answer_time, total_time])
 
-        vote = Vote.find_by(clicker_id: clicker_id, question_id: question.id)
-        if vote == nil
-          vote = Vote.find_or_create_by(clicker_id: clicker_id,
-            question: question, num_attempts: num_attempts,
-            first_answer_time: first_answer_time, total_time: total_time,
-            first_response: first_response, response: response,
-            loaned_clicker_to: loaned_clicker_to)
+          vote = Vote.find_by(clicker_id: clicker_id, question_id: question.id)
+          if vote == nil
+            vote = Vote.find_or_create_by(clicker_id: clicker_id,
+              question: question, num_attempts: num_attempts,
+              first_answer_time: first_answer_time, total_time: total_time,
+              first_response: first_response, response: response,
+              loaned_clicker_to: loaned_clicker_to)
+          end
         end
       end
     end
@@ -175,7 +183,8 @@ def parse_course(root, folder, name, institution, term, year, instructor, parse_
       institution: institution, term: term, year: year, instructor: instructor)
   end
 
-  # TODO: copy the Images folder to public/courses/FOLDER/Images
+  # TODO: copy the Images folder to AWS S3
+  # http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/S3.html
 
   # Iterate through the sessions
   session_path = "%s/%s/SessionData/*.xml" % [root, folder]
@@ -227,22 +236,22 @@ if __FILE__ == $0
   # parse_course(root, 'UIC.CS450S17', 'CS450', 'UIC', 'spring', 2017, 'Taylor')
   # p "done with UIC.CS450S17"
 
-  # parse_course(root, 'KnoxCS142W15', 'CS142', 'Knox', 'winter', 2015, 'Bunde')
+  # parse_course(root, 'KnoxCS142W15', 'CS142', 'Knox', 'winter', 2015, 'Bunde', false)
   # p "done with KnoxCS142W15"
 
-  parse_course(root, 'KnoxCS142S15', 'CS142', 'Knox', 'spring', 2015, 'Bunde')
+  parse_course(root, 'KnoxCS142S15', 'CS142', 'Knox', 'spring', 2015, 'Bunde', false)
   p "done with KnoxCS142S15"
 
-  parse_course(root, 'KnoxCS142W16', 'CS142', 'Knox', 'winter', 2016, 'Bunde')
+  parse_course(root, 'KnoxCS142W16', 'CS142', 'Knox', 'winter', 2016, 'Bunde', false)
   p "done with KnoxCS142W16"
 
-  parse_course(root, 'KnoxCS142S16', 'CS142', 'Knox', 'spring', 2016, 'Bunde')
+  parse_course(root, 'KnoxCS142S16', 'CS142', 'Knox', 'spring', 2016, 'Bunde', false)
   p "done with KnoxCS142S16"
 
-  parse_course(root, 'KnoxCS142W17', 'CS142', 'Knox', 'winter', 2017, 'Bunde')
+  parse_course(root, 'KnoxCS142W17', 'CS142', 'Knox', 'winter', 2017, 'Bunde', false)
   p "done with KnoxCS142W17"
 
-  parse_course(root, 'KnoxCS142S17', 'CS142', 'Knox', 'spring', 2017, 'Bunde')
+  parse_course(root, 'KnoxCS142S17', 'CS142', 'Knox', 'spring', 2017, 'Bunde', false)
   p "done with KnoxCS142S17"
 
 
