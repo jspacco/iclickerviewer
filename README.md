@@ -1,29 +1,21 @@
 # README
 
 ## TODO (code)
-* TODO: single script to copy local db, remove votes, and push to heroku
-* TODO: pull heroku data and merge with missing votes
 * TODO: upload images to s3, and set stupid permissions correctly
   * http://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjectUsingRuby.html
 * TODO: figure out how to use rails test
 * FIXME: disallow changing type when it is set to pair, or directly setting to pair
 * settings (hide/show spurious, etc)
 * TODO: matching_questions
-  * can be either identical or modified, property of the many-to-many row
+  * mark identical VS modified from /class_periods/:id
   * FIXME: transitive relationships for matches, and for identical/modified
-  * run phashion offline and produce a list of possible matches in a big text file
-    * /path/to/file/img1.jpg => /path/to/file/img2.jpg
-    * put in the session?
-    * check into github?
-    * single-row of DB?
-    * how to handle new file uploads?
-    * put on S3? (probably the right move)
-* FIXME: question_type should default to 0, not to the empty string
-* TODO (lowpri): mark correct answer when pairing
+  * Improve potential matches using Phashion
+* FIXME (db): should question_type default to 0 instead of empty string?
+* TODO (lowpri): auto mark correct answer when pairing
 * TODO: Update the column tooltips for sessions
-* TODO: how does flash work in Rails?
+* TODO: how does flash for errors work in Rails?
 * TODO (longterm): Somehow link from CQ to slide, and from slide to CQ
-  * embedded PDF slide display tool
+  * embedded PDF slide display tool?
 * TODO (lowpri): web-based importer for the zipfile
   * basically a generalization of parse.rb
 * TODO: breadcrumbs in header
@@ -49,9 +41,10 @@
 q.matched_questions.where(:matching_questions => {:is_match => nil})
 
 ## TODO (logistics)
-* email Dave, Leo, other collaborators
-* IRB at Knox
+*
+* IRB at Knox (awaiting response; ping Gabe and Andy again)
 * two 450s and classes from Prague are 361s16 (Kanich)
+  * FIXME: which are the other Kanich questions?
 
 ## TODO (deployment)
 * streamline uploading of database
