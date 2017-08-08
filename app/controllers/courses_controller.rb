@@ -84,22 +84,23 @@ class CoursesController < ApplicationController
     @num_possible_matches = Hash.new
     @num_matches = Hash.new
     @num_nonmatches = Hash.new
-    Course.all.each do |course|
-      course.questions.each do |q|
-        q.matched_questions.where(:matching_questions => {:is_match => nil}).each do |mq|
-          next if q.id == mq.id or q.class_period_id == mq.class_period_id
-          increment(@num_possible_matches, course.id)
-        end
-        q.matched_questions.where(:matching_questions => {:is_match => 1}).each do |mq|
-          next if q.id == mq.id or q.class_period_id == mq.class_period_id
-          increment(@num_matches, course.id)
-        end
-        q.matched_questions.where(:matching_questions => {:is_match => 0}).each do |mq|
-          next if q.id == mq.id or q.class_period_id == mq.class_period_id
-          increment(@num_nonmatches, course.id)
-        end
-      end
-    end
+    # FIXME This is way too slow! Fix it.
+    # Course.all.each do |course|
+    #   course.questions.each do |q|
+    #     q.matched_questions.where(:matching_questions => {:is_match => nil}).each do |mq|
+    #       next if q.id == mq.id or q.class_period_id == mq.class_period_id
+    #       increment(@num_possible_matches, course.id)
+    #     end
+    #     q.matched_questions.where(:matching_questions => {:is_match => 1}).each do |mq|
+    #       next if q.id == mq.id or q.class_period_id == mq.class_period_id
+    #       increment(@num_matches, course.id)
+    #     end
+    #     q.matched_questions.where(:matching_questions => {:is_match => 0}).each do |mq|
+    #       next if q.id == mq.id or q.class_period_id == mq.class_period_id
+    #       increment(@num_nonmatches, course.id)
+    #     end
+    #   end
+    # end
   end
 
   def get_match_stats(course)
