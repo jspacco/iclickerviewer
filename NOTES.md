@@ -164,3 +164,8 @@ https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-
 * For joins, we really use getters, but getting the plurality correct is annoying:
   https://stackoverflow.com/questions/25938632/rails-join-table-a-to-table-c-where-a-has-many-b-and-b-has-many-c
   Note that its ':has_many :itemS, through: :boxes'; it has to be plural for this to work (apparently)
+
+* For creating a postgres file for database merges, maybe try this:
+  https://stackoverflow.com/questions/1745105/postgres-dump-of-only-parts-of-tables-for-a-dev-snapshot
+  Basically, we're going to try to use the postgres copy command to create sql insert statements for only some rows of the table. To prevent errors from PK overrides: 
+  https://stackoverflow.com/questions/20169372/postgresql-copy-method-enter-valid-entries-and-discard-exceptions

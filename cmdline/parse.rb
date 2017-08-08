@@ -2,15 +2,19 @@
 require 'rubygems'
 require 'nokogiri'
 require 'date'
-require_relative 'command_line'
-require_relative '../app/models/application_record'
-require_relative '../app/models/course'
-require_relative '../app/models/class_period'
-require_relative '../app/models/question'
-require_relative '../app/models/vote'
+require 'logger'
+
+# Set up a logger for command-line logging.
+$logger = Logger.new(STDOUT)
+# TODO set logger level from command line
+$logger.level = :info
+$logger.datetime_format = '%Y-%m-%d %H:%M:%S'
 
 def get_resp(s)
-  return s[0..(s.index("|")-1)].to_i
+  # 2,12.00
+  # 2|12.00
+  m = s.match(/(\d+)[^\d]\d+\.\d+/)
+  return m.captures[0].to_i
 end
 
 def get_or_nil(val)
@@ -49,6 +53,7 @@ def parse_XML(filename, course, parse_votes)
   # Each file should only have one session (class_period) in it
   page.css('//ssn').each do |ssn|
     name = ssn['ssnn']
+    $logger.debug("session (class_period) name #{name}")
     min_response = ssn['minrep']
     participation = ssn['part']
     performance = ssn['perf']
@@ -182,45 +187,63 @@ end
 if __FILE__ == $0
   root = '/Users/jspacco/projects/clickers/data/'
 
-  parse_course(root, 'UT.CSC108F16-L0101', 'CS108', 'Toronto', 'fall', 2016, 'Tong')
-  p "done with UT.CSC108F16-L0101"
-  parse_course(root, 'UT.CSC108F16-L0102', 'CS108', 'Toronto', 'fall', 2016, 'Petersen')
-  p "done with UT.CSC108F16-L0102"
-  parse_course(root, 'UT.CSC108F16-L0104', 'CS108', 'Toronto', 'fall', 2016, 'Dema')
-  p "done with UT.CSC108F16-L0104"
+  # parse_course(root, 'UT.CSC108F16-L0101', 'CS108', 'Toronto', 'fall', 2016, 'Tong')
+  # p "done with UT.CSC108F16-L0101"
+  # parse_course(root, 'UT.CSC108F16-L0102', 'CS108', 'Toronto', 'fall', 2016, 'Petersen')
+  # p "done with UT.CSC108F16-L0102"
+  # parse_course(root, 'UT.CSC108F16-L0104', 'CS108', 'Toronto', 'fall', 2016, 'Dema')
+  # p "done with UT.CSC108F16-L0104"
+  #
+  # parse_course(root, 'KnoxCS141F16-1', 'CS141', 'Knox', 'fall', 2016, 'Budach')
+  # p "done with KnoxCS141F16-1"
+  # parse_course(root, 'KnoxCS141W17-2', 'CS141', 'Knox', 'winter', 2017, 'Spacco')
+  # p "done with KnoxCS141W17-2"
+  #
+  # parse_course(root, 'UIC.CS111S16', 'CS111', 'UIC', 'spring', 2016, 'Taylor')
+  # p "done with UIC.CS111S16"
+  #
+  # parse_course(root, 'UIC.CS261S17', 'CS261', 'UIC', 'spring', 2017, 'Taylor')
+  # p "done with UIC.CS261S17"
+  #
+  # parse_course(root, 'UIC.CS361F15', 'CS361', 'UIC', 'fall', 2015, 'Taylor')
+  # p "done with UIC.CS361F15"
+  # parse_course(root, 'UIC.CS361S16', 'CS361', 'UIC', 'spring', 2016, 'Taylor')
+  # p "done with UIC.CS361S16"
+  # parse_course(root, 'UIC.CS361F16', 'CS361', 'UIC', 'fall', 2016, 'Taylor')
+  # p "done with UIC.CS361F16"
+  # parse_course(root, 'UIC.CS361S17', 'CS361', 'UIC', 'spring', 2017, 'Taylor')
+  # p "done with UIC.CS361S17"
+  #
+  # parse_course(root, 'UIC.CS362F16', 'CS362', 'UIC', 'fall', 2016, 'Taylor')
+  # p "done with UIC.CS362F16"
+  #
+  # parse_course(root, 'UIC.CS385S16', 'CS385', 'UIC', 'spring', 2016, 'Taylor')
+  # p "done with UIC.CS385S16"
+  # parse_course(root, 'UIC.CS385F16', 'CS385', 'UIC', 'fall', 2016, 'Taylor')
+  # p "done with UIC.CS385F16"
+  #
+  # parse_course(root, 'UIC.CS450F15', 'CS450', 'UIC', 'fall', 2015, 'Taylor')
+  # p "done with UIC.CS450F15"
+  # parse_course(root, 'UIC.CS450S17', 'CS450', 'UIC', 'spring', 2017, 'Taylor')
+  # p "done with UIC.CS450S17"
 
-  parse_course(root, 'KnoxCS141F16-1', 'CS141', 'Knox', 'fall', 2016, 'Budach')
-  p "done with KnoxCS141F16-1"
-  parse_course(root, 'KnoxCS141W17-2', 'CS141', 'Knox', 'winter', 2017, 'Spacco')
-  p "done with KnoxCS141W17-2"
+  # parse_course(root, 'KnoxCS142W15', 'CS142', 'Knox', 'winter', 2015, 'Bunde')
+  # p "done with KnoxCS142W15"
 
-  parse_course(root, 'UIC.CS111S16', 'CS111', 'UIC', 'spring', 2016, 'Taylor')
-  p "done with UIC.CS111S16"
+  parse_course(root, 'KnoxCS142S15', 'CS142', 'Knox', 'spring', 2015, 'Bunde')
+  p "done with KnoxCS142S15"
 
-  parse_course(root, 'UIC.CS261S17', 'CS261', 'UIC', 'spring', 2017, 'Taylor')
-  p "done with UIC.CS261S17"
+  parse_course(root, 'KnoxCS142W16', 'CS142', 'Knox', 'winter', 2016, 'Bunde')
+  p "done with KnoxCS142W16"
 
-  parse_course(root, 'UIC.CS361F15', 'CS361', 'UIC', 'fall', 2015, 'Taylor')
-  p "done with UIC.CS361F15"
-  parse_course(root, 'UIC.CS361S16', 'CS361', 'UIC', 'spring', 2016, 'Taylor')
-  p "done with UIC.CS361S16"
-  parse_course(root, 'UIC.CS361F16', 'CS361', 'UIC', 'fall', 2016, 'Taylor')
-  p "done with UIC.CS361F16"
-  parse_course(root, 'UIC.CS361S17', 'CS361', 'UIC', 'spring', 2017, 'Taylor')
-  p "done with UIC.CS361S17"
+  parse_course(root, 'KnoxCS142S16', 'CS142', 'Knox', 'spring', 2016, 'Bunde')
+  p "done with KnoxCS142S16"
 
-  parse_course(root, 'UIC.CS362F16', 'CS362', 'UIC', 'fall', 2016, 'Taylor')
-  p "done with UIC.CS362F16"
+  parse_course(root, 'KnoxCS142W17', 'CS142', 'Knox', 'winter', 2017, 'Bunde')
+  p "done with KnoxCS142W17"
 
-  parse_course(root, 'UIC.CS385S16', 'CS385', 'UIC', 'spring', 2016, 'Taylor')
-  p "done with UIC.CS385S16"
-  parse_course(root, 'UIC.CS385F16', 'CS385', 'UIC', 'fall', 2016, 'Taylor')
-  p "done with UIC.CS385F16"
-
-  parse_course(root, 'UIC.CS450F15', 'CS450', 'UIC', 'fall', 2015, 'Taylor')
-  p "done with UIC.CS450F15"
-  parse_course(root, 'UIC.CS450S17', 'CS450', 'UIC', 'spring', 2017, 'Taylor')
-  p "done with UIC.CS450S17"
+  parse_course(root, 'KnoxCS142S17', 'CS142', 'Knox', 'spring', 2017, 'Bunde')
+  p "done with KnoxCS142S17"
 
 
 end
