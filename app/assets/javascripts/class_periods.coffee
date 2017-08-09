@@ -133,11 +133,6 @@ root.dynamic_image_handler =(course_hash, first_load) ->
     $("#old_dynamic_course_selected").val(dynamic_course_selected)
     $("#old_dynamic_class_period_selected").val(dynamic_class_period_selected)
     $("#old_dynamic_question_selected").val(dynamic_question_selected)
-
-    # HACK: adding modal image click handlers here because they need to be
-    # loaded at page load time
-    if first_load
-      Shared.setup_modal_image()
   return 0
 
 #

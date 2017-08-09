@@ -8,9 +8,10 @@ class Shared
   #
   # To set up a modal image:
   #
-  # clickable image(s) to be expanded should have class myImg
-  # div tag surrounding the modal should have id myModal
-  # img tag of the modal image should have id img01
+  # clickable image(s) to be expanded should have class="myImg"
+  # div tag surrounding the modal should have id="myModal"
+  # img tag of the modal image (the one that will be replaced with whatever is
+  #   clicked) should have id="img01"
   #
   @setup_modal_image: () ->
     jQuery ->
