@@ -182,3 +182,12 @@ https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-
 * Dammit, it's possible to hide the console.log statements from the JS debugger view in Chrome! Make sure you don't have accidentally set the console log message to be hidden or filtered out.
 
 * In JQuery, when you say $(document).ready(func), func is a function to be called, not a function call. It's another example of passing a function to JS.
+
+* To ignore a whole class period, we want to default an integer column to 0. Looks like we do that like this:
+  In schema:
+  t.integer "ignore", default: 0
+  In migration:
+  t.integer :ignore, :default => 0
+  I haven't done this yet because we can just skip class periods that have no non-error questions
+
+* 
