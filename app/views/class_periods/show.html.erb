@@ -1,43 +1,4 @@
-<h2>
-<center>
-  <%# TODO: Make this information for course into a method %>
-  <%= @course.term %>
-  <%= @course.year %> <%= @course.institution %> <br>
-  <%= @course.instructor %> <br>
-  <%= @course.folder_name %> <br>
-  <%= @class_period.name %> <br>
-  <%= @class_period.session_code %> <br>
-  <%= @class_period.date.strftime("%Y-%m-%d %H:%M") %><br>
-  Average time per clicker question:<br> <%= @avg_time %> seconds
-</center>
-</h2>
-
-
-<% if @next_class_period != nil %>
-<div class="nextlink">
-  <%= button_tag "> NEXT CLASS #{@next_class_period.session_code} >",
-  { :type => "button",
-      :onclick => "next_class_button_handler('#{class_period_path(@next_class_period)}')" } %>
-<% else %>
-<div class="lastclassperiod">
-  Last class period for this course, yay!
-<% end %>
-</div>
-
-<%# TODO: Make course_hash an AJAX call. Inlining it is not elegant.
-http://railscasts.com/episodes/324-passing-data-to-javascript
-%>
-<%= javascript_tag do %>
-  $(document).ready(function() {
-    $("#old_dynamic_course_selected").val("<%=j @old_dynamic_course_selected%>");
-    $("#old_dynamic_class_period_selected").val("<%=j @old_dynamic_class_period_selected%>");
-    $("#old_dynamic_question_selected").val("<%=j @old_dynamic_question_selected%>");
-  });
-
-  var course_hash = <%=raw @course_hash.to_json.gsub("\n", '') %>;
-  window.onload = dynamic_image_handler(course_hash, true);
-<% end %>
-
+<div class="topdiv">
 <table frame=box rules=none>
 <tr>
   <td colspan="4"><b>QUICK PREVIEW</b> to preview questions from other classes;
@@ -67,6 +28,46 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
   </td>
 </tr>
 </table>
+</div>
+
+<h2 class="right">
+  <%# TODO: Make this information for course into a method %>
+  <%= @course.term %>
+  <%= @course.year %> <%= @course.institution %> <br>
+  <%= @course.instructor %> <br>
+  <%= @course.folder_name %> <br>
+  <%= @class_period.name %> <br>
+  <%= @class_period.session_code %> <br>
+  <%= @class_period.date.strftime("%Y-%m-%d %H:%M") %><br>
+  Average time per clicker question:<br> <%= @avg_time %> seconds
+</h2>
+
+
+<% if @next_class_period != nil %>
+<div class="nextlink">
+  <%= button_tag "> NEXT CLASS #{@next_class_period.session_code} >",
+  { :type => "button",
+      :onclick => "next_class_button_handler('#{class_period_path(@next_class_period)}')" } %>
+<% else %>
+<div class="lastclassperiod">
+  Last class period for this course, yay!
+<% end %>
+</div>
+
+<%# TODO: Make course_hash an AJAX call. Inlining it is not elegant.
+http://railscasts.com/episodes/324-passing-data-to-javascript
+%>
+<%= javascript_tag do %>
+  $(document).ready(function() {
+    $("#old_dynamic_course_selected").val("<%=j @old_dynamic_course_selected%>");
+    $("#old_dynamic_class_period_selected").val("<%=j @old_dynamic_class_period_selected%>");
+    $("#old_dynamic_question_selected").val("<%=j @old_dynamic_question_selected%>");
+  });
+
+  var course_hash = <%=raw @course_hash.to_json.gsub("\n", '') %>;
+  window.onload = dynamic_image_handler(course_hash, true);
+<% end %>
+
 
 <%= form_tag(class_period_path(@class_period), method: :patch) do %>
 <input type="hidden" id="old_dynamic_course_selected" name="old_dynamic_course_selected" value=""/>

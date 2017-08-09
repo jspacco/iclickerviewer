@@ -157,3 +157,12 @@ root.next_class_button_handler = (url) ->
     "&old_dynamic_class_period_selected=#{class_period}"+
     "&old_dynamic_question_selected=#{question}"
   window.location.href = addr
+
+#
+# show/hide the quick preview
+#
+root.toggle_quick_preview =() ->
+  if $('.topdiv').is(':visible')
+    $('.topdiv').hide()
+  else
+    $('.topdiv').show()

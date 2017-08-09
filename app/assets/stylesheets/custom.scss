@@ -40,6 +40,16 @@ textarea {
   margin-bottom: 10px;
 }
 
+.topdiv {
+  top: 0;
+  padding-top: 60px;
+  position: fixed;
+  background: #ffffff;
+  opacity: 1.0;
+//  width: 100%;
+  visibility: visible;
+}
+
 h1, h2, h3, h4, h5, h6 {
   line-height: 1;
 }
@@ -49,6 +59,10 @@ h1 {
   letter-spacing: -2px;
   margin-bottom: 30px;
   text-align: center;
+}
+
+.right h2 {
+  text-align: right;
 }
 
 h2 {

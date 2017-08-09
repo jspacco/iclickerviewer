@@ -3,6 +3,11 @@
     <%# link_to "sample app", root_path, id: "logo" %>
     <nav>
       <ul class="nav navbar-nav navbar-right">
+        <% if request.fullpath.starts_with? '/class_period' %>
+          <li>
+            <button onclick="toggle_quick_preview()">toggle quick preview</button>
+          </li>
+        <% end %>
         <li><%= link_to "Home", root_path %></li>
         <li>
           <%= link_to "Log out", logout_path, method: :delete %>
