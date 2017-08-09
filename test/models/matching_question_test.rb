@@ -145,4 +145,14 @@ class MatchingQuestionTest < ActiveSupport::TestCase
     # so this query should not return any results.
     assert 0, matches.length
   end
+
+  test "cascade match" do
+    # TODO check cascades: match rando1 and rando2, then rando2 and rando3
+    #   and ensure that rando1 and rando3 match
+    # What about changing match types?
+    # How to delete/remove a match?
+    q1 = Question.find_by(name: 'Nomatch-1')
+    q2 = Question.find_by(name: 'Nomatch-2')
+
+  end
 end
