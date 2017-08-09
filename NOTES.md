@@ -178,3 +178,7 @@ https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-
   NOTE: in parse.db, we need to specifically connect using DATABASE_URL because for some reason, rails doesn't pick up on this variable, and was still using the local database.
 
 * Upgrading to hobby-basic (10M rows max) for the DB on heroku was not that difficult to do and works pretty well. We still aren't storing the votes on heroku, but we probably could, and it looks like parse can create them from folder_name/SessionData without too much trouble.
+
+* Dammit, it's possible to hide the console.log statements from the JS debugger view in Chrome! Make sure you don't have accidentally set the console log message to be hidden or filtered out.
+
+* In JQuery, when you say $(document).ready(func), func is a function to be called, not a function call. It's another example of passing a function to JS.
