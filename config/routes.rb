@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :courses, :only => [:index, :show]
   resources :class_periods, :only => [:show, :update]
   resources :questions, :only => [:index, :show, :update]
+  resources :data, :only => [:index]
 
   get    '/login',   to: 'sessions#new'
   post   '/login',   to: 'sessions#create'

@@ -190,4 +190,7 @@ https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-
   t.integer :ignore, :default => 0
   I haven't done this yet because we can just skip class periods that have no non-error questions
 
+* If I need to turn html into images, try imgkit
+  https://stackoverflow.com/questions/4563707/rails-convert-html-to-image
+
 * 
