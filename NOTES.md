@@ -28,6 +28,11 @@ bin/rails generate controller ClassPeriods
 bin/rails generate controller Sessions new
 bin/rails generate controller Questions
 
+R NOTES
+---
+* https://stackoverflow.com/questions/4215154/count-unique-values
+
+
 OTHER NOTES
 ---
 * validators cannot be created through the rails model generator. So it's

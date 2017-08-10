@@ -1,11 +1,31 @@
 <header class="navbar navbar-fixed-top navbar-inverse">
   <div class="container">
-    <%# link_to "sample app", root_path, id: "logo" %>
     <nav>
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav navbar-left">
         <% if request.fullpath.starts_with? '/class_period' %>
-          <li>
-            <button onclick="toggle_quick_preview()">toggle quick preview</button>
+          <li class="nav-item">
+            <button class="navbar-btn" onclick="toggle_quick_preview()">
+              toggle quick preview
+            </button>
+          </li>
+        <% end %>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <% if defined?(@questions) %>
+          <li class="nav-item">
+            <span class="navbar-text">
+              <%= "Question #{@questions[0].question_index} (#{@questions[0].id}) "%>
+            </span>
+          </li>
+        <% end %>
+        <% if defined?(@class_period) %>
+          <li class="nav-item">
+            <span class="navbar-text"> <%= @class_period.session_code %> </span>
+          </li>
+        <% end %>
+        <% if defined?(@course) %>
+          <li class="nav-item">
+            <span class="navbar-text"> <%= @course.name %> </span>
           </li>
         <% end %>
         <li><%= link_to "Home", root_path %></li>
