@@ -198,3 +198,6 @@ https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-
 * Finally learned what * means in Ruby! It's the "splat" operator, of course.
   https://stackoverflow.com/questions/5227290/pass-array-into-vararg-in-ruby
   Can be used with an array to pass to a method looking for varargs. I have no idea if there is something like this in Python or other languages. Maybe it's a dynamically typed scripting language thing?
+
+* Apparently rails does not allow you to use send_data and redirect_to together in the same controller, because send/redirect both send responses. The solutions all seem to use JS, or opening up a new window for the download.
+https://stackoverflow.com/questions/30296653/in-rails-cant-we-use-send-file-and-redirect-to-together-gives-render-and-or-re?noredirect=1&lq=1

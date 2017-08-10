@@ -6,11 +6,14 @@ class DataController < ApplicationController
   # -----------------------------------------
   # GET /data
   #
-  # This returns the data for all classes in this format (csv or json, once
+  # This returns the data for all classes in csv format (csv or json, once
   #   I figure out how to create json):
   #
-  # courseID courseName classID className questionID questionIndex questionType
-  # numCorrect1stVotes numCorrect2ndVotes pctCorrect1stVotes pctCorrect2ndVotes time
+  # course_id course_name class_id class_name
+  # qid num_seconds question_index question_type
+  # num_correct_answers num1st num2nd
+  # num1st_correct num2nd_correct pct1st_correct pct2nd_correct
+  #
   def index
     # I'm using raw SQL instead of ActiveRecord. Sue me.
     #
@@ -33,7 +36,6 @@ class DataController < ApplicationController
     ActiveRecord::Base.connection.exec_query(queries[5])
 
     # https://stackoverflow.com/questions/39066365/smartly-converting-array-of-hashes-to-csv-in-ruby
-    # TODO convert hash to csv
     header = ['course_id', 'course_name', 'class_id', 'class_code',
     'qid', 'question_index', 'num_seconds', 'question_type',
     'num_correct_answers', 'num1st', 'num2nd',
@@ -42,14 +44,17 @@ class DataController < ApplicationController
 
     csv = header.to_csv
     results.each do |row|
-      puts row.values_at(*header)
-      csv += row.values_at(*header).to_csv
+      # Holy crap, I'm combing the splat (*) operator with
+      #   the map method and a block!
+      csv += row.values_at(*header).map{|s| s.to_s.strip}.to_csv
     end
 
+    # TODO Support json as well as csv.
     send_data csv,
-      filename: "foo.csv",
+      filename: "courses.csv",
       type: "text/plain; charset=us-ascii"
 
+    # We can't redirect here because send_data is an http response
   end
 
 private
