@@ -1,3 +1,7 @@
+NOTES
+---
+I'm writing down notes as I work on this, so that when I look back I will have some idea how to use Rails and R, and how to solve a number of issues I've run into along the way.
+
 MODELS COMMANDS
 ---
 In case I need to make changes... These are the rails commands to create the database model:
@@ -31,7 +35,22 @@ bin/rails generate controller Questions
 R NOTES
 ---
 * https://stackoverflow.com/questions/4215154/count-unique-values
+* useful commands that I've forgotten since 2014:
+  * nrow: number of rows in a dataframe
+  * aggregate with ~ and *
+* & and && are not the same thing!
+  https://stackoverflow.com/questions/6558921/r-boolean-operators-and
+* When splitting things up across line breaks, DO NOT START A LINE WITH +!!! R will think that the + is a unary operator. So this works:
 
+  ggplot(subset(ses, question_type == 3 & num_correct_answers == 1),
+    aes(pct1st_correct, pct2nd_correct)) +
+    geom_point(aes(color = factor(course_name)), alpha = 0.1)
+
+  But this is an error:
+
+  ggplot(subset(ses, question_type == 3 & num_correct_answers == 1),
+    aes(pct1st_correct, pct2nd_correct))
+    + geom_point(aes(color = factor(course_name)), alpha = 0.1)
 
 OTHER NOTES
 ---
