@@ -1,3 +1,5 @@
+require 'csv'
+
 class DataController < ApplicationController
   include ApplicationHelper
 
@@ -30,8 +32,22 @@ class DataController < ApplicationController
     results = ActiveRecord::Base.connection.exec_query(queries[4])
     ActiveRecord::Base.connection.exec_query(queries[5])
 
-    send_data "this is a file",
-      filename: "foo.txt",
+    # https://stackoverflow.com/questions/39066365/smartly-converting-array-of-hashes-to-csv-in-ruby
+    # TODO convert hash to csv
+    header = ['course_id', 'course_name', 'class_id', 'class_code',
+    'qid', 'question_index', 'num_seconds', 'question_type',
+    'num_correct_answers', 'num1st', 'num2nd',
+    'num1st_correct', 'num2nd_correct',
+    'pct1st_correct', 'pct2nd_correct']
+
+    csv = header.to_csv
+    results.each do |row|
+      puts row.values_at(*header)
+      csv += row.values_at(*header).to_csv
+    end
+
+    send_data csv,
+      filename: "foo.csv",
       type: "text/plain; charset=us-ascii"
 
   end
@@ -159,8 +175,9 @@ as num1st_correct,
 from questions q1
 where q1.question_type = 4;
 
-select c.id, c.folder_name, cp.id, cp.session_code,
-q.id, q.question_index, q.num_seconds, q.question_type,
+select c.id as course_id, c.folder_name as course_name,
+cp.id as class_id, cp.session_code as class_code,
+q.id as qid, q.question_index, q.num_seconds, q.question_type,
 qt.num_correct_answers, qt.num1st, qt.num2nd, qt.num1st_correct, qt.num2nd_correct,
 qt.pct1st_correct, qt.pct2nd_correct
 from courses c, class_periods cp, questions q, qtemp qt

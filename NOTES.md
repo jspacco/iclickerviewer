@@ -193,4 +193,8 @@ https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-
 * If I need to turn html into images, try imgkit
   https://stackoverflow.com/questions/4563707/rails-convert-html-to-image
 
-* 
+* ActiveRecord won't let me send multiple SQL statements to execute or exec_query, so I had to use split(';') and then run the commands separately.
+
+* Finally learned what * means in Ruby! It's the "splat" operator, of course.
+  https://stackoverflow.com/questions/5227290/pass-array-into-vararg-in-ruby
+  Can be used with an array to pass to a method looking for varargs. I have no idea if there is something like this in Python or other languages. Maybe it's a dynamically typed scripting language thing?
