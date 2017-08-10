@@ -20,9 +20,11 @@ $logger.level = :info
 $logger.datetime_format = '%Y-%m-%d %H:%M:%S'
 
 def get_resp(s)
+  # Lots of formats the clickers can use to store this information:
   # 2,12.00
   # 2|12.00
-  m = s.match(/(\d+)[^\d]\d+\.\d+/)
+  # 96,0
+  m = s.match(/(\d+)[^\d]\d+.*/)
   return m.captures[0].to_i
 end
 
@@ -238,21 +240,28 @@ if __FILE__ == $0
 
   # parse_course(root, 'KnoxCS142W15', 'CS142', 'Knox', 'winter', 2015, 'Bunde', false)
   # p "done with KnoxCS142W15"
+  # parse_course(root, 'KnoxCS142S15', 'CS142', 'Knox', 'spring', 2015, 'Bunde', false)
+  # p "done with KnoxCS142S15"
+  # parse_course(root, 'KnoxCS142W16', 'CS142', 'Knox', 'winter', 2016, 'Bunde', false)
+  # p "done with KnoxCS142W16"
+  # parse_course(root, 'KnoxCS142S16', 'CS142', 'Knox', 'spring', 2016, 'Bunde', false)
+  # p "done with KnoxCS142S16"
+  # parse_course(root, 'KnoxCS142W17', 'CS142', 'Knox', 'winter', 2017, 'Bunde', false)
+  # p "done with KnoxCS142W17"
+  # parse_course(root, 'KnoxCS142S17', 'CS142', 'Knox', 'spring', 2017, 'Bunde', false)
+  # p "done with KnoxCS142S17"
 
-  parse_course(root, 'KnoxCS142S15', 'CS142', 'Knox', 'spring', 2015, 'Bunde', false)
-  p "done with KnoxCS142S15"
-
-  parse_course(root, 'KnoxCS142W16', 'CS142', 'Knox', 'winter', 2016, 'Bunde', false)
-  p "done with KnoxCS142W16"
-
-  parse_course(root, 'KnoxCS142S16', 'CS142', 'Knox', 'spring', 2016, 'Bunde', false)
-  p "done with KnoxCS142S16"
-
-  parse_course(root, 'KnoxCS142W17', 'CS142', 'Knox', 'winter', 2017, 'Bunde', false)
-  p "done with KnoxCS142W17"
-
-  parse_course(root, 'KnoxCS142S17', 'CS142', 'Knox', 'spring', 2017, 'Bunde', false)
-  p "done with KnoxCS142S17"
-
+  # parse_course(root, 'UCSD.CSE141F14-A', 'CSE141', 'UCSD', 'fall', 2014, 'Porter', false)
+  # p "done with UCSD.CSE141F14-A"
+  # parse_course(root, 'UCSD.CSE141F14-B', 'CSE141', 'UCSD', 'fall', 2014, 'Porter', false)
+  # p "done with UCSD.CSE141F14-B"
+  # parse_course(root, 'UCSD.CSE141F15', 'CSE141', 'UCSD', 'fall', 2015, 'Porter', false)
+  # p "done with UCSD.CSE141F15"
+  # parse_course(root, 'UCSD.CSE141F16', 'CSE141', 'UCSD', 'fall', 2016, 'Porter', false)
+  # p "done with UCSD.CSE141F16"
+  # parse_course(root, 'UCSD.CSE141S17-1', 'CSE141', 'UCSD', 'spring', 2017, 'Porter', false)
+  # p "done with UCSD.CSE141S17-1"
+  # parse_course(root, 'UCSD.CSE141S17-2', 'CSE141', 'UCSD', 'spring', 2017, 'Porter', false)
+  # p "done with UCSD.CSE141S17-2"
 
 end
