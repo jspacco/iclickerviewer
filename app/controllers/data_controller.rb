@@ -40,7 +40,8 @@ class DataController < ApplicationController
     'qid', 'question_index', 'num_seconds', 'question_type',
     'num_correct_answers', 'num1st', 'num2nd',
     'num1st_correct', 'num2nd_correct',
-    'pct1st_correct', 'pct2nd_correct']
+    'pct1st_correct', 'pct2nd_correct',
+    'normalized_gain']
 
     csv = header.to_csv
     results.each do |row|
@@ -184,7 +185,8 @@ select c.id as course_id, c.folder_name as course_name,
 cp.id as class_id, cp.session_code as class_code,
 q.id as qid, q.question_index, q.num_seconds, q.question_type,
 qt.num_correct_answers, qt.num1st, qt.num2nd, qt.num1st_correct, qt.num2nd_correct,
-qt.pct1st_correct, qt.pct2nd_correct
+qt.pct1st_correct, qt.pct2nd_correct,
+(qt.pct2nd_correct::float - qt.pct1st_correct::float) / (1.0 - qt.pct1st_correct::float) as normalized_gain
 from courses c, class_periods cp, questions q, qtemp qt
 where c.id = cp.course_id
 and cp.id = q.class_period_id
