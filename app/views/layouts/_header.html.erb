@@ -11,7 +11,7 @@
         <% end %>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <% if defined?(@questions) %>
+        <% if defined?(@questions) && request.fullpath.starts_with?('/question') %>
           <li class="nav-item">
             <span class="navbar-text">
               <%= "Question #{@questions[0].question_index} (#{@questions[0].id}) "%>
