@@ -52,6 +52,16 @@ R NOTES
     aes(pct1st_correct, pct2nd_correct))
     + geom_point(aes(color = factor(course_name)), alpha = 0.1)
 
+* The := operator did not work for setting precision of a column:
+https://stackoverflow.com/questions/17093416/write-a-dataframe-with-different-number-of-decimal-places-per-column-in-r
+
+* For whatever reason, it seems impossible to use sink() inside a function in order to write something to a file. Instead, for xtable try using print:
+https://stackoverflow.com/questions/43263993/writing-to-file-with-xtable-in-r
+That's an hour of my life that I can never, ever get back.
+
+* To get rid of the fake/synthetic numbering R has for all rows of all data frames, use include.rownames = FALSE in the print call for xtable
+https://stackoverflow.com/questions/5430338/remove-data-frame-row-names-when-using-xtable
+
 OTHER NOTES
 ---
 * validators cannot be created through the rails model generator. So it's

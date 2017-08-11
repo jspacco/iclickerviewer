@@ -1,3 +1,5 @@
+library(xtable)
+
 course_hash = new.env()
 
 course_hash[["1"]] = "UT.CSC108F16-L0101"
@@ -31,4 +33,32 @@ course_hash[["28"]] = "UCSD.CSE141S17-2"
 
 getcourse = function(num) {
   return(course_hash[[toString(num)]])
+}
+
+# XXX sink doesn't seem to work this way for some reason
+xtableToFile = function(tab, filename) {
+  ff = file(filename)
+  sink(ff, type='output')
+  # xtable(tab)
+  tab
+  sink()
+  close(ff)
+}
+
+make_basic_table = function() {
+  table = "
+\\begin{table*}
+\\centering
+\\begin{tabular}{| l | l | l | l |}
+\\hline
+course & num. class periods & num clicker questions & avg. CQs / class \\\\
+"
+
+  paste(table, "
+\\end{tabular}
+\\caption{TODO: caption goes here}
+\\label{tab:basic_stats}
+\\end{table*}
+")
+  return(table)
 }
