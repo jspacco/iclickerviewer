@@ -3,7 +3,7 @@ library(data.table)
 library(Cairo)
 library(ggplot2)
 library(xtable)
-# require(plyr)
+require(plyr)
 
 outdir = '/Users/jspacco/projects/clickers/sigcse2018'
 mydir = function(path) {
@@ -29,15 +29,18 @@ TODO
   probably swap the functions)
 * anonymize instructors same way
 
+question_types are
+0: unknown
+1: quiz
+2: single
+3: paired
+4: non-MCQ
+5: error
+
 ---"
 
 filename = 'courses.csv'
 ses = read.csv(filename)
-
-#
-# Compute "normalized gain", which is the fraction of possible improvement
-# that we achieved.
-#
 
 
 # number of class periods per course
@@ -50,7 +53,7 @@ num_classes = setNames(
 # uses the number of questions per class periods per course
 avg_cqs = setNames(aggregate(qid ~ course_id,
   data = aggregate(qid ~ course_id * class_id, data = ses, FUN = length),
-  FUN = mean), c('course_id', 'av_cqs'))
+  FUN = mean), c('course_id', 'avg_cqs'))
 
 # total number of clicker questions per course
 num_cqs = setNames(
@@ -58,6 +61,8 @@ num_cqs = setNames(
   c('course_id', 'num_cqs'))
 
 #
+# Table #1
+# chats/table1.text
 # course, num class periods, num CQs, avg CQs
 # FIXME rename column and row headers
 #
@@ -69,33 +74,109 @@ tab1 = xtable(table1,
   align = "ccccr",
   latex.environments="center",
   digits = c(0, 0, 0, 0, 1),
-  format.args = list(format = c("d","d","d","f")))
+  format.args = list(format = c('d','d','d','f')))
 # send output to file using print, an amazing function
 print(tab1, file=mydir('charts/table1.tex'), include.rownames=FALSE)
 
 
-# get only the UIC courses (which have been tagged)
-uicses = ses[grep("UIC", ses$course_name),]
-
-
-
-
 #
-# TODO
+# Table #2
+# charts/table2.tex
+#
 # Table: How are we using the clickers?
-# course, total votes, paired votes, single votes, other clicker usage
+# course, paired, single, quiz, nonmcq, paired>1correct, single>1correct
+# TODO: caption, labels
 #
+# num paired questions per course
+num_paired = setNames(aggregate(qid ~ course_id,
+  data = subset(ses, question_type == 3 & num_correct_answers == 1),
+  FUN = length), c('course_id', 'num_paired'))
+# num single questions per course
+num_single = setNames(aggregate(qid ~ course_id,
+  data = subset(ses, question_type == 2 & num_correct_answers == 1),
+  FUN = length), c('course_id', 'num_single'))
+# num quiz questions per course
+num_quiz = setNames(aggregate(qid ~ course_id,
+  data = subset(ses, question_type == 1 & num_correct_answers == 1),
+  FUN = length), c('course_id', 'num_quiz'))
+# num non-MCQ
+num_nonmcq = setNames(aggregate(qid ~ course_id,
+  data = subset(ses, question_type == 4),
+  FUN = length), c('course_id', 'num_nonmcq'))
+# num paired questions, > 1 correct answer
+num_paired_gt1c = setNames(aggregate(qid ~ course_id,
+  data = subset(ses, question_type == 3 & num_correct_answers > 1),
+  FUN = length), c('course_id', 'num_paired_gt1c'))
+# num single questions, > 1 correct answer
+num_single_gt1c = setNames(aggregate(qid ~ course_id,
+  data = subset(ses, question_type == 2 & num_correct_answers > 1),
+  FUN = length), c('course_id', 'num_single_gt1c'))
+table2 = join_all(list(num_paired, num_single, num_quiz,
+  num_nonmcq, num_paired_gt1c, num_single_gt1c),
+  by = 'course_id',
+  type = 'full')
+
+tab2 = xtable(table2,
+  align = "cccccccc",
+  latex.environments="center",
+  digits = c(0, 0, 0, 0, 0, 0, 0, 0),
+  format.args = list(format = c('d','d','d','d','d','d','d')))
+# send output to file using print, an amazing function
+print(tab2, file=mydir('charts/table2.tex'), include.rownames=FALSE)
 
 #
-# TODO timing
+# TODO simple timing
 # how long for single votes?
 # how long for 1st and 2nd votes?
+# how long for quiz votes, nonmcq, and >1correct answer?
+avg_paired = setNames(aggregate(num_seconds ~ course_id,
+  data = subset(ses, question_type == 3 & num_correct_answers == 1),
+  FUN = mean), c('course_id', 'avg_paired'))
+# num single questions per course
+avg_single = setNames(aggregate(num_seconds ~ course_id,
+  data = subset(ses, question_type == 2 & num_correct_answers == 1),
+  FUN = mean), c('course_id', 'avg_single'))
+# num quiz questions per course
+avg_quiz = setNames(aggregate(num_seconds ~ course_id,
+  data = subset(ses, question_type == 1 & num_correct_answers == 1),
+  FUN = mean), c('course_id', 'avg_quiz'))
+# num non-MCQ
+avg_nonmcq = setNames(aggregate(num_seconds ~ course_id,
+  data = subset(ses, question_type == 4),
+  FUN = mean), c('course_id', 'avg_nonmcq'))
+# num paired questions, > 1 correct answer
+avg_paired_gt1c = setNames(aggregate(num_seconds ~ course_id,
+  data = subset(ses, question_type == 3 & num_correct_answers > 1),
+  FUN = mean), c('course_id', 'avg_paired_gt1c'))
+# num single questions, > 1 correct answer
+avg_single_gt1c = setNames(aggregate(num_seconds ~ course_id,
+  data = subset(ses, question_type == 2 & num_correct_answers > 1),
+  FUN = mean), c('course_id', 'avg_single_gt1c'))
+table3 = join_all(list(avg_paired, avg_single, avg_quiz,
+  avg_nonmcq, avg_paired_gt1c, avg_single_gt1c),
+  by = 'course_id',
+  type = 'full')
+
+tab3 = xtable(table3,
+  align = "cccccccc",
+  latex.environments="center",
+  digits = c(0, 0, 1, 1, 1, 1, 1, 1),
+  format.args = list(format = c('d','d','d','d','d','d','d')))
+# send output to file using print, an amazing function
+print(tab3, file=mydir('charts/table3.tex'), include.rownames=FALSE)
+
+
+
+#
+# TODO advanced timing
 # difficulty vs time?
-# difficulty vs course level (i.e. cs-1, architecture, etc)
+# difficulty vs course level (i.e. cs-1, architecture, etc)?
+#
 #
 
 #
-# TODO plot CQ movements
+# TODO plot CQ movements on grid between votes
+# can we see a visual pattern for good and bad questions?
 #
 
 #
@@ -104,6 +185,9 @@ uicses = ses[grep("UIC", ses$course_name),]
 # questions with space for improvement that DO improve
 # fraction of easy, medium, and hard questions
 #
+
+# get only the UIC courses (which have been tagged)
+uicses = ses[grep("UIC", ses$course_name),]
 
 
 # OK, R is a terrible language and using "+" to populate a scatterplot with points
