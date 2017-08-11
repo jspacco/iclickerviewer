@@ -69,6 +69,11 @@ HEROKU
 * local postgres:
   create role iclickerviewer with createdb login password iclickerviewer;
 
+* postgres is super weird about shell variables like PGUSER and .pgpass. The passwords in .pgpass are actually just there to be matched. These are NOT settings like with a .my.cnf file. So the default is always to connect with the currently logged in user (i.e. jspacco), not with the user I want, which is iclickerviewer. You can't set a database user or a database in .pgpass, just passwords to match.
+    * Also, PGUSER also does not seem to make any difference. The only way to connect with a user other than the one who is logged in (i.e. the unix username jspacco) is to set --user on the command line with psql. This is not what the documentation seems to suggest. Ugh.
+    * to start/stop the server:
+    sudo su - postgres -c "/Library/PostgreSQL/9.6/bin/pg_ctl -D /Library/PostgreSQL/9.6/data stop"
+
 * heroku pg:info
   * heroku pg:credentials postgresql-parallel-76813
   * heroku pg:reset
@@ -85,6 +90,10 @@ HEROKU
   the primary keys are needed (i.e. courses, then sessions which ref courses,
   then questions which ref sessions, then votes which ref questions).
   * could be postgres v9.4 (local) vs postgres v9.6 (heroku)
+
+* when pulling Heroku db to local:
+update schema_migrations set version = '20170706214116' where version = '20170706214115';
+This is because I ended up changing one of the migration numbers for some reason earlier. I can't remember why I changed the migration number, and I have no idea why it works on heroku but doesn't work locally. It's probably the right move to get these synched up again so that I can just pull the heroku db without doing anything else.
 
 * Check rails config:
   RAILS_ENV=production rake about
