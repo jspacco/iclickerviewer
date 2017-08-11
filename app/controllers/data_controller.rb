@@ -45,6 +45,14 @@ class DataController < ApplicationController
 
     csv = header.to_csv
     results.each do |row|
+      # Compute normalized gain. It's easier to compute here than in the
+      #   database with SQL.
+      row['normalized_gain'] = -1
+      if row['question_type'] == 3
+        pct1st = row['pct1st_correct'].to_f
+        pct2nd = row['pct2nd_correct'].to_f
+        row['normalized_gain'] = (pct2nd - pct1st) / (1 - pct1st)
+      end
       # Holy crap, I'm combing the splat (*) operator with
       #   the map method and a block!
       csv += row.values_at(*header).map{|s| s.to_s.strip}.to_csv
@@ -185,8 +193,7 @@ select c.id as course_id, c.folder_name as course_name,
 cp.id as class_id, cp.session_code as class_code,
 q.id as qid, q.question_index, q.num_seconds, q.question_type,
 qt.num_correct_answers, qt.num1st, qt.num2nd, qt.num1st_correct, qt.num2nd_correct,
-qt.pct1st_correct, qt.pct2nd_correct,
-(qt.pct2nd_correct::float - qt.pct1st_correct::float) / (1.0 - qt.pct1st_correct::float) as normalized_gain
+qt.pct1st_correct, qt.pct2nd_correct
 from courses c, class_periods cp, questions q, qtemp qt
 where c.id = cp.course_id
 and cp.id = q.class_period_id
