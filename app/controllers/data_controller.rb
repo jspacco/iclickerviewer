@@ -36,7 +36,7 @@ class DataController < ApplicationController
     ActiveRecord::Base.connection.exec_query(queries[5])
 
     # https://stackoverflow.com/questions/39066365/smartly-converting-array-of-hashes-to-csv-in-ruby
-    header = ['course_id', 'course_name', 'class_id', 'class_code',
+    header = ['course_id', 'course_name', 'instructor', 'class_id', 'class_code',
     'qid', 'question_index', 'num_seconds', 'question_type',
     'num_correct_answers', 'num1st', 'num2nd',
     'num1st_correct', 'num2nd_correct',
@@ -189,7 +189,7 @@ as num1st_correct,
 from questions q1
 where q1.question_type = 4;
 
-select c.id as course_id, c.folder_name as course_name,
+select c.id as course_id, c.folder_name as course_name, c.instructor,
 cp.id as class_id, cp.session_code as class_code,
 q.id as qid, q.question_index, q.num_seconds, q.question_type,
 qt.num_correct_answers, qt.num1st, qt.num2nd, qt.num1st_correct, qt.num2nd_correct,
