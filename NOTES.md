@@ -62,6 +62,14 @@ That's an hour of my life that I can never, ever get back.
 * To get rid of the fake/synthetic numbering R has for all rows of all data frames, use include.rownames = FALSE in the print call for xtable
 https://stackoverflow.com/questions/5430338/remove-data-frame-row-names-when-using-xtable
 
+* Trying to map a lookup function that uses an env (basically a hash or map) to map course_ids to a string, and put this into each table I'm generating. This will be useful for anonymizing the paper. But apply, lapply, etc are annoying as shit to work with.
+https://stackoverflow.com/questions/18503177/r-apply-function-on-specific-dataframe-columns
+  * Son of a bitch! I can't seem to apply/lapply toString to an integer in the same way as other functions that just change the int (like function(x) x+1). No idea why.
+
+* I have used R on multiple projects and I still don't understand the difference between x[1] and x[,1]. R is a terrible language.
+
+* I don't know the differences between apply, lapply, and sapply. To map a function that looks up values and returns strings and use it to look up column names, we have to use apply, not lapply. I honestly have no idea why.
+
 OTHER NOTES
 ---
 * validators cannot be created through the rails model generator. So it's

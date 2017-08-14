@@ -63,7 +63,8 @@ num_cqs = setNames(
 #
 # Table #1
 # chats/table1.text
-# course, num class periods, num CQs, avg CQs
+#
+# XXX Basic stats: course, num class periods, num CQs, avg CQs
 # FIXME rename column and row headers
 #
 # merge 3 frames together
@@ -74,18 +75,23 @@ tab1 = xtable(table1,
   align = "ccccr",
   latex.environments="center",
   digits = c(0, 0, 0, 0, 1),
-  format.args = list(format = c('d','d','d','f')))
+  format.args = list(format = c('d','d','d','f')),
+  caption = "For each class, the number of class periods,
+the total number of clicker quesions,
+and the average number of clicker questions per class period.",
+  label = "tab:basic-class-stats"
+  )
 # send output to file using print, an amazing function
-print(tab1, file=mydir('charts/table1.tex'), include.rownames=FALSE)
+print(tab1, file=mydir('charts/table1.tex'),
+  include.rownames=FALSE)
 
 
 #
 # Table #2
 # charts/table2.tex
 #
-# Table: How are we using the clickers?
+# XXX Table: How are we using the clickers?
 # course, paired, single, quiz, nonmcq, paired>1correct, single>1correct
-# TODO: caption, labels
 #
 # num paired questions per course
 num_paired = setNames(aggregate(qid ~ course_id,
@@ -116,13 +122,28 @@ table2 = join_all(list(num_paired, num_single, num_quiz,
   by = 'course_id',
   type = 'full')
 
+# course, paired, single, quiz, nonmcq, paired>1correct, single>1correct
 tab2 = xtable(table2,
   align = "cccccccc",
   latex.environments="center",
   digits = c(0, 0, 0, 0, 0, 0, 0, 0),
-  format.args = list(format = c('d','d','d','d','d','d','d')))
+  format.args = list(format = c('d','d','d','d','d','d','d')),
+  caption = "How are each faculty using the clickers?
+For each class, the number of paired and single clicker questions with one answer,
+the number of times the clickers were used for in-class quizzes,
+the number of uses of the clicker for an in-class exercise that was not
+multiple choice (such as using the clickers as a timer for an ungraded
+in-class exercise, or a 'confidence vote'), and the number of paired and
+single clicer questions with more than one correct answer.",
+  label = "tab:basic-question-stats"
+)
 # send output to file using print, an amazing function
-print(tab2, file=mydir('charts/table2.tex'), include.rownames=FALSE)
+print(tab2,
+  file=mydir('charts/table2.tex'),
+  include.rownames=FALSE,
+  type = 'latex',
+  floating = 'TRUE',
+  floating.environment = "table*")
 
 #
 # TODO simple timing
@@ -163,8 +184,11 @@ tab3 = xtable(table3,
   digits = c(0, 0, 1, 1, 1, 1, 1, 1),
   format.args = list(format = c('d','d','d','d','d','d','d')))
 # send output to file using print, an amazing function
-print(tab3, file=mydir('charts/table3.tex'), include.rownames=FALSE)
-
+print(tab3, file=mydir('charts/table3.tex'),
+  include.rownames=FALSE,
+  type = 'latex',
+  floating = 'TRUE',
+  floating.environment = "table*")
 
 
 #

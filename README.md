@@ -1,6 +1,8 @@
 # README
 
 ## TODO (code)
+* FIXME: multiple sessions from the same day are actually the same class period; happens for Toronto a few times and this messes up tracking paired questions if the questions straddle this artificial break
+* TODO: It looks like some questions are actually tripled, not just paired
 * TODO: upload images to s3, and set stupid permissions correctly
   * http://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjectUsingRuby.html
 * TODO: figure out how to use rails test
