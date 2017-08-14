@@ -37,10 +37,11 @@ class DataController < ApplicationController
 
     # https://stackoverflow.com/questions/39066365/smartly-converting-array-of-hashes-to-csv-in-ruby
     header = ['course_id', 'course_name', 'instructor', 'class_id', 'class_code',
-    'qid', 'question_index', 'num_seconds', 'question_type',
+    'qid', 'question_index', 'question_type',
     'num_correct_answers', 'num1st', 'num2nd',
     'num1st_correct', 'num2nd_correct',
     'pct1st_correct', 'pct2nd_correct',
+    'seconds_1st', 'seconds_2nd',
     'normalized_gain']
 
     csv = header.to_csv
@@ -74,6 +75,16 @@ private
     }
   end
 
+  # ------------------------------------------
+  # Sort of a hack. I couldn't figure out how to make the sql query
+  # a private variable, so I'm making the SQL query a helper method that
+  # just returns the sql query string.
+  # I really want the sql query to be one big string, and to live in the same
+  # file as the db code that invokes it, so that changing them together
+  # is simlper and easier.
+  # FIXME Figure out how to make this an actual variable.
+  # XXX This sql query cannot have comments with semicolons in it! We are
+  #   splitting this query as a string using the semicolons as delimiters.
   def csvsql
 return %q{
 -- delete the temp table, if it exists
@@ -116,7 +127,9 @@ as pct1st_correct,
   q2.response_d * q2.correct_d +
   q2.response_e * q2.correct_e)::float /
   (q2.response_a + q2.response_b + q2.response_c + q2.response_d + q2.response_e), '0.99')
-as pct2nd_correct
+as pct2nd_correct,
+q1.num_seconds as seconds_1st,
+q2.num_seconds as seconds_2nd
 from questions q1, questions q2
 where q1.class_period_id = q2.class_period_id
 and q1.question_type = 3
@@ -156,7 +169,9 @@ as num1st_correct,
   q1.response_e * q1.correct_e)::float /
   (q1.response_a + q1.response_b + q1.response_c + q1.response_d + q1.response_e), '0.99')
 as pct1st_correct,
--1 as pct2nd_correct
+-1 as pct2nd_correct,
+q1.num_seconds as seconds_1st,
+-1 as seconds_2nd
 from questions q1
 where q1.question_type in (1, 2)
 -- at least one response to prevent divide by zero
@@ -185,15 +200,18 @@ as num1st,
 as num1st_correct,
 -1 as num2nd_correct,
 -1 as pct1st_correct,
--1 as pct2nd_correct
+-1 as pct2nd_correct,
+q1.num_seconds as seconds_1st,
+-1 as seconds_2nd
 from questions q1
 where q1.question_type = 4;
 
 select c.id as course_id, c.folder_name as course_name, c.instructor,
 cp.id as class_id, cp.session_code as class_code,
-q.id as qid, q.question_index, q.num_seconds, q.question_type,
+q.id as qid, q.question_index, q.question_type,
 qt.num_correct_answers, qt.num1st, qt.num2nd, qt.num1st_correct, qt.num2nd_correct,
-qt.pct1st_correct, qt.pct2nd_correct
+qt.pct1st_correct, qt.pct2nd_correct,
+qt.seconds_1st, qt.seconds_2nd
 from courses c, class_periods cp, questions q, qtemp qt
 where c.id = cp.course_id
 and cp.id = q.class_period_id

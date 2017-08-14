@@ -70,6 +70,10 @@ https://stackoverflow.com/questions/18503177/r-apply-function-on-specific-datafr
 
 * I don't know the differences between apply, lapply, and sapply. To map a function that looks up values and returns strings and use it to look up column names, we have to use apply, not lapply. I honestly have no idea why.
 
+* checking if a vector contains a value:
+https://stackoverflow.com/questions/1169248/r-function-for-testing-if-a-vector-contains-a-given-element
+  Also works with columns of a data frame, i.e. 2 %in% ses$course_id or match(2, ses$course_id) > 0 (or check that it's not NA; didn't fully check match)
+
 OTHER NOTES
 ---
 * validators cannot be created through the rails model generator. So it's
