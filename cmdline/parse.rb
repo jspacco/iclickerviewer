@@ -3,15 +3,13 @@ require 'rubygems'
 require 'nokogiri'
 require 'date'
 require 'logger'
+require_relative 'command_line'
 
-# FIXME For some reason, we need to explicitly use DATABASE_URL in order to
-#   connect to Heroku. Setting DATABASE_URL is supposed to do this automagically,
-#   but for some reason it doesn't. Note that we are running command line
-#   and connecting to Heroku DB like this:
-#   DATABASE_URL=$(heroku config:get DATABASE_URL -a iclickerviewer) rails runner cmdline/parse.rb
-if ENV.has_key?('DATABASE_URL')
-  ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
-end
+#
+# File containing clicker IDs that should be ignored
+# FIXME should be configurable from command line or ENV
+#
+$CLICKER_IGNORE = 'cmdline/clicker_ignore.yml'
 
 # Set up a logger for command-line logging.
 $logger = Logger.new(STDOUT)
@@ -20,11 +18,13 @@ $logger.level = :info
 $logger.datetime_format = '%Y-%m-%d %H:%M:%S'
 
 def get_resp(s)
-  # Lots of formats the clickers can use to store this information:
+  # Lots of formats the clickers can use to store this information!
+  # No idea why they didn't use two fields. Formats so far include:
   # 2,12.00
   # 2|12.00
   # 96,0
-  m = s.match(/(\d+)[^\d]\d+.*/)
+  # 10||25.0
+  m = s.match(/(\d+)[^\d]+\d+.*/)
   return m.captures[0].to_i
 end
 
@@ -53,7 +53,7 @@ def get_seconds(time)
   return hours.to_i * 3600 + minutes.to_i * 60 + seconds.to_i
 end
 
-def parse_XML(filename, course, parse_votes)
+def parse_XML(filename, course, save_votes, ignore = Array.new)
   # We should ignore these keys:
   # tscr, anspt
   page = Nokogiri::XML(open(filename))
@@ -143,12 +143,41 @@ def parse_XML(filename, course, parse_votes)
         correct_e: correct_e,
         is_deleted: is_deleted)
       else
-        # TODO How do we handle questions that already exist? Update everything
-        #   except for the correct answers?
+        # We are updating an existing question. This data may have been tagged.
+        # XXX DO NOT UPDATE CORRECT ANSWERS! Only update other fields.
+        $logger.debug("updating #{question.id} in DB before
+        #{question.response_a} #{question.response_b}
+        #{question.response_c} #{question.response_d}
+        #{question.response_e}".gsub(/\s+/, ' '))
+
+        $logger.debug("just read from file before
+        #{response_a} #{response_b} #{response_c} #{response_d} #{response_e}
+        ".gsub(/\s+/, ' '))
+
+        # XXX The only fields it makes sense to update right now are the
+        #   response fields. If we discover additional data format
+        #   inconsistencies, we will take those into account.
+        Question.update(question.id,
+          :response_a => response_a,
+          :response_b => response_b,
+          :response_c => response_c,
+          :response_d => response_d,
+          :response_e => response_e)
+        # Remember to reload the question from the DB after an update
+        question = Question.find_by(id: question.id)
+        $logger.debug("after updating #{question.id} in DB
+        after #{question.response_a} #{question.response_b} #{question.response_c}
+        #{question.response_d} #{question.response_e}".gsub(/\s+/, ' '))
       end
 
-      # Should we parse the votes, or skip parsing votes?
-      if parse_votes
+      # Only parse the votes if we are storing the votes, or if we have
+      #   at least one clicker ID that needs to be excluded from the totals.
+      if ignore.length > 0 or save_votes
+        ignore_a = 0
+        ignore_b = 0
+        ignore_c = 0
+        ignore_d = 0
+        ignore_e = 0
         prob.css('v').each do |vote|
           clicker_id = vote['id']
           loaned_clicker_to = get_or_nil(vote['lto'])
@@ -163,21 +192,57 @@ def parse_XML(filename, course, parse_votes)
           $logger.debug("%d %s %s %s %s %s" % [num_attempts, clicker_id,
             first_response, response, first_answer_time, total_time])
 
-          vote = Vote.find_by(clicker_id: clicker_id, question_id: question.id)
-          if vote == nil
-            vote = Vote.find_or_create_by(clicker_id: clicker_id,
-              question: question, num_attempts: num_attempts,
-              first_answer_time: first_answer_time, total_time: total_time,
-              first_response: first_response, response: response,
-              loaned_clicker_to: loaned_clicker_to)
+          if ignore.include?(clicker_id.upcase) || ignore.include?(clicker_id.upcase.gsub(/\#/, ''))
+            case response
+            when 'A'
+              ignore_a += 1
+            when 'B'
+              ignore_b += 1
+            when 'C'
+              ignore_c += 1
+            when 'D'
+              ignore_d += 1
+            when 'E'
+              ignore_e += 1
+            when nil
+              $logger.info("No response for #{clicker_id} for #{question.name} in #{class_period.session_code}")
+            else
+              $logger.error("Unknown clicker response for clicker #{clicker_id}: '#{response}' "+
+                "for #{question.name} #{question.question_index} in #{class_period.session_code}")
+            end
           end
+
+          # Only include votes if we are storing the votes
+          if save_votes
+            vote = Vote.find_by(clicker_id: clicker_id, question_id: question.id)
+            if vote == nil
+              vote = Vote.find_or_create_by(clicker_id: clicker_id,
+                question: question, num_attempts: num_attempts,
+                first_answer_time: first_answer_time, total_time: total_time,
+                first_response: first_response, response: response,
+                loaned_clicker_to: loaned_clicker_to)
+            end
+          end
+        end
+        # Update the question to ignore responses from clickers that
+        #   we have requested to ignore. These clickers might be
+        #   students who did not give consent to use their data, or who
+        #   were under 18 when they took the course. This depends on the IRB.
+        if ignore.length > 0 &&
+            ignore_a + ignore_b + ignore_c + ignore_d + ignore_e > 0
+          Question.update(question.id,
+            response_a: question.response_a - ignore_a,
+            response_b: question.response_b - ignore_b,
+            response_c: question.response_c - ignore_c,
+            response_d: question.response_d - ignore_d,
+            response_e: question.response_e - ignore_e)
         end
       end
     end
   end
 end
 
-def parse_course(root, folder, name, institution, term, year, instructor, parse_votes = true)
+def parse_course(root, folder, name, institution, term, year, instructor, save_votes = true, clicker_ignore_file = $CLICKER_IGNORE)
   # Create the course if it doesn't exist
   course = Course.find_by(folder_name: folder)
   if course == nil
@@ -188,80 +253,17 @@ def parse_course(root, folder, name, institution, term, year, instructor, parse_
   # TODO: copy the Images folder to AWS S3
   # http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/S3.html
 
-  # Iterate through the sessions
-  session_path = "%s/%s/SessionData/*.xml" % [root, folder]
-  Dir.glob(session_path) do |session_file|
-    parse_XML(session_file, course, parse_votes)
+  ignore_hash = YAML.load_file(clicker_ignore_file)
+  ignore = Set.new
+  if ignore_hash.has_key? folder
+    ignore = Set.new(ignore_hash[folder])
   end
-end
+  $logger.info("We will ignore these clicker IDs #{ignore.inspect}")
+  # Iterate through the sessions
+  session_path = "#{root}/#{folder}/SessionData/*.xml"
+  Dir.glob(session_path) do |session_file|
+    parse_XML(session_file, course, save_votes, ignore)
+  end
 
-if __FILE__ == $0
-  root = '/Users/jspacco/projects/clickers/data/'
-
-  # parse_course(root, 'UT.CSC108F16-L0101', 'CS108', 'Toronto', 'fall', 2016, 'Tong')
-  # p "done with UT.CSC108F16-L0101"
-  # parse_course(root, 'UT.CSC108F16-L0102', 'CS108', 'Toronto', 'fall', 2016, 'Petersen')
-  # p "done with UT.CSC108F16-L0102"
-  # parse_course(root, 'UT.CSC108F16-L0104', 'CS108', 'Toronto', 'fall', 2016, 'Dema')
-  # p "done with UT.CSC108F16-L0104"
-  #
-  # parse_course(root, 'KnoxCS141F16-1', 'CS141', 'Knox', 'fall', 2016, 'Budach')
-  # p "done with KnoxCS141F16-1"
-  # parse_course(root, 'KnoxCS141W17-2', 'CS141', 'Knox', 'winter', 2017, 'Spacco')
-  # p "done with KnoxCS141W17-2"
-  #
-  # parse_course(root, 'UIC.CS111S16', 'CS111', 'UIC', 'spring', 2016, 'Taylor')
-  # p "done with UIC.CS111S16"
-  #
-  # parse_course(root, 'UIC.CS261S17', 'CS261', 'UIC', 'spring', 2017, 'Taylor')
-  # p "done with UIC.CS261S17"
-  #
-  # parse_course(root, 'UIC.CS361F15', 'CS361', 'UIC', 'fall', 2015, 'Taylor')
-  # p "done with UIC.CS361F15"
-  # parse_course(root, 'UIC.CS361S16', 'CS361', 'UIC', 'spring', 2016, 'Taylor')
-  # p "done with UIC.CS361S16"
-  # parse_course(root, 'UIC.CS361F16', 'CS361', 'UIC', 'fall', 2016, 'Taylor')
-  # p "done with UIC.CS361F16"
-  # parse_course(root, 'UIC.CS361S17', 'CS361', 'UIC', 'spring', 2017, 'Taylor')
-  # p "done with UIC.CS361S17"
-  #
-  # parse_course(root, 'UIC.CS362F16', 'CS362', 'UIC', 'fall', 2016, 'Taylor')
-  # p "done with UIC.CS362F16"
-  #
-  # parse_course(root, 'UIC.CS385S16', 'CS385', 'UIC', 'spring', 2016, 'Taylor')
-  # p "done with UIC.CS385S16"
-  # parse_course(root, 'UIC.CS385F16', 'CS385', 'UIC', 'fall', 2016, 'Taylor')
-  # p "done with UIC.CS385F16"
-  #
-  # parse_course(root, 'UIC.CS450F15', 'CS450', 'UIC', 'fall', 2015, 'Taylor')
-  # p "done with UIC.CS450F15"
-  # parse_course(root, 'UIC.CS450S17', 'CS450', 'UIC', 'spring', 2017, 'Taylor')
-  # p "done with UIC.CS450S17"
-
-  # parse_course(root, 'KnoxCS142W15', 'CS142', 'Knox', 'winter', 2015, 'Bunde', false)
-  # p "done with KnoxCS142W15"
-  # parse_course(root, 'KnoxCS142S15', 'CS142', 'Knox', 'spring', 2015, 'Bunde', false)
-  # p "done with KnoxCS142S15"
-  # parse_course(root, 'KnoxCS142W16', 'CS142', 'Knox', 'winter', 2016, 'Bunde', false)
-  # p "done with KnoxCS142W16"
-  # parse_course(root, 'KnoxCS142S16', 'CS142', 'Knox', 'spring', 2016, 'Bunde', false)
-  # p "done with KnoxCS142S16"
-  # parse_course(root, 'KnoxCS142W17', 'CS142', 'Knox', 'winter', 2017, 'Bunde', false)
-  # p "done with KnoxCS142W17"
-  # parse_course(root, 'KnoxCS142S17', 'CS142', 'Knox', 'spring', 2017, 'Bunde', false)
-  # p "done with KnoxCS142S17"
-
-  # parse_course(root, 'UCSD.CSE141F14-A', 'CSE141', 'UCSD', 'fall', 2014, 'Porter', false)
-  # p "done with UCSD.CSE141F14-A"
-  # parse_course(root, 'UCSD.CSE141F14-B', 'CSE141', 'UCSD', 'fall', 2014, 'Porter', false)
-  # p "done with UCSD.CSE141F14-B"
-  # parse_course(root, 'UCSD.CSE141F15', 'CSE141', 'UCSD', 'fall', 2015, 'Porter', false)
-  # p "done with UCSD.CSE141F15"
-  # parse_course(root, 'UCSD.CSE141F16', 'CSE141', 'UCSD', 'fall', 2016, 'Porter', false)
-  # p "done with UCSD.CSE141F16"
-  # parse_course(root, 'UCSD.CSE141S17-1', 'CSE141', 'UCSD', 'spring', 2017, 'Porter', false)
-  # p "done with UCSD.CSE141S17-1"
-  # parse_course(root, 'UCSD.CSE141S17-2', 'CSE141', 'UCSD', 'spring', 2017, 'Porter', false)
-  # p "done with UCSD.CSE141S17-2"
-
+  $logger.info("done with #{folder}")
 end

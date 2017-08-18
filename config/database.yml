@@ -17,7 +17,8 @@ development:
   <<: *default
 
 # Full database includes data on votes, which we cannot upload
-# to Heroku without having to pay for DB usage.
+# to Heroku without having to pay for DB usage. And our IRB application
+# was only for aggregate data.
 full:
   adapter: postgresql
   encoding: unicode
