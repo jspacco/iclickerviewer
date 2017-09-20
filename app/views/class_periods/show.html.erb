@@ -239,20 +239,19 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
             <%= mq.matching_question_id %>
           </td>
           <td>
-            <%# identical:
+            <%#
 HACK: we pass things like 563-1 to mean that the matching question id
 should have its match_type changed to 1 (match_type 0 means identical,
 while match_type 1 means modified).
              %>
-            <%= radio_button_tag
-              "questions[#{q.object.id}][edit_matching_questions][]",
+            <%# identical: %>
+            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][]",
               "#{mq.matching_question_id}-0"
             %>
           </td>
           <td>
             <%# modified %>
-            <%= radio_button_tag
-              "questions[#{q.object.id}][edit_matching_questions][]",
+            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][]",
               "#{mq.matching_question_id}-1"
             %>
           </td>
