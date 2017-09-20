@@ -211,83 +211,80 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     <td> <%= question.num_seconds %> </td>
     <td> <%= correct_pct(question) %> </td>
     <td>
-      <%# Listing the IDs of the current matching questions, with a checkbox that
-        can delete each one. Was not able to figure out how to use the check_box
-        method for things like this, since we would be deleting a self-referential
-        association through a join table.
+      <%#
+      Compact table for adding, deleting, and editing matching_questions.
+      We have a number of hacks in here because the default Ruby mechanisms
+      don't really match, or I don't know how to use them well enough.
 
-        Also needed to specify the id of the checkbox explicitly, which is ungly,
-        because the check_box_tag method uses the name for both name and id and
-        I wanted a clickable label for each checkbox. There may be a better way
-        to do this.
+      For add, we enter the question ID in a textbox, and
+       use the radio buttons to set the match_type.
 
-        TODO: Only matching_questions where is_match == 1!
+      For edits, we have radio buttons to set the match_type for each existing
+        match already in the database.
+
+      For deletes, we get a list of matching_question_ids, and we remove them all.
+
+      TODO: Mark the radio buttons for existing matches with the match_type
       %>
-      <%# if MatchingQuestion.where(question_id: q.object.id, is_match: 1).length > 0 %>
-        <table border="1">
-          <tr align="center">
-            <th> qid </th>
-            <th> identical </th>
-            <th> modified </th>
-            <th> delete? </th>
-          </tr>
-          <% MatchingQuestion.where(question_id: q.object.id, is_match: 1).each do |mq| %>
-          <tr align="center">
-            <td>
-              <%= mq.matching_question_id %>
-            </td>
-            <td>
-              <%# identical:
+      <table border="1">
+        <tr align="center">
+          <th> qid </th>
+          <th> identical </th>
+          <th> modified </th>
+          <th> delete? </th>
+        </tr>
+        <% MatchingQuestion.where(question_id: q.object.id, is_match: 1).each do |mq| %>
+        <tr align="center">
+          <td>
+            <%= mq.matching_question_id %>
+          </td>
+          <td>
+            <%# identical:
 HACK: we pass things like 563-1 to mean that the matching question id
 should have its match_type changed to 1 (match_type 0 means identical,
 while match_type 1 means modified).
-               %>
-              <%= radio_button_tag
-                "questions[#{q.object.id}][edit_matching_questions][]",
-                "#{mq.matching_question_id}-0"
-              %>
-            </td>
-            <td>
-              <%# modified %>
-              <%= radio_button_tag
-                "questions[#{q.object.id}][edit_matching_questions][]",
-                "#{mq.matching_question_id}-1"
-              %>
-            </td>
-            <td>
-              <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
-                mq.matching_question_id, false,
-                {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
-              <%# label_tag "questions[#{q.object.id}][delete_matching_questions][][#{mq.matching_question_id}]",
-                mq.matching_question_id %>
-            </td>
-          </tr>
-          <% end %>
-          <!--
-          Last row of the table is for the UI to add a new matching question.
-          -->
-          <tr align="center">
-            <td>
-              <%= q.text_field :matching_questions, :value => '',
-                :size => '5',
-                :placeholder => 'add' %>
-            </td>
-            <td>
-              <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical %>
-            </td>
-            <td>
-              <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
-            </td>
-          </tr>
-        </table>
-      <%# end %>
+             %>
+            <%= radio_button_tag
+              "questions[#{q.object.id}][edit_matching_questions][]",
+              "#{mq.matching_question_id}-0"
+            %>
+          </td>
+          <td>
+            <%# modified %>
+            <%= radio_button_tag
+              "questions[#{q.object.id}][edit_matching_questions][]",
+              "#{mq.matching_question_id}-1"
+            %>
+          </td>
+          <td>
+            <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
+              mq.matching_question_id, false,
+              {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
+            <%# label_tag "questions[#{q.object.id}][delete_matching_questions][][#{mq.matching_question_id}]",
+              mq.matching_question_id %>
+          </td>
+        </tr>
+        <% end %>
+        <!--
+        Last row of the table is for the UI to add a new matching question.
+        -->
+        <tr align="center">
+          <td>
+            <%= q.text_field :matching_questions, :value => '',
+              :size => '5',
+              :placeholder => 'add' %>
+          </td>
+          <td>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical %>
+          </td>
+          <td>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
+          </td>
+        </tr>
+      </table>
       <%= button_tag "use quick preview",
       { :type => "button",
         :onclick => "use_quick_preview(#{q.object.id})" } %>
-
-      <%# "Check to delete<br><br>".html_safe if MatchingQuestion.where(
-        question_id: q.object.id, is_match: 1).length > 0 %>
-
     </td>
     <td> <%= @matches[question.id] %> </td>
     <td> <%= @possible_matches[question.id] %> </td>
