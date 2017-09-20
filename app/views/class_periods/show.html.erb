@@ -238,29 +238,32 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <td>
             <%= mq.matching_question_id %>
           </td>
+
+          <% if mq.match_type == 0 %>
+          <td class="bghicol">
+          <% else %>
           <td>
-            <%#
-HACK: we pass things like 563-1 to mean that the matching question id
-should have its match_type changed to 1 (match_type 0 means identical,
-while match_type 1 means modified).
-             %>
+          <% end %>
             <%# identical: %>
-            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][]",
-              "#{mq.matching_question_id}-0"
+            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
+              "0"
             %>
           </td>
+
+          <% if mq.match_type == 1 %>
+          <td class="bghicol">
+          <% else %>
           <td>
+          <% end %>
             <%# modified %>
-            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][]",
-              "#{mq.matching_question_id}-1"
+            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
+              "1"
             %>
           </td>
           <td>
             <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
               mq.matching_question_id, false,
               {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
-            <%# label_tag "questions[#{q.object.id}][delete_matching_questions][][#{mq.matching_question_id}]",
-              mq.matching_question_id %>
           </td>
         </tr>
         <% end %>

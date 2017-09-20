@@ -99,6 +99,11 @@ td.todo {
   background-color: #cccccc;
 }
 
+/* For highlighting a particular column */
+td.bghicol {
+  background-color: #cccccc;
+}
+
 // TODO: use Bootstrap's tooltips instead of our own
 // Tooltips
 .mytooltip {
