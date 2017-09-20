@@ -223,26 +223,38 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
         TODO: Only matching_questions where is_match == 1!
       %>
-      <% if MatchingQuestion.where(question_id: q.object.id, is_match: 1).length > 0 %>
+      <%# if MatchingQuestion.where(question_id: q.object.id, is_match: 1).length > 0 %>
         <table border="1">
-          <tr>
-            <th> qid </td>
+          <tr align="center">
+            <th> qid </th>
             <th> identical </th>
             <th> modified </th>
             <th> delete? </th>
           </tr>
           <% MatchingQuestion.where(question_id: q.object.id, is_match: 1).each do |mq| %>
-          <tr>
+          <tr align="center">
             <td>
               <%= mq.matching_question_id %>
             </td>
-            <td align="center">
-              <%= radio_button_tag "questions[#{mq.matching_question_id}][match_type]", :identical %>
+            <td>
+              <%# identical:
+HACK: we pass things like 563-1 to mean that the matching question id
+should have its match_type changed to 1 (match_type 0 means identical,
+while match_type 1 means modified).
+               %>
+              <%= radio_button_tag
+                "questions[#{q.object.id}][edit_matching_questions][]",
+                "#{mq.matching_question_id}-0"
+              %>
             </td>
-            <td align="center">
-              <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
+            <td>
+              <%# modified %>
+              <%= radio_button_tag
+                "questions[#{q.object.id}][edit_matching_questions][]",
+                "#{mq.matching_question_id}-1"
+              %>
             </td>
-            <td align="center">
+            <td>
               <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
                 mq.matching_question_id, false,
                 {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
@@ -251,23 +263,31 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
             </td>
           </tr>
           <% end %>
+          <!--
+          Last row of the table is for the UI to add a new matching question.
+          -->
+          <tr align="center">
+            <td>
+              <%= q.text_field :matching_questions, :value => '',
+                :size => '5',
+                :placeholder => 'add' %>
+            </td>
+            <td>
+              <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical %>
+            </td>
+            <td>
+              <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
+            </td>
+          </tr>
         </table>
-      <% end %>
+      <%# end %>
+      <%= button_tag "use quick preview",
+      { :type => "button",
+        :onclick => "use_quick_preview(#{q.object.id})" } %>
 
       <%# "Check to delete<br><br>".html_safe if MatchingQuestion.where(
         question_id: q.object.id, is_match: 1).length > 0 %>
 
-      <br>
-      add:
-      <br>
-      identical <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical %>
-      <br>
-      modified <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
-      <br>
-      <%= q.text_field :matching_questions, :value => '' %>
-      <%= button_tag "use quick preview",
-      { :type => "button",
-        :onclick => "use_quick_preview(#{q.object.id})" } %>
     </td>
     <td> <%= @matches[question.id] %> </td>
     <td> <%= @possible_matches[question.id] %> </td>

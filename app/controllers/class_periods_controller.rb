@@ -30,6 +30,23 @@ class ClassPeriodsController < ApplicationController
           match_type: match_type,
           is_match: 1)
       end
+
+      # Edit matching questions where we set a different match_type
+      to_edit = params[:questions][question.id.to_s][:edit_matching_questions]
+      if to_edit
+        to_edit.each do |key|
+          # The key will be qid-match_type, so for example:
+          # 563-1
+          # means that we are changing our match with the question with id
+          # 563 to modified (since we represent modified as 1 in the database).
+          edit_matching_question_id, match_type = key.split('-').collect {|n| Integer(n)}
+          mq = MatchingQuestion.find_by(question_id: question.id,
+            matching_question_id: edit_matching_question_id)
+            mq.match_type = match_type
+            mq.save
+        end
+      end
+
       # Delete any matching questions that are to be deleted.
       to_delete = params[:questions][question.id.to_s][:delete_matching_questions]
       if to_delete
