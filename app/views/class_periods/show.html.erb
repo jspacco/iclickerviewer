@@ -1,5 +1,5 @@
 <% content_for :title, @class_period.session_code %>
-<div class="topdiv">
+<div class="topdiv" style="display:none">
 <table frame=box rules=none>
 <tr>
   <td colspan="4"><b>QUICK PREVIEW</b> to preview questions from other classes;
@@ -223,18 +223,48 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
         TODO: Only matching_questions where is_match == 1!
       %>
-      <%= "Check to delete<br><br>".html_safe if MatchingQuestion.where(question_id: q.object.id, is_match: 1).length > 0 %>
-      <% MatchingQuestion.where(question_id: q.object.id, is_match: 1).each do |mq| %>
-        <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
-          mq.matching_question_id, false,
-          {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
-        <%= label_tag "questions[#{q.object.id}][delete_matching_questions][][#{mq.matching_question_id}]",
-          mq.matching_question_id %>
-        <br>
+      <% if MatchingQuestion.where(question_id: q.object.id, is_match: 1).length > 0 %>
+        <table border="1">
+          <tr>
+            <th> qid </td>
+            <th> identical </th>
+            <th> modified </th>
+            <th> delete? </th>
+          </tr>
+          <% MatchingQuestion.where(question_id: q.object.id, is_match: 1).each do |mq| %>
+          <tr>
+            <td>
+              <%= mq.matching_question_id %>
+            </td>
+            <td align="center">
+              <%= radio_button_tag "questions[#{mq.matching_question_id}][match_type]", :identical %>
+            </td>
+            <td align="center">
+              <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
+            </td>
+            <td align="center">
+              <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
+                mq.matching_question_id, false,
+                {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
+              <%# label_tag "questions[#{q.object.id}][delete_matching_questions][][#{mq.matching_question_id}]",
+                mq.matching_question_id %>
+            </td>
+          </tr>
+          <% end %>
+        </table>
       <% end %>
-      <br><br>
-      add: <%= q.text_field :matching_questions, :value => '' %>
+
+      <%# "Check to delete<br><br>".html_safe if MatchingQuestion.where(
+        question_id: q.object.id, is_match: 1).length > 0 %>
+
       <br>
+      add:
+      <br>
+      identical <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical %>
+      <br>
+      modified <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
+      <br>
+      <%= q.text_field :matching_questions, :value => '' %>
       <%= button_tag "use quick preview",
       { :type => "button",
         :onclick => "use_quick_preview(#{q.object.id})" } %>
