@@ -37,12 +37,13 @@ test:
 
 sqlite:
   adapter: sqlite3
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-#  pool: 1
+  #pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: '1'
   timeout: 5000
 # FIXME Why we need to use the full path here for command line programs?
 # database: db/development.sqlite3
-  database: /Users/jspacco/projects/clickers/iclickerviewer/db/development.sqlite3
+#  database: /Users/jspacco/projects/clickers/iclickerviewer/db/development.sqlite3
+  database: "/Users/errolkaylor/Desktop/Senior_Year/Research_Honors/iclickerviewer/db/db.sqlite3"
 
 # Deploying to Heroku automatically uses a pre-configured DATABASE_URL variable
 #   to connect to postgres.
