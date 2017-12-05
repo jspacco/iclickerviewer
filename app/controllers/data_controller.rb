@@ -52,7 +52,8 @@ class DataController < ApplicationController
       if row['question_type'] == 3
         pct1st = row['pct1st_correct'].to_f
         pct2nd = row['pct2nd_correct'].to_f
-        row['normalized_gain'] = (pct2nd - pct1st) / (1 - pct1st)
+        #row['normalized_gain'] = (pct2nd - pct1st) / (1 - pct1st)
+        row['normalized_gain'] = ng(pct1st_correct, pct2nd_correct)
       end
       # Holy crap, I'm combing the splat (*) operator with
       #   the map method and a block!
@@ -73,6 +74,13 @@ private
     return ActiveRecord::Base.connection_pool.with_connection {
       |con| con.exec_query( sql )
     }
+  end
+
+  def ng(pre, post)
+    if (post > pre)
+      return (post - pre) / (1 - pre)
+    end
+    return (post - pre) / pre
   end
 
   # ------------------------------------------
