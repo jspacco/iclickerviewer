@@ -29,6 +29,7 @@
 
 # For now, ignore all of the Images and slides
 public/courses
+public/assets
 
 OUT*
 output.txt
