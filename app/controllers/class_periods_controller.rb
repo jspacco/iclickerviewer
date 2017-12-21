@@ -17,9 +17,34 @@ class ClassPeriodsController < ApplicationController
     Question.where(class_period_id: params[:id]).each do |question|
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
       if matching_question_id
-        MatchingQuestion.find_or_create_by(question_id: question.id,
-          matching_question_id: matching_question_id)
+        match_type = params[:questions][question.id.to_s][:match_type]
+        if match_type == 'identical'
+          match_type = 0
+        elsif match_type == 'modified'
+          match_type = 1
+        else
+          match_type = nil
+        end
+        mq = MatchingQuestion.find_or_create_by(question_id: question.id,
+          matching_question_id: matching_question_id,
+          match_type: match_type,
+          is_match: 1)
       end
+
+      # Edit matching questions where we set a different match_type
+      to_edit = params[:questions][question.id.to_s][:edit_matching_questions]
+      if to_edit
+        to_edit.each do |edit_matching_question_id, match_type|
+          edit_matching_question_id = Integer(edit_matching_question_id)
+          match_type = Integer(match_type)
+
+          mq = MatchingQuestion.find_by(question_id: question.id,
+            matching_question_id: edit_matching_question_id)
+          mq.match_type = match_type
+          mq.save
+        end
+      end
+
       # Delete any matching questions that are to be deleted.
       to_delete = params[:questions][question.id.to_s][:delete_matching_questions]
       if to_delete
