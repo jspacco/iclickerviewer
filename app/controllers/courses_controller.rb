@@ -5,18 +5,24 @@ class CoursesController < ApplicationController
     # TODO avg number of CQs over all classes,
     #   avg time per CQ,
     #   pairing/individual stats???
+    start = current_time
     @all_class_stats = Hash.new
     @courses.each do |course|
       @all_class_stats[course.id] = get_class_stats(course.id)
     end
     get_updated_stats
     get_match_stats_all_courses
+    total = current_time - start
+    puts "Total time for DB crap is #{total} seconds"
   end
 
   def show
     @course = Course.find(params[:id])
     # TODO sort class periods by date
     @classes = ClassPeriod.where(course_id: @course.id).order(:session_code)
+
+    start = current_time
+
     @class_stats = get_class_stats(@course, @classes)
     @each_class_stats = Hash.new
     @classes.each do |sess|
@@ -27,9 +33,15 @@ class CoursesController < ApplicationController
     end
     get_updated_stats
     get_match_stats(@course)
+    total = current_time - start
+    puts "Time for show DB crap #{total}"
   end
 
   private
+
+  def current_time
+    return Time.now.to_f
+  end
 
   def get_class_stats(course_id, classes=nil)
     if classes == nil
