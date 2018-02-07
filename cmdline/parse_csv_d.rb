@@ -21,7 +21,7 @@ def get_datetime(filename)
 end
 
 def get_seconds(time)
-  m = time.match(/(\d\d):(\d\d):(\d\d)/)
+  m = time.match(/(\d+):(\d\d):(\d\d)/)
   hours, minutes, seconds = m.captures
   return hours.to_i * 3600 + minutes.to_i * 60 + seconds.to_i
 end
