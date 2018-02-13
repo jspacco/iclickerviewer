@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 20170718155221) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "class_periods", force: :cascade do |t|
     t.string "session_code"
     t.string "name"
@@ -20,7 +23,7 @@ ActiveRecord::Schema.define(version: 20170718155221) do
     t.string "min_response"
     t.string "min_response_string"
     t.datetime "date"
-    t.integer "course_id"
+    t.bigint "course_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_class_periods_on_course_id"
@@ -66,7 +69,7 @@ ActiveRecord::Schema.define(version: 20170718155221) do
     t.string "is_deleted"
     t.integer "question_type"
     t.integer "question_pair"
-    t.integer "class_period_id"
+    t.bigint "class_period_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["class_period_id"], name: "index_questions_on_class_period_id"
@@ -89,10 +92,13 @@ ActiveRecord::Schema.define(version: 20170718155221) do
     t.string "loaned_clicker_to"
     t.string "first_response"
     t.string "response"
-    t.integer "question_id"
+    t.bigint "question_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["question_id"], name: "index_votes_on_question_id"
   end
 
+  add_foreign_key "class_periods", "courses"
+  add_foreign_key "questions", "class_periods"
+  add_foreign_key "votes", "questions"
 end
