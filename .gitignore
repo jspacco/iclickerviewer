@@ -35,3 +35,8 @@ OUT*
 output.txt
 
 cmdline/test.rb
+
+# ignore zipfiles and postgres database backups
+
+*.dump
+*.zip
