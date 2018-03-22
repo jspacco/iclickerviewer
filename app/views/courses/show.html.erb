@@ -6,8 +6,8 @@
   <h1> <%= @course.term %> <%= @course.year %>
     <%= @course.institution %> <%= @course.instructor %>
   </h1>
-  <%= @class_stats[:avg_time].round(1) %>
-  <%= @class_stats[:num_questions] %>
+  <%# @class_stats[:avg_time].round(1) %>
+  <%# @class_stats[:num_questions] %>
 </center>
 
 <table border=1>
@@ -27,8 +27,8 @@
     <td> <%= sess.date.strftime("%Y-%m-%d %H:%M") %> </td>
     <td> <%= sess.name %> </td>
     <td> <%= link_to sess.session_code, class_period_path(sess) %> </td>
-    <td> <%= @each_class_stats[sess.id][:num_questions] %> </td>
-    <td> <%= @each_class_stats[sess.id][:avg_time].round(1) %> </td>
+    <td> <%# @each_class_stats[sess.id][:num_questions] %> </td>
+    <td> <%# @each_class_stats[sess.id][:avg_time].round(1) %> </td>
     <% if @question_updated_counts[sess.session_code][0] > 0 %>
     <td class="todo">
     <% else %>
@@ -36,9 +36,9 @@
     <% end %>
       <%= to_s_fraction(@question_updated_counts[sess.session_code]) %>
     </td>
-    <td> <%= @num_matches[sess.id] %> </td>
-    <td> <%= @num_possible_matches[sess.id] %> </td>
-    <td> <%= @num_nonmatches[sess.id] %> </td>
+    <td> <%# @num_matches[sess.id] %> </td>
+    <td> <%# @num_possible_matches[sess.id] %> </td>
+    <td> <%# @num_nonmatches[sess.id] %> </td>
   </tr>
   <% end %>
 </table>

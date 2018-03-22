@@ -5,15 +5,28 @@ class CoursesController < ApplicationController
     # TODO avg number of CQs over all classes,
     #   avg time per CQ,
     #   pairing/individual stats???
+
     start = current_time
+
     @all_class_stats = Hash.new
     @courses.each do |course|
       @all_class_stats[course.id] = get_class_stats(course.id)
     end
-    get_updated_stats
-    get_match_stats_all_courses
+
     total = current_time - start
-    puts "Total time for DB crap is #{total} seconds"
+    puts "Time for DB for courses#index get_class_stats is #{total} seconds"
+
+    start = current_time
+
+    get_updated_stats
+
+    total = current_time - start
+    puts "Time for DB for courses#index other functions is #{total} seconds"
+
+
+    get_match_stats_all_courses
+
+
   end
 
   def show
@@ -23,6 +36,7 @@ class CoursesController < ApplicationController
 
     start = current_time
 
+    '''
     @class_stats = get_class_stats(@course, @classes)
     @each_class_stats = Hash.new
     @classes.each do |sess|
@@ -31,10 +45,17 @@ class CoursesController < ApplicationController
       class_hash[:avg_time] = Question.where(class_period_id: sess.id).sum(:num_seconds).to_f / class_hash[:num_questions]
       @each_class_stats[sess.id] = class_hash
     end
-    get_updated_stats
     get_match_stats(@course)
+    '''
+
+    update_start = current_time
+    get_updated_stats
+    update_total = current_time - update_start
+    puts "Time for courses#show updated stats is #{update_total}"
+
     total = current_time - start
-    puts "Time for show DB crap #{total}"
+
+    puts "Time for courses#show DB is #{total}"
   end
 
   private
