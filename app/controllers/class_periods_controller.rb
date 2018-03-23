@@ -3,8 +3,11 @@ class ClassPeriodsController < ApplicationController
   # -------------------------------------------------------------
   # GET /class_periods/1
   def show
+    start = current_time
     get_questions_course_class_period
-    get_match_stats(ClassPeriod.find_by(id: params[:id]))
+    total = current_time - start
+    puts "total DB prep time for class_periods#show is #{total}"
+    # get_match_stats(ClassPeriod.find_by(id: params[:id]))
   end
 
   # -------------------------------------------------------------
@@ -74,6 +77,10 @@ class ClassPeriodsController < ApplicationController
   end
 
   private
+
+  def current_time
+    return Time.now.to_f
+  end
 
   # -------------------------------------------------------------
   def get_match_stats(class_period)
@@ -155,12 +162,19 @@ class ClassPeriodsController < ApplicationController
     # Look up the class period, course, and questions
     @class_period = ClassPeriod.find_by(id: params[:id])
     # For making a link to the next class.
+    # TODO CACHE should we cache this? probably not worth it.
     @next_class_period = ClassPeriod.where("session_code > ? and course_id = ?",
       @class_period.session_code, @class_period.course_id).first
     @course = Course.find_by(id: @class_period.course_id)
     @questions = Question.where(class_period_id: @class_period.id).order(:question_index)
     # Look up a hash from course_name => session_code (class_period) => question_index => question_id
+
+    # TODO cache this!
+    start_hash = current_time
     @course_hash = get_course_hash
+    total_hash = current_time - start_hash
+    puts "@course_hash time is #{total_hash}"
+
     # Average time taken per clicker question
     total_time = 0.0
     num_questions = 0.0

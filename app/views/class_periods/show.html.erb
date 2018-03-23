@@ -288,9 +288,10 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       { :type => "button",
         :onclick => "use_quick_preview(#{q.object.id})" } %>
     </td>
-    <td> <%= @matches[question.id] %> </td>
-    <td> <%= @possible_matches[question.id] %> </td>
-    <td> <%= @nonmatches[question.id] %> </td>
+    <%# Turning off possible matches to speed up the page %>
+    <td> <%# @matches[question.id] %> </td>
+    <td> <%# @possible_matches[question.id] %> </td>
+    <td> <%# @nonmatches[question.id] %> </td>
   </tr>
   <% end %>
   <% end %>
