@@ -1,0 +1,3 @@
+class CourseHash < ApplicationRecord
+  
+end

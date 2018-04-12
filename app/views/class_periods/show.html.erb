@@ -65,7 +65,8 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     $("#old_dynamic_question_selected").val("<%=j @old_dynamic_question_selected%>");
   });
 
-  var course_hash = <%=raw @course_hash.to_json.gsub("\n", '') %>;
+  var course_hash = <%=raw @course_hash %>;
+
   window.onload = dynamic_image_handler(course_hash, true);
 <% end %>
 
@@ -75,6 +76,8 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <input type="hidden" id="old_dynamic_class_period_selected" name="old_dynamic_class_period_selected" value=""/>
 <input type="hidden" id="old_dynamic_question_selected" name="old_dynamic_question_selected" value=""/>
 <%= submit_tag 'Update data', class: "updatebutton"%>
+<%# link_to "Reload Course Hash", update_course_hash_path(@class_period), method: :get%>
+<%= link_to "Reload Course Hash", "/update_course_hash/#{@class_period.id}", method: :get %>
 <table border=1>
   <tr>
     <th class="mytooltip"> ID

@@ -76,6 +76,15 @@ class ClassPeriodsController < ApplicationController
     render :show
   end
 
+  def update_course_hash
+    new_hash = get_course_hash
+    new_hash = new_hash.to_json.gsub("\n", '')
+    course_hash = CourseHash.find_or_create_by(id:1)
+    course_hash.course_hash = new_hash
+    course_hash.save
+    redirect_to class_period_path params[:id]
+  end
+
   private
 
   def current_time
@@ -171,7 +180,12 @@ class ClassPeriodsController < ApplicationController
 
     # TODO cache this!
     start_hash = current_time
-    @course_hash = get_course_hash
+    something_else =CourseHash.first
+    if something_else!=nil
+      @course_hash = CourseHash.first.course_hash
+    else
+      @course_hash = get_course_hash
+    end
     total_hash = current_time - start_hash
     puts "@course_hash time is #{total_hash}"
 
