@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  avg_questions_class: 1.5
+  avg_secs_question: 1.5
+  num_classes_updated: 1
+  total_classes: 1
+
+two:
+  avg_questions_class: 1.5
+  avg_secs_question: 1.5
+  num_classes_updated: 1
+  total_classes: 1

@@ -12,6 +12,7 @@
 /db/*.sqlite3-journal
 /db/*.zip
 /db/*.sql
+/db/*.dump
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -38,5 +39,5 @@ cmdline/test.rb
 
 # ignore zipfiles and postgres database backups
 
-*.dump
+/*.dump
 *.zip

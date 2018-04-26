@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  num_questions: 1.5
+  avg_secs_question: 1.5
+  num_questions_updated: 1
+  total_class_periods: 1
+  session_code: 'L1609051230'
+  course: one
+
+two:
+  num_questions: 1.5
+  avg_secs_question: 1.5
+  num_questions_updated: 1
+  total_class_periods: 1
+  session_code: 'L1609051230'
+  course: two

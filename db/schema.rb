@@ -10,10 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170718155221) do
+ActiveRecord::Schema.define(version: 20180419162653) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "class_period_caches", force: :cascade do |t|
+    t.integer "num_questions"
+    t.float "avg_secs_question"
+    t.integer "num_questions_updated"
+    t.integer "total_class_periods"
+    t.string "session_code"
+    t.bigint "course_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_class_period_caches_on_course_id"
+  end
 
   create_table "class_periods", force: :cascade do |t|
     t.string "session_code"
@@ -27,6 +39,21 @@ ActiveRecord::Schema.define(version: 20170718155221) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_class_periods_on_course_id"
+  end
+
+  create_table "course_caches", force: :cascade do |t|
+    t.float "avg_questions_class"
+    t.float "avg_secs_question"
+    t.integer "num_classes_updated"
+    t.integer "total_classes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "course_hashes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "course_hash"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -98,6 +125,7 @@ ActiveRecord::Schema.define(version: 20170718155221) do
     t.index ["question_id"], name: "index_votes_on_question_id"
   end
 
+  add_foreign_key "class_period_caches", "courses"
   add_foreign_key "class_periods", "courses"
   add_foreign_key "questions", "class_periods"
   add_foreign_key "votes", "questions"

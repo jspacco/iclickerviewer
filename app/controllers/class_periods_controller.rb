@@ -6,7 +6,7 @@ class ClassPeriodsController < ApplicationController
     start = current_time
     get_questions_course_class_period
     total = current_time - start
-    puts "total DB prep time for class_periods#show is #{total}"
+    puts "total time for class_periods#show is #{total}"
     # get_match_stats(ClassPeriod.find_by(id: params[:id]))
   end
 
@@ -68,12 +68,24 @@ class ClassPeriodsController < ApplicationController
     # Finally, look up the course, class period, and questions we just updated to make
     #   them available to to the view. We are going to re-direct to the show view,
     #   but NOT the show controller.
+    # TODO: update the DB and then look it up
     get_questions_course_class_period
     get_match_stats(ClassPeriod.find_by(id: params[:id]))
 
     # Basically, this is a re-direct ONLY for rendering!
     #   It does NOT call the show method in this file.
     render :show
+  end
+
+  def update_course_hash
+    # custom handler defined in routes.rb
+    # get '/update_course_hash/:id', to: 'class_periods#update_course_hash'
+    new_hash = get_course_hash
+    new_hash = new_hash.to_json.gsub("\n", '')
+    course_hash = CourseHash.find_or_create_by(id:1)
+    course_hash.course_hash = new_hash
+    course_hash.save
+    redirect_to class_period_path params[:id]
   end
 
   private
@@ -111,6 +123,8 @@ class ClassPeriodsController < ApplicationController
 
   # -------------------------------------------------------------
   def get_course_hash
+    # This is super-slow because it recomputes everything from the DB.
+    # We cache this data in the the table :course_hash
     course_hash = Hash.new
     Course.all.each do |course|
       class_period_hash = Hash.new
@@ -169,9 +183,14 @@ class ClassPeriodsController < ApplicationController
     @questions = Question.where(class_period_id: @class_period.id).order(:question_index)
     # Look up a hash from course_name => session_code (class_period) => question_index => question_id
 
-    # TODO cache this!
     start_hash = current_time
-    @course_hash = get_course_hash
+    if CourseHash.first != nil
+      # read cached version, if it exists
+      @course_hash = CourseHash.first.course_hash
+    else
+      # otherwise, recompute the course_hash from the DB
+      @course_hash = get_course_hash
+    end
     total_hash = current_time - start_hash
     puts "@course_hash time is #{total_hash}"
 
