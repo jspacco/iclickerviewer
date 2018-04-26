@@ -1,0 +1,2 @@
+class CourseCache < ApplicationRecord
+end

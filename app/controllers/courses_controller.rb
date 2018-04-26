@@ -8,20 +8,24 @@ class CoursesController < ApplicationController
 
     start = current_time
 
+    get_all_class_stats
+
+    '''
     @all_class_stats = Hash.new
     @courses.each do |course|
       @all_class_stats[course.id] = get_class_stats(course.id)
     end
+    '''
 
     total = current_time - start
-    puts "Time for DB for courses#index get_class_stats is #{total} seconds"
+    puts "get_all_class_stats is #{total} seconds"
 
     start = current_time
 
     get_updated_stats
 
     total = current_time - start
-    puts "Time for DB for courses#index other functions is #{total} seconds"
+    puts "get_updated_stats is #{total} seconds"
 
 
     get_match_stats_all_courses
@@ -34,28 +38,11 @@ class CoursesController < ApplicationController
     # TODO sort class periods by date
     @classes = ClassPeriod.where(course_id: @course.id).order(:session_code)
 
-    start = current_time
-
-    '''
-    @class_stats = get_class_stats(@course, @classes)
-    @each_class_stats = Hash.new
-    @classes.each do |sess|
-      class_hash = Hash.new
-      class_hash[:num_questions] = Question.where(class_period_id: sess.id).length
-      class_hash[:avg_time] = Question.where(class_period_id: sess.id).sum(:num_seconds).to_f / class_hash[:num_questions]
-      @each_class_stats[sess.id] = class_hash
-    end
-    get_match_stats(@course)
-    '''
-
     update_start = current_time
     get_updated_stats
     update_total = current_time - update_start
     puts "Time for courses#show updated stats is #{update_total}"
 
-    total = current_time - start
-
-    puts "Time for courses#show DB is #{total}"
   end
 
   private
@@ -64,7 +51,32 @@ class CoursesController < ApplicationController
     return Time.now.to_f
   end
 
-  def get_class_stats(course_id, classes=nil)
+  def get_all_class_stats
+    @all_class_stats = Hash.new
+    CourseCache.all.each do |course_cache|
+      course_stats = Hash.new
+      course_stats[:avg_time] = course_cache.avg_secs_question
+      course_stats[:avg_num_questions] = course_cache.avg_questions_class
+      @all_class_stats[course_cache.id] = course_stats
+    end
+  end
+
+  def get_class_stats(course_id)
+    # create a hash from course_id => aggregate course stats
+    # aggregate course stats are avg time per question, avg questions per class,
+    #
+    # Uses cached data to save time
+    # Caching data breaks the normalized form of the DB, but
+    # the app was much too slow otherwise
+    @course_stats = Hash.new
+    course_cache = CourseCache.find_by(id: course_id)
+    if course_cache != nil
+      @course_stats[:avg_time] = course_cache.avg_secs_question
+      @course_stats[:avg_num_questions] = course_cache.avg_questions_class
+    end
+  end
+
+  def get_class_stats2(course_id, classes=nil)
     if classes == nil
       classes = ClassPeriod.where(course_id: course_id)
     end
@@ -85,6 +97,18 @@ class CoursesController < ApplicationController
   end
 
   def get_updated_stats
+    # Uses cached information to save time
+    @question_updated_counts = Hash.new
+    # session_code => [updated, total] for each class period
+    @class_period_updated_counts = Hash.new
+    ClassPeriodCache.all.each do |class_period_cache|
+      @question_updated_counts[class_period_cache.session_code] = [class_period_cache.num_questions_updated, class_period_cache.num_questions]
+      course_cache = CourseCache.find_by(id: class_period_cache.course_id)
+      @class_period_updated_counts[class_period_cache.course_id] = [course_cache.num_classes_updated, course_cache.total_classes]
+    end
+  end
+
+  def get_updated_stats2
     # course_id => [updated, total] for each class overall
     @question_updated_counts = Hash.new
     # session_code => [updated, total] for each class period
