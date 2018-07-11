@@ -76,26 +76,6 @@ class CoursesController < ApplicationController
     end
   end
 
-  def get_class_stats2(course_id, classes=nil)
-    if classes == nil
-      classes = ClassPeriod.where(course_id: course_id)
-    end
-    class_stats = Hash.new
-    total_time = 0.0
-    num_questions = 0.0
-    classes.each do |sess|
-      questions = Question.where(class_period_id: sess)
-      questions.each do |question|
-        total_time += question.num_seconds
-      end
-      num_questions += questions.length
-      # Create hash of stats
-    end
-    class_stats[:avg_time] = total_time / num_questions
-    class_stats[:avg_num_questions] = num_questions / classes.length
-    return class_stats
-  end
-
   def get_updated_stats
     # Uses cached information to save time
     @question_updated_counts = Hash.new
@@ -105,33 +85,6 @@ class CoursesController < ApplicationController
       @question_updated_counts[class_period_cache.session_code] = [class_period_cache.num_questions_updated, class_period_cache.num_questions]
       course_cache = CourseCache.find_by(id: class_period_cache.course_id)
       @class_period_updated_counts[class_period_cache.course_id] = [course_cache.num_classes_updated, course_cache.total_classes]
-    end
-  end
-
-  def get_updated_stats2
-    # course_id => [updated, total] for each class overall
-    @question_updated_counts = Hash.new
-    # session_code => [updated, total] for each class period
-    @class_period_updated_counts = Hash.new
-    Course.all.each do |course|
-      classes_updated = 0
-      classes_total = 0
-      ClassPeriod.where(course_id: course.id).each do |class_period|
-        updated = 0
-        total = 0
-        Question.where(class_period_id: class_period.id).each do |question|
-          if data_entered?(question)
-            updated += 1
-          end
-          total += 1
-        end
-        @question_updated_counts[class_period.session_code] = [total - updated, total]
-        if updated == total
-          classes_updated += 1
-        end
-        classes_total += 1
-      end
-      @class_period_updated_counts[course.id] = [classes_total - classes_updated, classes_total]
     end
   end
 
