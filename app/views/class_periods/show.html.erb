@@ -75,9 +75,11 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <input type="hidden" id="old_dynamic_course_selected" name="old_dynamic_course_selected" value=""/>
 <input type="hidden" id="old_dynamic_class_period_selected" name="old_dynamic_class_period_selected" value=""/>
 <input type="hidden" id="old_dynamic_question_selected" name="old_dynamic_question_selected" value=""/>
+<% if logged_in? %>
 <%= submit_tag 'Update data', class: "updatebutton"%>
 <%# link_to "Reload Course Hash", update_course_hash_path(@class_period), method: :get%>
 <%= link_to "Reload Course Hash", "/update_course_hash/#{@class_period.id}", method: :get %>
+<% end %>
 <table border=1>
   <tr>
     <th class="mytooltip"> ID
@@ -161,7 +163,8 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <b> <%= link_to question.question_index, question_path(question) %> </b>
     </td>
     <td>
-      <%= q.select :question_type, [
+      <%= if (logged_in?)
+        q.select :question_type, [
         ["unknown", 0],
         ["quiz", 1],
         ["single", 2],
@@ -169,15 +172,18 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         ["non-MCQ", 4],
         ["error", 5]
       ], {}, { class: "question_type_#{q.object.question_index}" }
-      %>
+    end
+    %>
     </td>
     <td>
 <%# HACK: creating this.old_question_pair in the DOM to store the previously selected value %>
+<% if logged_in? %>
       <%= q.select :question_pair, question_pair_options(q.object, @questions),
         { include_blank: true },
         { onclick: "this.old_question_pair = $(this).val();",
           onchange: "question_pair_handler( #{q.object.question_index}, $(this).val(), this.old_question_pair );",
           class: "question_pair_#{q.object.question_index}" } %>
+          <% end %>
     </td>
     <td class="imagecolumn">
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
@@ -193,6 +199,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     </td>
     <td>
       <table>
+        <% if logged_in? %>
         <tr>
           <th> <%= q.label :correct_a, "A" %> </th>
           <th> <%= q.label :correct_b, "B" %> </th>
@@ -207,6 +214,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <td> <%= q.check_box :correct_d %> </td>
           <td> <%= q.check_box :correct_e %> </td>
         </tr>
+        <% end %>
       </table>
     </td>
     <td> <%= question.start %> </td>
@@ -229,6 +237,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
       TODO: Mark the radio buttons for existing matches with the match_type
       %>
+      <% if logged_in? %>
       <table border="1">
         <tr align="center">
           <th> qid </th>
@@ -287,9 +296,11 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           </td>
         </tr>
       </table>
+
       <%= button_tag "use quick preview",
       { :type => "button",
         :onclick => "use_quick_preview(#{q.object.id})" } %>
+        <% end %>
     </td>
     <%# Turning off possible matches to speed up the page %>
     <td> <%# @matches[question.id] %> </td>
@@ -299,7 +310,9 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
   <% end %>
   <% end %>
 </table>
+<% if logged_in? %>
 <%= submit_tag 'Update data', class: "updatebutton" %>
+<% end %>
 <% end %>
 
 <%= render 'modal_image' %>
