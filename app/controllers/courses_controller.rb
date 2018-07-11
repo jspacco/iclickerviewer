@@ -54,6 +54,7 @@ class CoursesController < ApplicationController
   def get_all_class_stats
     @all_class_stats = Hash.new
     CourseCache.all.each do |course_cache|
+      puts "#{course_cache.id}"
       course_stats = Hash.new
       course_stats[:avg_time] = course_cache.avg_secs_question
       course_stats[:avg_num_questions] = course_cache.avg_questions_class
