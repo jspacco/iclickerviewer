@@ -29,11 +29,11 @@
           </li>
         <% end %>
         <% if request.fullpath.starts_with?('/login') %>
-        <li><%= link_to "Continue in Read-Only Mode", root_path %></li>
+        <li><%= link_to "Continue Anonymously", root_path %></li>
         <% else %>
         <li><%= link_to "Home", root_path %></li>
         <% end %>
-        <% if (logged_in?) %>
+        <% if current_user %>
         <li>
           <%= link_to "Log out", logout_path, method: :delete %>
         </li>
