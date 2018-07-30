@@ -210,7 +210,19 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     </td>
     <td>
       <table>
-        <% if current_user && current_user.verification >0 %>
+        <%
+        # Disable the correctness checkbox elements unless the current_user
+        # has permission level above 0. Level 0 is an unverified or anonymous user,
+        # and has read-only access to the system.
+        # Level 1 is a verified user (allowed to update correct answers and
+        # add keyword tags to questions).
+        # Level 2 is a superuser and can promote the verification level of users.
+        disable_correctness_checkbox = true
+        if is_verified?(current_user, 1)
+          disable_correctness_checkbox = false
+        end
+        %>
+
         <tr>
           <th> <%= q.label :correct_a, "A" %> </th>
           <th> <%= q.label :correct_b, "B" %> </th>
@@ -219,13 +231,12 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <th> <%= q.label :correct_e, "E" %> </th>
         </tr>
         <tr>
-          <td> <%= q.check_box :correct_a %> </td>
-          <td> <%= q.check_box :correct_b %> </td>
-          <td> <%= q.check_box :correct_c %> </td>
-          <td> <%= q.check_box :correct_d %> </td>
-          <td> <%= q.check_box :correct_e %> </td>
+          <td> <%= q.check_box :correct_a, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_b, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_c, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_d, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_e, { :disabled => disable_correctness_checkbox } %> </td>
         </tr>
-        <% end %>
       </table>
     </td>
     <td> <%= question.start %> </td>
