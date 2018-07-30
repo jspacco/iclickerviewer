@@ -328,15 +328,13 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         <% end %>
     </td>
     <td>
+      <%= @question_keywords[q.object.id.to_s].join(', ') %>
       <% if is_verified?(current_user, 1) %>
-      <% @question_keywords[q.object.id.to_s].each do |keyword| %>
-        <%= keyword %>
-      <% end %>
-      <%=
-        q.text_field :keywords,
-          :value => '',
-          :placeholder => 'add keyword'
-      %>
+        <%=
+          q.text_field :keywords,
+            :value => '',
+            :placeholder => 'add keyword'
+        %>
       <% end %>
     </td>
 <!-- Commenting out last 3 columns for suggested matches.
