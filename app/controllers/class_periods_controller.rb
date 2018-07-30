@@ -70,16 +70,11 @@ class ClassPeriodsController < ApplicationController
       params[:questions][question.id.to_s].delete(:matching_questions)
 
       # Handle keyword tags
-      # puts "params[:questions][question.id.to_s][keywords] = #{params[:questions][question.id.to_s][:keywords]}"
-
-      # TODO Look up the user using the session or something like it
-      # TODO
-
       keyword_tag = params[:questions][question.id.to_s][:keywords]
       if keyword_tag != ''
         keyword = Keyword.find_or_create_by(keyword: keyword_tag)
         tag = KeywordQuestionTag.find_or_create_by(keyword: keyword,
-          user_id: '1',
+          user_id: current_user.id.to_s,
           question: question)
       end
 
@@ -93,7 +88,7 @@ class ClassPeriodsController < ApplicationController
     # Finally, look up the course, class period, and questions we just updated to make
     #   them available to to the view. We are going to re-direct to the show view,
     #   but NOT the show controller.
-    # TODO: update the DB and then look it up
+#=begin
     get_questions_course_class_period
     get_match_stats(ClassPeriod.find_by(id: params[:id]))
     get_keyword_hash(params[:id])
@@ -101,6 +96,8 @@ class ClassPeriodsController < ApplicationController
     # Basically, this is a re-direct ONLY for rendering!
     #   It does NOT call the show method in this file.
     render :show
+#=end
+#    redirect_to :show, id: params[:id]
   end
 
   def update_course_hash
