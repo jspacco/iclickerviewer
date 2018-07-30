@@ -317,7 +317,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         <% end %>
     </td>
     <td>
-      <% if logged_in? %>
+      <% if is_verified?(current_user, 1) %>
       <% @question_keywords[q.object.id.to_s].each do |keyword| %>
         <%= keyword %>
       <% end %>
