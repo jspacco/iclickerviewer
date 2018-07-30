@@ -1,0 +1,34 @@
+<h1>Admin#change_verification</h1>
+
+
+<table border = 1>
+  <tr>
+    <th> Name </th>
+    <th> User Email </th>
+    <th> Verification Level </th>
+    <th> Last access </th>
+  </tr>
+  <%= form_tag("/admin", method: :patch) do %>
+  <% @users.each do |user| %>
+  <%= fields_for "users[]", user do |u| %>
+  <tr>
+    <td> <%= user.name %> </td>
+    <td> <%= user.email %> </td>
+    <td>
+      <%=
+        u.select :verification, [
+        ["No Permissions", 0],
+        ["Can Mark Matching Questions", 1],
+        ["Can Change Verification Levels", 2],
+      ], {}
+    %>
+    </td>
+    <td> <%= user.last_sign_in_at %> </td>
+  </tr>
+  <% end %>
+ <% end %>
+ <%= submit_tag 'Update Verification Levels', class: 'updatebutton'%>
+<% end %>
+
+
+</table>
