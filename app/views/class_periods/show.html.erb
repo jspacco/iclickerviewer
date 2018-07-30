@@ -76,7 +76,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <input type="hidden" id="old_dynamic_course_selected" name="old_dynamic_course_selected" value=""/>
 <input type="hidden" id="old_dynamic_class_period_selected" name="old_dynamic_class_period_selected" value=""/>
 <input type="hidden" id="old_dynamic_question_selected" name="old_dynamic_question_selected" value=""/>
-<% if logged_in? %>
+<% if is_verified?(current_user,0) %>
 <%= submit_tag 'Update data', class: "updatebutton"%>
 <%# link_to "Reload Course Hash", update_course_hash_path(@class_period), method: :get%>
 <%= link_to "Reload Course Hash", "/update_course_hash/#{@class_period.id}", method: :get %>
@@ -173,7 +173,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <b> <%= link_to question.question_index, question_path(question) %> </b>
     </td>
     <td>
-      <%= if (logged_in?)
+      <%= if current_user && current_user.verification >0
         q.select :question_type, [
         ["unknown", 0],
         ["quiz", 1],
@@ -185,9 +185,10 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     end
     %>
     </td>
+
     <td>
 <%# HACK: creating this.old_question_pair in the DOM to store the previously selected value %>
-<% if logged_in? %>
+<% if current_user && current_user.verification >0 %>
       <%= q.select :question_pair, question_pair_options(q.object, @questions),
         { include_blank: true },
         { onclick: "this.old_question_pair = $(this).val();",
@@ -209,7 +210,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     </td>
     <td>
       <table>
-        <% if logged_in? %>
+        <% if current_user && current_user.verification >0 %>
         <tr>
           <th> <%= q.label :correct_a, "A" %> </th>
           <th> <%= q.label :correct_b, "B" %> </th>
@@ -250,7 +251,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         possibly in a big chain of links?
       TODO: Could this be its own partial ERB view element?
       %>
-      <% if logged_in? %>
+      <% if current_user && current_user.verification >0 %>
       <table border="1">
         <tr align="center">
           <th> qid </th>
@@ -336,7 +337,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
   <% end %>
   <% end %>
 </table>
-<% if logged_in? %>
+<% if current_user && current_user.verification >0 %>
 <%= submit_tag 'Update data', class: "updatebutton" %>
 <% end %>
 <% end %>

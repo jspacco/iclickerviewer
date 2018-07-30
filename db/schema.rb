@@ -126,6 +126,17 @@ ActiveRecord::Schema.define(version: 2018_07_25_204305) do
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.datetime "remember_created_at"
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.inet "current_sign_in_ip"
+    t.inet "last_sign_in_ip"
+    t.string "provider"
+    t.string "uid"
+    t.text "image"
+    t.integer "verification"
   end
 
   create_table "votes", force: :cascade do |t|

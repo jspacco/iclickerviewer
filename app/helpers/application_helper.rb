@@ -37,4 +37,14 @@ of a fraction. For example, [3, 10] would be "3 / 10"
   def to_s_fraction(values)
     return "#{values[0]} / #{values[1]}"
   end
+
+  def is_verified?(user, level)
+    if current_user && current_user.verification >= level
+      return true
+    else
+      return false
+    end
+  end 
+
+
 end
