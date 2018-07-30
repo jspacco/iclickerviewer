@@ -54,13 +54,11 @@ class CoursesController < ApplicationController
   def get_all_class_stats
     @all_class_stats = Hash.new
     CourseCache.all.each do |course_cache|
-      puts "#{course_cache.id}"
       course_stats = Hash.new
       course_stats[:avg_time] = course_cache.avg_secs_question
       course_stats[:avg_num_questions] = course_cache.avg_questions_class
       @all_class_stats[course_cache.id] = course_stats
     end
-    puts @all_class_stats.length
   end
 
   def get_class_stats(course_id)
@@ -89,7 +87,6 @@ class CoursesController < ApplicationController
       course_cache = CourseCache.find_by(id: class_period_cache.course_id)
       @class_period_updated_counts[class_period_cache.course_id] = [course_cache.num_classes_updated, course_cache.total_classes]
     end
-    puts @question_updated_counts.length
   end
 
   def get_match_stats_all_courses
