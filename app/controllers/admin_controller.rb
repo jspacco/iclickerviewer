@@ -6,8 +6,6 @@ class AdminController < ApplicationController
   end
 
   def update
-    puts "Hey Yall We Doing Good"
-    puts params[:users]
     @users = User.all.order(:verification)
     @users.each do |user|
       user.update_attributes(user_params(user))
