@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  has_many :keyword_question_tags
+  has_many :questions, :through => :keyword_question_tags
   before_save { self.email = email.downcase }
   validates :name, presence: true, length: { maximum: 50 }
   validates :username, presence: true, length: { maximum: 50 }

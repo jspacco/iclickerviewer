@@ -7,12 +7,16 @@ class ClassPeriodsController < ApplicationController
     get_questions_course_class_period
     total = current_time - start
     puts "total time for class_periods#show is #{total}"
+
+    get_keyword_hash(params[:id])
+
     # get_match_stats(ClassPeriod.find_by(id: params[:id]))
   end
 
   # -------------------------------------------------------------
   # POST /class_periods/1
   def update
+
     # TODO Can we iterate through questions listed in parameters, not all
     #   questions from DB? One issue is how to know that something has been
     #   unchecked, if that is the only change. The current approach is a
@@ -58,19 +62,41 @@ class ClassPeriodsController < ApplicationController
             matching_question_id: delete_matching_question_id).destroy
         end
       end
+
       # TODO more elegant way to create self-referential many-to-many.
       # Delete the matching_questions key from params, now that we've already
       #   used it. This allows us to use update_attributes without getting
       #   an error for "Unpermitted paramter".
       params[:questions][question.id.to_s].delete(:matching_questions)
+
+      # Handle keyword tags
+      # puts "params[:questions][question.id.to_s][keywords] = #{params[:questions][question.id.to_s][:keywords]}"
+
+      # TODO Look up the user using the session or something like it
+      # TODO
+
+      keyword_tag = params[:questions][question.id.to_s][:keywords]
+      if keyword_tag != ''
+        keyword = Keyword.find_or_create_by(keyword: keyword_tag)
+        tag = KeywordQuestionTag.find_or_create_by(keyword: keyword,
+          user_id: '1',
+          question: question)
+      end
+
+      params[:questions][question.id.to_s].delete(:keywords)
+
+      # Updates the actual question
       question.update_attributes(question_params(question))
     end
+
+
     # Finally, look up the course, class period, and questions we just updated to make
     #   them available to to the view. We are going to re-direct to the show view,
     #   but NOT the show controller.
     # TODO: update the DB and then look it up
     get_questions_course_class_period
     get_match_stats(ClassPeriod.find_by(id: params[:id]))
+    get_keyword_hash(params[:id])
 
     # Basically, this is a re-direct ONLY for rendering!
     #   It does NOT call the show method in this file.
@@ -92,6 +118,22 @@ class ClassPeriodsController < ApplicationController
 
   def current_time
     return Time.now.to_f
+  end
+
+  # -------------------------------------------------------------
+  def get_keyword_hash(class_period_id)
+    list = Question.includes(:keywords).where(class_period_id: class_period_id)
+    @question_keywords = Hash.new
+
+    list.each do |q|
+      if !@question_keywords.key? q.id.to_s
+        @question_keywords[q.id.to_s] = []
+      end
+      q.keywords.each do |keyword|
+        @question_keywords[q.id.to_s] << keyword.keyword
+        # puts keyword.keyword
+      end
+    end
   end
 
   # -------------------------------------------------------------
@@ -149,7 +191,8 @@ class ClassPeriodsController < ApplicationController
 
     # TODO Document require vs permit, as well as how :questions gets us the array.
     return params.require(:questions).require(question.id.to_s).permit(:correct_a,
-      :correct_b, :correct_c, :correct_d, :correct_e, :question_type, :question_pair)
+      :correct_b, :correct_c, :correct_d, :correct_e, :question_type,
+      :question_pair, :keywords)
   end
 
   # -------------------------------------------------------------

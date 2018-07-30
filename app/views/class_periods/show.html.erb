@@ -43,7 +43,7 @@
   Average time per clicker question:<br> <%= @avg_time %> seconds
 </h2>
 
-
+<%# NEXT CLASS link for quick navigation %>
 <% if @next_class_period != nil %>
 <div class="nextlink">
   <%= button_tag "> NEXT CLASS #{@next_class_period.session_code} >",
@@ -55,7 +55,8 @@
 <% end %>
 </div>
 
-<%# TODO: Make course_hash an AJAX call. Inlining it is not elegant.
+<%# TODO: Make course_hash an AJAX call.
+Currently we cache the @course_hash in a course_hash table, which is ugly.
 http://railscasts.com/episodes/324-passing-data-to-javascript
 %>
 <%= javascript_tag do %>
@@ -130,6 +131,15 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         to say that these two questions are the same.
       </span>
     </th>
+    <!-- TODO tags may be clickable?
+    bolded tags you agree with, while
+    non-bold tags you haven't clicked on yet.
+    -->
+    <th class="mytooltip"> keyword<br>tags
+      <span class="tooltiptext"> Keyword tags for this question.
+      </span>
+    </th>
+    <%#
     <th class="mytooltip"> num <br>matching<br>questions
       <span class="tooltiptext"> TODO
       </span>
@@ -142,7 +152,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <span class="tooltiptext left"> TODO
       </span>
     </th>
-
+    %>
   </tr>
 </thead>
   <!--
@@ -236,6 +246,9 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       For deletes, we get a list of matching_question_ids, and we remove them all.
 
       TODO: Mark the radio buttons for existing matches with the match_type
+      TODO: Link to new UI element to show all matches for this question,
+        possibly in a big chain of links?
+      TODO: Could this be its own partial ERB view element?
       %>
       <% if logged_in? %>
       <table border="1">
@@ -302,10 +315,23 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         :onclick => "use_quick_preview(#{q.object.id})" } %>
         <% end %>
     </td>
-    <%# Turning off possible matches to speed up the page %>
+    <td>
+      <% if logged_in? %>
+      <% @question_keywords[q.object.id.to_s].each do |keyword| %>
+        <%= keyword %>
+      <% end %>
+      <%=
+        q.text_field :keywords,
+          :value => '',
+          :placeholder => 'add keyword'
+      %>
+      <% end %>
+    </td>
+<!-- Commenting out last 3 columns for suggested matches.
     <td> <%# @matches[question.id] %> </td>
     <td> <%# @possible_matches[question.id] %> </td>
     <td> <%# @nonmatches[question.id] %> </td>
+-->
   </tr>
   <% end %>
   <% end %>
