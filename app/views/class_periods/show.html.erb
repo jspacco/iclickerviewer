@@ -262,7 +262,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         possibly in a big chain of links?
       TODO: Could this be its own partial ERB view element?
       %>
-      <% if current_user && current_user.verification >0 %>
+      <% if is_verified?(current_user, 1) %>
       <table border="1">
         <tr align="center">
           <th> qid </th>
@@ -270,7 +270,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <th> modified </th>
           <th> delete? </th>
         </tr>
-        <% MatchingQuestion.where(question_id: q.object.id, is_match: 1).each do |mq| %>
+        <% MatchingQuestion.where(question_id: q.object.id, :is_match => [0, 1]).each do |mq| %>
         <tr align="center">
           <td>
             <%= mq.matching_question_id %>

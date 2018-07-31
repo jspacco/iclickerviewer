@@ -2,6 +2,11 @@ class MatchingQuestion < ApplicationRecord
   belongs_to :question
   belongs_to :matched_question, :class_name => "Question", :foreign_key => :matching_question_id
 
+  # is_match field possible values:
+  # NIL: suggested match that a human needs to look at (for example an OCR program suggested that two questionsa re the same)
+  # 0: identical
+  # 1: modified
+
   # FIXME Add validations to raise an error if we try to update either of these
   #   attributes
   attr_readonly :question_id
