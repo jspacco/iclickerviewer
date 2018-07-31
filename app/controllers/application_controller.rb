@@ -2,7 +2,6 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   # before_action is a filter that is applied before we load the view
   #before_action :authenticate_user!
-  include SessionsHelper
   # include utility functions from lib/utilities.rb
   # include Utilities
   protected
