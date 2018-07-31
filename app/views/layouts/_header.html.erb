@@ -28,27 +28,19 @@
             <span class="navbar-text"> <%= @course.name %> (<%= @course.folder_name %>) </span>
           </li>
         <% end %>
-        <% if request.fullpath.starts_with?('/login') %>
-        <li><%= link_to "Continue Anonymously", root_path %></li>
-        <% else %>
         <li><%= link_to "Home", root_path %></li>
-        <% end %>
-        <% if current_user && current_user.verification >1 %>
+        <% if current_user %>
         <li>
-          <%# link_to "Log out", logout_path, method: :delete %>
           <%= link_to "Log out", destroy_user_session_path, method: :delete %>
         </li>
-        <li>
-          <%= link_to "Admin Page", admin_index_path, method: :get %>
-        </li>
-        <% elsif current_user %>
-          <li>
-        <%# link_to "Log out", logout_path, method: :delete %>
-        <%= link_to "Log out", destroy_user_session_path, method: :delete %>
-        </li>
-          <% else %>
+        <% else %>
         <li>
           <%= link_to "Login", user_google_oauth2_omniauth_authorize_path %>
+        </li>
+        <% end %>
+        <% if is_verified?(current_user, 2) %>
+        <li>
+          <%= link_to "Admin Page", admin_index_path, method: :get %>
         </li>
         <% end %>
       </ul>
