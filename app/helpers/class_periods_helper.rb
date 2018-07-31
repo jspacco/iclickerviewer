@@ -39,6 +39,6 @@ module ClassPeriodsHelper
 
   private
   def pct_string(num, denom)
-    "%s\%" % ((num.to_f / denom.to_f) * 100).round(1).to_s
+    "%s%%" % ((num.to_f / denom.to_f) * 100).round(1).to_s
   end
 end

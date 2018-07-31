@@ -82,6 +82,7 @@ class CoursesController < ApplicationController
     # session_code => [updated, total] for each class period
     @class_period_updated_counts = Hash.new
     ClassPeriodCache.all.each do |class_period_cache|
+      # TODO fix with real names of things
       @question_updated_counts[class_period_cache.session_code] = [class_period_cache.num_questions_updated, class_period_cache.num_questions]
       course_cache = CourseCache.find_by(id: class_period_cache.course_id)
       @class_period_updated_counts[class_period_cache.course_id] = [course_cache.num_classes_updated, course_cache.total_classes]

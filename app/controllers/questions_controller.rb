@@ -10,9 +10,7 @@ class QuestionsController < ApplicationController
     update_matches_question(:nonmatches)
     update_matches_question(:matches)
 
-    # FIXME is this the right way to do this, or should I trigger an actual redirect?
-    get_values
-    render :show
+    redirect_to action: :show, id: params[:id]
   end
 
   # -------------------------------------------------------------

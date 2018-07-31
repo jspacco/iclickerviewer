@@ -11,6 +11,7 @@
 
   <body>
     <%= render 'layouts/header' %>
+    <%= render 'layouts/flash_messages' if !flash.empty? %>
     <div class="container">
       <%= yield %>
       <%= render 'layouts/footer' %>

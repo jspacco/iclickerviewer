@@ -225,12 +225,15 @@ https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-
   Basically, we're going to try to use the postgres copy command to create sql insert statements for only some rows of the table. To prevent errors from PK overrides:
   https://stackoverflow.com/questions/20169372/postgresql-copy-method-enter-valid-entries-and-discard-exceptions
 
-* OK, simpler way to merge things into the Heroku DB is to just use Heroku:
-  DATABASE_URL=$(heroku config:get DATABASE_URL -a iclickerviewer) rails runner cmdline/test.rb
+* ~~OK, simpler way to merge things into the Heroku DB is to just use Heroku:
+  DATABASE_URL=$(heroku config:get DATABASE_URL -a iclickerviewer) rails runner cmdline/test.rb~~
 
-  This sets the database url to connect to the Heroku DB, but it's actually running locally. This means we can run cmdline/parse.rb to process local data, but write it to the Heroku DB. We may need to turn off the thing with processing the votes, and in fact we may want to generate the vote information later, since votes only rely on the primary key of the question. Actually, yes, this is the right way to go here.
+  ~~This sets the database url to connect to the Heroku DB, but it's actually running locally. This means we can run cmdline/parse.rb to process local data, but write it to the Heroku DB. We may need to turn off the thing with processing the votes, and in fact we may want to generate the vote information later, since votes only rely on the primary key of the question. Actually, yes, this is the right way to go here.~~
 
-  NOTE: in parse.db, we need to specifically connect using DATABASE_URL because for some reason, rails doesn't pick up on this variable, and was still using the local database.
+  ~~NOTE: in parse.db, we need to specifically connect using DATABASE_URL because for some reason, rails doesn't pick up on this variable, and was still using the local database.~~
+
+* *OK folks*, an even simpler way to do this! For example:
+  heroku run bin/rails runner cmdline/update_cached_stats.rb
 
 * Upgrading to hobby-basic (10M rows max) for the DB on heroku was not that difficult to do and works pretty well. We still aren't storing the votes on heroku, but we probably could, and it looks like parse can create them from folder_name/SessionData without too much trouble.
 

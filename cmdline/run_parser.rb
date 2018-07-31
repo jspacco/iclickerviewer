@@ -7,13 +7,17 @@ if __FILE__ == $0
 
   # These either had a different vote count format, or clickers to be ignored
 
-  parse_course(root, 'UIC.CS111F17', 'CS111', 'UIC', 'fall', 2017, 'Taylor', false)
-  parse_course(root, 'UIC.CS111F17-law', 'CS111', 'UIC', 'fall', 2017, 'Taylor', false)
-  parse_course(root, 'UIC.CS111F16', 'CS111', 'UIC', 'fall', 2016, 'Green', false)
-  parse_course(root, 'UIC.CS362F17', 'CS362', 'UIC', 'fall', 2017, 'Taylor', false)
+#  parse_course(root, 'UIC.CS361S18', 'CS361', 'UIC', 'spring', 2018, 'Taylor', false)
+  parse_course(root, 'UIUC.CS233F17-1', 'CS233', 'UIUC', 'fall', 2017, 'Herman', false)
+  parse_course(root, 'UIUC.CS233F17-2', 'CS233', 'UIUC', 'fall', 2017, 'Herman', false)
 
-  parse_course(root, 'KnoxCS141W16', 'CS141', 'Knox', 'winter', 2016, 'Dooley', false)
-  parse_course(root, 'KnoxCS141F16-2', 'CS141', 'Knox', 'fall', 2016, 'Dooley', false)
+  # parse_course(root, 'UIC.CS111F17', 'CS111', 'UIC', 'fall', 2017, 'Taylor', false)
+  # parse_course(root, 'UIC.CS111F17-law', 'CS111', 'UIC', 'fall', 2017, 'Taylor', false)
+  # parse_course(root, 'UIC.CS111F16', 'CS111', 'UIC', 'fall', 2016, 'Green', false)
+  # parse_course(root, 'UIC.CS362F17', 'CS362', 'UIC', 'fall', 2017, 'Taylor', false)
+
+  # parse_course(root, 'KnoxCS141W16', 'CS141', 'Knox', 'winter', 2016, 'Dooley', false)
+  # parse_course(root, 'KnoxCS141F16-2', 'CS141', 'Knox', 'fall', 2016, 'Dooley', false)
 
   # parse_course(root, 'KnoxCS142S17', 'CS142', 'Knox', 'spring', 2017, 'Bunde', false)
   #parse_course(root, 'UCSD.CSE141S17-1', 'CSE141', 'UCSD', 'spring', 2017, 'Porter', false)

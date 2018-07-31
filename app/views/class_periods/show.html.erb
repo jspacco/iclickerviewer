@@ -43,7 +43,7 @@
   Average time per clicker question:<br> <%= @avg_time %> seconds
 </h2>
 
-
+<%# NEXT CLASS link for quick navigation %>
 <% if @next_class_period != nil %>
 <div class="nextlink">
   <%= button_tag "> NEXT CLASS #{@next_class_period.session_code} >",
@@ -55,7 +55,8 @@
 <% end %>
 </div>
 
-<%# TODO: Make course_hash an AJAX call. Inlining it is not elegant.
+<%# TODO: Make course_hash an AJAX call.
+Currently we cache the @course_hash in a course_hash table, which is ugly.
 http://railscasts.com/episodes/324-passing-data-to-javascript
 %>
 <%= javascript_tag do %>
@@ -75,9 +76,11 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <input type="hidden" id="old_dynamic_course_selected" name="old_dynamic_course_selected" value=""/>
 <input type="hidden" id="old_dynamic_class_period_selected" name="old_dynamic_class_period_selected" value=""/>
 <input type="hidden" id="old_dynamic_question_selected" name="old_dynamic_question_selected" value=""/>
+<% if is_verified?(current_user,0) %>
 <%= submit_tag 'Update data', class: "updatebutton"%>
 <%# link_to "Reload Course Hash", update_course_hash_path(@class_period), method: :get%>
 <%= link_to "Reload Course Hash", "/update_course_hash/#{@class_period.id}", method: :get %>
+<% end %>
 <table border=1>
   <tr>
     <th class="mytooltip"> ID
@@ -128,6 +131,15 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         to say that these two questions are the same.
       </span>
     </th>
+    <!-- TODO tags may be clickable?
+    bolded tags you agree with, while
+    non-bold tags you haven't clicked on yet.
+    -->
+    <th class="mytooltip"> keyword<br>tags
+      <span class="tooltiptext"> Keyword tags for this question.
+      </span>
+    </th>
+    <%#
     <th class="mytooltip"> num <br>matching<br>questions
       <span class="tooltiptext"> TODO
       </span>
@@ -140,7 +152,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <span class="tooltiptext left"> TODO
       </span>
     </th>
-
+    %>
   </tr>
 </thead>
   <!--
@@ -161,7 +173,8 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <b> <%= link_to question.question_index, question_path(question) %> </b>
     </td>
     <td>
-      <%= q.select :question_type, [
+      <%= if current_user && current_user.verification >0
+        q.select :question_type, [
         ["unknown", 0],
         ["quiz", 1],
         ["single", 2],
@@ -169,15 +182,19 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         ["non-MCQ", 4],
         ["error", 5]
       ], {}, { class: "question_type_#{q.object.question_index}" }
-      %>
+    end
+    %>
     </td>
+
     <td>
 <%# HACK: creating this.old_question_pair in the DOM to store the previously selected value %>
+<% if current_user && current_user.verification >0 %>
       <%= q.select :question_pair, question_pair_options(q.object, @questions),
         { include_blank: true },
         { onclick: "this.old_question_pair = $(this).val();",
           onchange: "question_pair_handler( #{q.object.question_index}, $(this).val(), this.old_question_pair );",
           class: "question_pair_#{q.object.question_index}" } %>
+          <% end %>
     </td>
     <td class="imagecolumn">
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
@@ -193,6 +210,19 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     </td>
     <td>
       <table>
+        <%
+        # Disable the correctness checkbox elements unless the current_user
+        # has permission level above 0. Level 0 is an unverified or anonymous user,
+        # and has read-only access to the system.
+        # Level 1 is a verified user (allowed to update correct answers and
+        # add keyword tags to questions).
+        # Level 2 is a superuser and can promote the verification level of users.
+        disable_correctness_checkbox = true
+        if is_verified?(current_user, 1)
+          disable_correctness_checkbox = false
+        end
+        %>
+
         <tr>
           <th> <%= q.label :correct_a, "A" %> </th>
           <th> <%= q.label :correct_b, "B" %> </th>
@@ -201,11 +231,11 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <th> <%= q.label :correct_e, "E" %> </th>
         </tr>
         <tr>
-          <td> <%= q.check_box :correct_a %> </td>
-          <td> <%= q.check_box :correct_b %> </td>
-          <td> <%= q.check_box :correct_c %> </td>
-          <td> <%= q.check_box :correct_d %> </td>
-          <td> <%= q.check_box :correct_e %> </td>
+          <td> <%= q.check_box :correct_a, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_b, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_c, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_d, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_e, { :disabled => disable_correctness_checkbox } %> </td>
         </tr>
       </table>
     </td>
@@ -228,7 +258,11 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       For deletes, we get a list of matching_question_ids, and we remove them all.
 
       TODO: Mark the radio buttons for existing matches with the match_type
+      TODO: Link to new UI element to show all matches for this question,
+        possibly in a big chain of links?
+      TODO: Could this be its own partial ERB view element?
       %>
+      <% if current_user && current_user.verification >0 %>
       <table border="1">
         <tr align="center">
           <th> qid </th>
@@ -287,19 +321,34 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           </td>
         </tr>
       </table>
+
       <%= button_tag "use quick preview",
       { :type => "button",
         :onclick => "use_quick_preview(#{q.object.id})" } %>
+        <% end %>
     </td>
-    <%# Turning off possible matches to speed up the page %>
+    <td>
+      <%= @question_keywords[q.object.id.to_s].join(', ') %>
+      <% if is_verified?(current_user, 1) %>
+        <%=
+          q.text_field :keywords,
+            :value => '',
+            :placeholder => 'add keyword'
+        %>
+      <% end %>
+    </td>
+<!-- Commenting out last 3 columns for suggested matches.
     <td> <%# @matches[question.id] %> </td>
     <td> <%# @possible_matches[question.id] %> </td>
     <td> <%# @nonmatches[question.id] %> </td>
+-->
   </tr>
   <% end %>
   <% end %>
 </table>
+<% if current_user && current_user.verification >0 %>
 <%= submit_tag 'Update data', class: "updatebutton" %>
+<% end %>
 <% end %>
 
 <%= render 'modal_image' %>

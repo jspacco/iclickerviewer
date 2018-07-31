@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180419162653) do
+ActiveRecord::Schema.define(version: 2018_07_25_204305) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,23 @@ ActiveRecord::Schema.define(version: 20180419162653) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "keyword_question_tags", force: :cascade do |t|
+    t.bigint "question_id"
+    t.bigint "keyword_id"
+    t.bigint "user_id"
+    t.index ["keyword_id"], name: "index_keyword_question_tags_on_keyword_id"
+    t.index ["question_id", "keyword_id", "user_id"], name: "unique_index", unique: true
+    t.index ["question_id"], name: "index_keyword_question_tags_on_question_id"
+    t.index ["user_id"], name: "index_keyword_question_tags_on_user_id"
+  end
+
+  create_table "keywords", force: :cascade do |t|
+    t.string "keyword"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["keyword"], name: "index_keywords_on_keyword", unique: true
+  end
+
   create_table "matching_questions", force: :cascade do |t|
     t.integer "question_id"
     t.integer "matching_question_id"
@@ -109,6 +126,17 @@ ActiveRecord::Schema.define(version: 20180419162653) do
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.datetime "remember_created_at"
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.inet "current_sign_in_ip"
+    t.inet "last_sign_in_ip"
+    t.string "provider"
+    t.string "uid"
+    t.text "image"
+    t.integer "verification"
   end
 
   create_table "votes", force: :cascade do |t|
