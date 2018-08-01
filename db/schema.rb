@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_25_204305) do
+ActiveRecord::Schema.define(version: 2018_08_01_154712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,14 @@ ActiveRecord::Schema.define(version: 2018_07_25_204305) do
     t.integer "match_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "changed_question_phrasing", default: false
+    t.boolean "changed_question_values", default: false
+    t.boolean "changed_info_phrasing", default: false
+    t.boolean "changed_info_layout", default: false
+    t.boolean "changed_answers_phrasing", default: false
+    t.boolean "changed_answers_values", default: false
+    t.boolean "changed_answers_order", default: false
+    t.boolean "changed_answers_type", default: false
     t.index ["question_id", "matching_question_id"], name: "matching_question_index", unique: true
   end
 
