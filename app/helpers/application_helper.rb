@@ -47,4 +47,8 @@ of a fraction. For example, [3, 10] would be "3 / 10"
   end
 
 
+  def current_time
+    return Time.now.to_f
+  end
+
 end

@@ -100,10 +100,6 @@ class ClassPeriodsController < ApplicationController
 
   private
 
-  def current_time
-    return Time.now.to_f
-  end
-
   # -------------------------------------------------------------
   def get_keyword_hash(class_period_id)
     list = Question.includes(:keywords).where(class_period_id: class_period_id)

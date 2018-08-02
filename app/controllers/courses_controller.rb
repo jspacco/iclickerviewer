@@ -47,10 +47,6 @@ class CoursesController < ApplicationController
 
   private
 
-  def current_time
-    return Time.now.to_f
-  end
-
   def get_all_class_stats
     @all_class_stats = Hash.new
     CourseCache.all.each do |course_cache|
