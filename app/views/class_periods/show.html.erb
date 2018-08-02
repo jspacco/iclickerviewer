@@ -296,6 +296,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <th> qid </th>
           <th> identical </th>
           <th> modified </th>
+          <th> modified+</th>
           <th> delete? </th>
         </tr>
         <% MatchingQuestion.where(question_id: q.object.id, :is_match => 1).each do |mq| %>
@@ -303,7 +304,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <td>
             <%= mq.matching_question_id %>
           </td>
-
+          <!-- identical -->
           <% if mq.match_type == 0 %>
           <td class="bghicol">
           <% else %>
@@ -314,7 +315,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
               "0"
             %>
           </td>
-
+          <!-- modified -->
           <% if mq.match_type == 1 %>
           <td class="bghicol">
           <% else %>
@@ -325,6 +326,19 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
               "1"
             %>
           </td>
+
+          <!-- modified+ -->
+          <% if mq.match_type == 2 %>
+          <td class="bghicol">
+          <% else %>
+          <td>
+          <% end %>
+            <%# modified+ %>
+            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
+              "2"
+            %>
+          </td>
+
           <td>
             <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
               mq.matching_question_id, false,
@@ -346,6 +360,9 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           </td>
           <td>
             <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
+          </td>
+          <td>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified_plus %>
           </td>
         </tr>
       </table>
