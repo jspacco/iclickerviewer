@@ -78,8 +78,6 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <input type="hidden" id="old_dynamic_question_selected" name="old_dynamic_question_selected" value=""/>
 <% if is_verified?(current_user,0) %>
 <%= submit_tag 'Update data', class: "updatebutton"%>
-<%# link_to "Reload Course Hash", update_course_hash_path(@class_period), method: :get%>
-<%= link_to "Reload Course Hash", "/update_course_hash/#{@class_period.id}", method: :get %>
 <% end %>
 <table border=1>
   <tr>
