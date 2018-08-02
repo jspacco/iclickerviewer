@@ -8,5 +8,6 @@ class AddMatchingTypesToMatchingQuestions < ActiveRecord::Migration[5.2]
     add_column :matching_questions, :changed_answers_values, :boolean, default: false
     add_column :matching_questions, :changed_answers_order, :boolean, default: false
     add_column :matching_questions, :changed_answers_type, :boolean, default: false
+    add_column :matching_questions, :changed_other, :boolean, default: false
   end
 end
