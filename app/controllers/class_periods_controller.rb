@@ -209,6 +209,11 @@ class ClassPeriodsController < ApplicationController
     @questions = Question.where(class_period_id: @class_period.id).order(:question_index)
     # Look up a hash from course_name => session_code (class_period) => question_index => question_id
 
+    #TODO can this work? Issue is we have to call it for each question but it's good form to keep db queries out of the view right?
+    #@matching_questions = MatchingQuestion.where(question_id: q.object.id, :is_match => 1)
+
+
+
     start_hash = current_time
     if CourseHash.first != nil
       # read cached version, if it exists

@@ -78,6 +78,8 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <input type="hidden" id="old_dynamic_question_selected" name="old_dynamic_question_selected" value=""/>
 <% if is_verified?(current_user,0) %>
 <%= submit_tag 'Update data', class: "updatebutton"%>
+<%# link_to "Reload Course Hash", update_course_hash_path(@class_period), method: :get%>
+<%= link_to "Reload Course Hash", "/update_course_hash/#{@class_period.id}", method: :get %>
 <% end %>
 <table border=1>
   <tr>
@@ -137,20 +139,6 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         primary key) of the matching question. You can use the "quick preview
         viewer" above to find a question, and then use the button in this column
         to say that these two questions are the same.
-      </span>
-    </th>
-    <th class="mytooltip"> type of<br>match
-      <span class="tooltiptext">Describe what kind of modifications were made.
-        Choices are:<br>
-        1.) Changed Question Phrasing<br>
-        2.) Changed Question Values<br>
-        3.) Changed Info Phrasing<br>
-        4.) Changed Info Layout<br>
-        5.) Changed Answers Phrasing<br>
-        6.) Changed Answers Values<br>
-        7.) Changed Answers Order<br>
-        8.) Changed Answers Type<br>
-        9.) Changed Other<br>
       </span>
     </th>
     <%#
@@ -269,6 +257,9 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         %>
       <% end %>
     </td>
+
+
+
     <td>
       <%#
       Compact table for adding, deleting, and editing matching_questions.
