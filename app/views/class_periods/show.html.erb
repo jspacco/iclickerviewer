@@ -141,7 +141,20 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         to say that these two questions are the same.
       </span>
     </th>
-
+    <th class="mytooltip"> type of<br>match
+      <span class="tooltiptext">Describe what kind of modifications were made.
+        Choices are:<br>
+        1.) Changed Question Phrasing<br>
+        2.) Changed Question Values<br>
+        3.) Changed Info Phrasing<br>
+        4.) Changed Info Layout<br>
+        5.) Changed Answers Phrasing<br>
+        6.) Changed Answers Values<br>
+        7.) Changed Answers Order<br>
+        8.) Changed Answers Type<br>
+        9.) Changed Other<br>
+      </span>
+    </th>
     <%#
     <th class="mytooltip"> num <br>matching<br>questions
       <span class="tooltiptext"> TODO
@@ -191,7 +204,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
     <td>
 <%# HACK: creating this.old_question_pair in the DOM to store the previously selected value %>
-<% if current_user && current_user.verification >0 %>
+<% if is_verified?(current_user, 1) %>
       <%= q.select :question_pair, question_pair_options(q.object, @questions),
         { include_blank: true },
         { onclick: "this.old_question_pair = $(this).val();",
