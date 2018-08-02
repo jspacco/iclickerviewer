@@ -111,6 +111,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     <th class="mytooltip"> correct<br> answer(s)
       <span class="tooltiptext"> TODO </span>
     </th>
+<!--
     <th class="mytooltip"> start
       <span class="tooltiptext"> TODO </span>
     </th>
@@ -123,14 +124,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     <th class="mytooltip"> correct<br> %
       <span class="tooltiptext">Percent of answers that were correct</span>
     </th>
-    <th class="mytooltip"> matching<br>question
-      <span class="tooltiptext">Matching versions of this question
-        from other courses. Enter the question ID (database
-        primary key) of the matching question. You can use the "quick preview
-        viewer" above to find a question, and then use the button in this column
-        to say that these two questions are the same.
-      </span>
-    </th>
+-->
     <!-- TODO tags may be clickable?
     bolded tags you agree with, while
     non-bold tags you haven't clicked on yet.
@@ -139,6 +133,15 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <span class="tooltiptext"> Keyword tags for this question.
       </span>
     </th>
+    <th class="mytooltip"> matching<br>question
+      <span class="tooltiptext">Matching versions of this question
+        from other courses. Enter the question ID (database
+        primary key) of the matching question. You can use the "quick preview
+        viewer" above to find a question, and then use the button in this column
+        to say that these two questions are the same.
+      </span>
+    </th>
+
     <%#
     <th class="mytooltip"> num <br>matching<br>questions
       <span class="tooltiptext"> TODO
@@ -239,10 +242,22 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         </tr>
       </table>
     </td>
+<!--
     <td> <%= question.start %> </td>
     <td> <%= question.stop %> </td>
     <td> <%= question.num_seconds %> </td>
     <td> <%= correct_pct(question) %> </td>
+-->
+    <td>
+      <%= @question_keywords[q.object.id.to_s].join(', ') %>
+      <% if is_verified?(current_user, 1) %>
+        <%=
+          q.text_field :keywords,
+            :value => '',
+            :placeholder => 'add keyword'
+        %>
+      <% end %>
+    </td>
     <td>
       <%#
       Compact table for adding, deleting, and editing matching_questions.
@@ -326,16 +341,6 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       { :type => "button",
         :onclick => "use_quick_preview(#{q.object.id})" } %>
         <% end %>
-    </td>
-    <td>
-      <%= @question_keywords[q.object.id.to_s].join(', ') %>
-      <% if is_verified?(current_user, 1) %>
-        <%=
-          q.text_field :keywords,
-            :value => '',
-            :placeholder => 'add keyword'
-        %>
-      <% end %>
     </td>
 <!-- Commenting out last 3 columns for suggested matches.
     <td> <%# @matches[question.id] %> </td>
