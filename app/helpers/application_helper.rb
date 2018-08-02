@@ -35,7 +35,7 @@ Given a list of two values, return them as a string representation
 of a fraction. For example, [3, 10] would be "3 / 10"
 =end
   def to_s_fraction(values)
-    return "#{values[0]} / #{values[1]}"
+    return "#{values[1] - values[0]} / #{values[1]}"
   end
 
   def is_verified?(user, level)
@@ -44,7 +44,7 @@ of a fraction. For example, [3, 10] would be "3 / 10"
     else
       return false
     end
-  end 
+  end
 
 
 end
