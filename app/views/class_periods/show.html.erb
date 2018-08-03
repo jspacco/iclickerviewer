@@ -64,6 +64,11 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     $("#old_dynamic_course_selected").val("<%=j @old_dynamic_course_selected%>");
     $("#old_dynamic_class_period_selected").val("<%=j @old_dynamic_class_period_selected%>");
     $("#old_dynamic_question_selected").val("<%=j @old_dynamic_question_selected%>");
+    // autocomplete
+    var keywords = <%= raw @keywords %>;
+    $( ".keyword_input" ).autocomplete({
+      source: keywords
+    });
   });
 
   var course_hash = <%=raw @course_hash %>;
@@ -72,7 +77,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <% end %>
 
 
-<%= form_tag(class_period_path(@class_period), method: :patch) do %>
+<%= form_tag(class_period_path(@class_period), :method => :patch, :autocomplete => 'off') do %>
 <input type="hidden" id="old_dynamic_course_selected" name="old_dynamic_course_selected" value=""/>
 <input type="hidden" id="old_dynamic_class_period_selected" name="old_dynamic_class_period_selected" value=""/>
 <input type="hidden" id="old_dynamic_question_selected" name="old_dynamic_question_selected" value=""/>
@@ -249,11 +254,14 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     <td>
       <%= @question_keywords[q.object.id.to_s].join(', ') %>
       <% if is_verified?(current_user, 1) %>
+        <div class="ui-widget">
         <%=
           q.text_field :keywords,
             :value => '',
-            :placeholder => 'add keyword'
+            :placeholder => 'add keyword',
+            :class => 'keyword_input'
         %>
+        </div>
       <% end %>
     </td>
     <td>

@@ -10,6 +10,8 @@ class ClassPeriodsController < ApplicationController
 
     get_keyword_hash(params[:id])
 
+    get_question_keyword_list
+
     # get_match_stats(ClassPeriod.find_by(id: params[:id]))
   end
 
@@ -225,5 +227,13 @@ class ClassPeriodsController < ApplicationController
     end
     @avg_time = (total_time / num_questions).round(0)
 
+  end
+
+  # --------------------------------------------------------------------
+  def get_question_keyword_list
+    @keywords = []
+    Keyword.all.each do |keyword|
+      @keywords << keyword.keyword.downcase
+    end
   end
 end
