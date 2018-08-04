@@ -230,20 +230,23 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         %>
 
         <tr>
-          <th> <%= q.label :correct_a, "A" %> </th>
-          <th> <%= q.label :correct_b, "B" %> </th>
-          <th> <%= q.label :correct_c, "C" %> </th>
-          <th> <%= q.label :correct_d, "D" %> </th>
-          <th> <%= q.label :correct_e, "E" %> </th>
+          <th> <%= q.label :correct_a, "A", :ondblclick => "select_all_inverse('#{q.object.id}', 'a');" %> </th>
+          <th> <%= q.label :correct_b, "B", :ondblclick => "select_all_inverse('#{q.object.id}', 'b');" %> </th>
+          <th> <%= q.label :correct_c, "C", :ondblclick => "select_all_inverse('#{q.object.id}', 'c');" %> </th>
+          <th> <%= q.label :correct_d, "D", :ondblclick => "select_all_inverse('#{q.object.id}', 'd');" %> </th>
+          <th> <%= q.label :correct_e, "E", :ondblclick => "select_all_inverse('#{q.object.id}', 'e');" %> </th>
         </tr>
         <tr>
-          <td> <%= q.check_box :correct_a, { :disabled => disable_correctness_checkbox } %> </td>
-          <td> <%= q.check_box :correct_b, { :disabled => disable_correctness_checkbox } %> </td>
-          <td> <%= q.check_box :correct_c, { :disabled => disable_correctness_checkbox } %> </td>
-          <td> <%= q.check_box :correct_d, { :disabled => disable_correctness_checkbox } %> </td>
-          <td> <%= q.check_box :correct_e, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_a, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'a');" } %> </td>
+          <td> <%= q.check_box :correct_b, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'b');"  } %> </td>
+          <td> <%= q.check_box :correct_c, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'c');"  } %> </td>
+          <td> <%= q.check_box :correct_d, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'd');"  } %> </td>
+          <td> <%= q.check_box :correct_e, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'e');"  } %> </td>
         </tr>
       </table>
+      <button type="button" class="navbar-btn" onclick="reset_correct_checkboxes('<%= "#{q.object.id}" %>')"> 
+        reset
+      </button>
     </td>
 <!--
     <td> <%= question.start %> </td>

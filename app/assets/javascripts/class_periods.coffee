@@ -166,3 +166,42 @@ root.toggle_quick_preview =() ->
     $('.topdiv').hide()
   else
     $('.topdiv').show()
+
+#
+# helper function
+#
+html_id =(id, ch) ->
+  return "questions_#{id}_correct_#{ch}"
+
+#
+# When we double-click a correctness checkbox, select
+# all of the ones we didn't click.
+#
+# This is used for "A or not A" questions, which are sort
+# of like "true/false" questions, except instead of A/B
+# it's "A for true, not A for false"
+#
+root.select_all_inverse =(id, clicked_letter) ->
+  # labels and checkboxes are of the form:
+  # questions_12345_correct_a
+  # We are given the id, which is 12345 in the example above,
+  # and the letter of the id, which is 'a' in the example above.
+  # Using this information and JQuery,
+  # check all the checkboxes except the one that was
+  # double-clicked, which will be left unchecked.
+  clicked = html_id(id, clicked_letter)
+  for letter in ['a', 'b', 'c', 'd', 'e']
+    current = html_id(id, letter)
+    if clicked == current
+      $("##{current}").prop("checked", false)
+    else
+      $("##{current}").prop("checked", true)
+  return 0
+
+#
+# reset the correctness checkboxes that match the given html id
+#
+root.reset_correct_checkboxes =(id) ->
+  for letter in ['a', 'b', 'c', 'd', 'e']
+    id_tag = html_id(id, letter)
+    $("##{id_tag}").prop("checked", false)
