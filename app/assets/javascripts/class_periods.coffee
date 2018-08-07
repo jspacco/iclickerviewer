@@ -205,3 +205,4 @@ root.reset_correct_checkboxes =(id) ->
   for letter in ['a', 'b', 'c', 'd', 'e']
     id_tag = html_id(id, letter)
     $("##{id_tag}").prop("checked", false)
+  return 0
