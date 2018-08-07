@@ -91,15 +91,15 @@ ActiveRecord::Schema.define(version: 2018_08_01_154712) do
     t.integer "match_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "changed_question_phrasing", default: false
-    t.boolean "changed_question_values", default: false
-    t.boolean "changed_info_phrasing", default: false
-    t.boolean "changed_info_layout", default: false
-    t.boolean "changed_answers_phrasing", default: false
-    t.boolean "changed_answers_values", default: false
-    t.boolean "changed_answers_order", default: false
-    t.boolean "changed_answers_type", default: false
-    t.boolean "changed_other", default: false
+    t.integer "changed_question_phrasing", default: 0
+    t.integer "changed_question_values", default: 0
+    t.integer "changed_info_phrasing", default: 0
+    t.integer "changed_info_layout", default: 0
+    t.integer "changed_answers_phrasing", default: 0
+    t.integer "changed_answers_values", default: 0
+    t.integer "changed_answers_order", default: 0
+    t.integer "changed_answers_type", default: 0
+    t.integer "changed_other", default: 0
     t.index ["question_id", "matching_question_id"], name: "matching_question_index", unique: true
   end
 
