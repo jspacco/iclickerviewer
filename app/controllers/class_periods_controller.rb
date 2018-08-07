@@ -29,6 +29,8 @@ class ClassPeriodsController < ApplicationController
           match_type = 0
         elsif match_type == 'modified'
           match_type = 1
+        elsif match_type == 'modified_plus'
+          match_type = 2
         else
           match_type = nil
         end
@@ -63,10 +65,130 @@ class ClassPeriodsController < ApplicationController
         end
       end
 
+      changed_question_phrasing = params[:questions][question.id.to_s][:set_changed_q_p]
+      if changed_question_phrasing
+        changed_question_phrasing.each do |changed_question_phrasing_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_question_phrasing_id)
+        mq.changed_question_phrasing = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_question_values = params[:questions][question.id.to_s][:set_changed_q_v]
+      if changed_question_values
+        changed_question_values.each do |changed_question_values_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_question_values_id)
+        mq.changed_question_values = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_info_phrasing = params[:questions][question.id.to_s][:set_changed_i_p]
+      if changed_info_phrasing
+        changed_info_phrasing.each do |changed_info_phrasing_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_info_phrasing_id)
+        mq.changed_info_phrasing = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_info_layout = params[:questions][question.id.to_s][:set_changed_i_l]
+      if changed_info_layout
+        changed_info_layout.each do |changed_info_layout_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_info_layout_id)
+        mq.changed_info_layout = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_answers_phrasing = params[:questions][question.id.to_s][:set_changed_a_p]
+      if changed_answers_phrasing
+        changed_answers_phrasing.each do |changed_answers_phrasing_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_answers_phrasing_id)
+        mq.changed_answers_phrasing = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_answers_values = params[:questions][question.id.to_s][:set_changed_a_v]
+      if changed_answers_values
+        changed_answers_values.each do |changed_answers_values_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_answers_values_id)
+        mq.changed_answers_values = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_answers_order = params[:questions][question.id.to_s][:set_changed_a_o]
+      if changed_answers_order
+        changed_answers_order.each do |changed_answers_order_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_answers_order_id)
+        mq.changed_answers_order = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_answers_type = params[:questions][question.id.to_s][:set_changed_a_t]
+      if changed_answers_type
+        changed_answers_type.each do |changed_answers_type_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_answers_type_id)
+        mq.changed_answer_type = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_other = params[:questions][question.id.to_s][:set_changed_o]
+      if changed_other
+        changed_other.each do |changed_other_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_other_id)
+        mq.changed_other = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+
+      #----------------------------------------------------------
+
       # TODO more elegant way to create self-referential many-to-many.
       # Delete the matching_questions key from params, now that we've already
       #   used it. This allows us to use update_attributes without getting
-      #   an error for "Unpermitted paramter".
+      #   an error for "Unpermitted parameter".
       params[:questions][question.id.to_s].delete(:matching_questions)
 
       # Handle keyword tags
@@ -77,6 +199,7 @@ class ClassPeriodsController < ApplicationController
           user_id: current_user.id.to_s,
           question: question)
       end
+
 
       params[:questions][question.id.to_s].delete(:keywords)
 
