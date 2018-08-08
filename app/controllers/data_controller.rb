@@ -10,7 +10,7 @@ class DataController < ApplicationController
   #   I figure out how to create json):
   #
   # course_id course_name class_id class_name
-  # qid num_seconds question_index question_type
+  # q1id q2id num_seconds question_index question_type
   # num_correct_answers num1st num2nd
   # num1st_correct num2nd_correct pct1st_correct pct2nd_correct
   #
@@ -36,24 +36,31 @@ class DataController < ApplicationController
     ActiveRecord::Base.connection.exec_query(queries[5])
 
     # https://stackoverflow.com/questions/39066365/smartly-converting-array-of-hashes-to-csv-in-ruby
-    header = ['course_id', 'course_name', 'instructor', 'class_id', 'class_code',
-    'qid', 'question_index', 'question_type',
+    header = ['match_cluster','course_id', 'course_name', 'instructor', 'class_id', 'class_code',
+    'q1id', 'q2id', 'question_index', 'question_type',
     'num_correct_answers', 'num1st', 'num2nd',
     'num1st_correct', 'num2nd_correct',
     'pct1st_correct', 'pct2nd_correct',
     'seconds_1st', 'seconds_2nd',
     'normalized_gain']
 
+    clusters = match_clusters
+
     csv = header.to_csv
     results.each do |row|
       # Compute normalized gain. It's easier to compute here than in the
       #   database with SQL.
+      if clusters.has_key?(row['q1id'].to_i) || clusters.has_key?(row['q2id'].to_i)
+        row['match_cluster'] = clusters[row['q1id'].to_i]
+      else
+        row['match_cluster'] = -1
+      end
       row['normalized_gain'] = -1
       if row['question_type'] == 3
         pct1st = row['pct1st_correct'].to_f
         pct2nd = row['pct2nd_correct'].to_f
         #row['normalized_gain'] = (pct2nd - pct1st) / (1 - pct1st)
-        row['normalized_gain'] = ng(pct1st_correct, pct2nd_correct)
+        row['normalized_gain'] = ng(pct1st, pct2nd)
       end
       # Holy crap, I'm combing the splat (*) operator with
       #   the map method and a block!
@@ -69,6 +76,33 @@ class DataController < ApplicationController
   end
 
 private
+
+  def match_clusters
+    result = Hash.new
+    cluster = 1
+    MatchingQuestion.all.each do |mq|
+      qid = mq.question_id
+      mqid = mq.matching_question_id
+      if !result.has_key?(qid) && !result.has_key?(mqid)
+        # We have not seen either of these question ids
+        # Create a new clsuter for each of them!
+        result[qid] = cluster
+        result[mqid] = cluster
+        cluster += 1
+      elsif result.has_key?(qid) && !result.has_key?(mqid)
+        # We already have a cluster for qid, but not for mqid.
+        # So set mqid's cluster to qid.
+        result[mqid] = result[qid]
+      elsif result.has_key?(mqid) && !result.has_key?(qid)
+        result[qid] = result[mqid]
+        # We already have a cluster for mqid, but not for qid.
+        # So set mqid's cluster to mqid.
+      end
+      # Final possibility is that we have already seen both qid and mqid,
+      # and assigned them to a cluster. If so, don't change anything.
+    end
+    return result
+  end
 
   def query(sql)
     return ActiveRecord::Base.connection_pool.with_connection {
@@ -93,6 +127,7 @@ private
   # FIXME Figure out how to make this an actual variable.
   # XXX This sql query cannot have comments with semicolons in it! We are
   #   splitting this query as a string using the semicolons as delimiters.
+  # FIXME Handle questions with more than one correct answer!
   def csvsql
 return %q{
 -- delete the temp table, if it exists
@@ -216,7 +251,7 @@ where q1.question_type = 4;
 
 select c.id as course_id, c.folder_name as course_name, c.instructor,
 cp.id as class_id, cp.session_code as class_code,
-q.id as qid, q.question_index, q.question_type,
+q.id as q1id, qt.q2id as q2id, q.question_index, q.question_type,
 qt.num_correct_answers, qt.num1st, qt.num2nd, qt.num1st_correct, qt.num2nd_correct,
 qt.pct1st_correct, qt.pct2nd_correct,
 qt.seconds_1st, qt.seconds_2nd
