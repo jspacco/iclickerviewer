@@ -245,7 +245,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <td> <%= q.check_box :correct_e, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'e');"  } %> </td>
         </tr>
       </table>
-      <button type="button" class="navbar-btn" onclick="reset_correct_checkboxes('<%= "#{q.object.id}" %>')"> 
+      <button type="button" class="navbar-btn" onclick="reset_correct_checkboxes('<%= "#{q.object.id}" %>')">
         reset
       </button>
     </td>
@@ -351,8 +351,8 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <td>
           <% end %>
             <%# identical: %>
-            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
-              "0"
+            <%= radio_button_tag  "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
+            "0",false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 0);"
             %>
           </td>
           <!-- modified -->
@@ -363,7 +363,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <% end %>
             <%# modified %>
             <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
-              "1"
+              "1",false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 1);"
             %>
           </td>
 
@@ -375,7 +375,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <% end %>
             <%# modified+ %>
             <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
-              "2"
+              "2",false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 2);"
             %>
           </td>
 
@@ -390,7 +390,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
             <% q_p_val = "1" %>
           <% end %>
           <%= check_box_tag "questions[#{q.object.id}][set_changed_q_p][#{mq.matching_question_id}]",
-            q_p_val
+            q_p_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
           %>
         </td>
           <% if mq.changed_question_values == 1 %> <!-- changed_question_values -->
@@ -402,7 +402,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
             <% q_v_val = "1" %>
           <% end %>
           <%= check_box_tag "questions[#{q.object.id}][set_changed_q_v][#{mq.matching_question_id}]",
-            q_v_val
+            q_v_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
           %>
         </td>
           <% if mq.changed_info_phrasing == 1 %> <!-- changed_info_phrasing -->
@@ -415,7 +415,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
           <% end %>
           <%= check_box_tag "questions[#{q.object.id}][set_changed_i_p][#{mq.matching_question_id}]",
-            i_p_val
+            i_p_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
           %>
         </td>
           <% if mq.changed_info_layout == 1 %> <!-- changed_info_layout -->
@@ -428,7 +428,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
           <% end %>
           <%= check_box_tag "questions[#{q.object.id}][set_changed_i_l][#{mq.matching_question_id}]",
-            i_l_val
+            i_l_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
           %>
         </td>
           <% if mq.changed_answers_phrasing == 1 %> <!-- changed_answers_phrasing -->
@@ -441,7 +441,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
           <% end %>
           <%= check_box_tag "questions[#{q.object.id}][set_changed_a_p][#{mq.matching_question_id}]",
-            a_p_val
+            a_p_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
           %>
         </td>
           <% if mq.changed_answers_values == 1 %> <!-- changed_answers_values -->
@@ -454,7 +454,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
           <% end %>
           <%= check_box_tag "questions[#{q.object.id}][set_changed_a_v][#{mq.matching_question_id}]",
-            a_v_val
+            a_v_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
           %>
         </td>
           <% if mq.changed_answers_order == 1 %> <!-- changed_answers_order -->
@@ -467,7 +467,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
           <% end %>
           <%= check_box_tag "questions[#{q.object.id}][set_changed_a_o][#{mq.matching_question_id}]",
-            a_o_val
+            a_o_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
           %>
         </td>
           <% if mq.changed_answers_type == 1 %> <!-- changed_answers_type -->
@@ -480,7 +480,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
           <% end %>
           <%= check_box_tag "questions[#{q.object.id}][set_changed_a_t][#{mq.matching_question_id}]",
-            a_t_val
+            a_t_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
           %>
         </td>
           <% if mq.changed_other == 1 %> <!-- changed_other -->
@@ -492,13 +492,13 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
             <% o_val = "1" %>
           <% end %>
           <%= check_box_tag "questions[#{q.object.id}][set_changed_o][#{mq.matching_question_id}]",
-            o_val
+            o_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
           %>
         </td>
           <td>
             <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
               mq.matching_question_id, false,
-              {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
+              {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}", onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 'delete');"} %>
           </td>
         </tr>
         <% end %>
@@ -513,14 +513,67 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
               :placeholder => 'add' %>
           </td>
           <td>
-            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical %>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical,false, onclick: "matching_new_logic(#{q.object.id}, 0);" %>
           </td>
           <td>
-            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified, false, onclick: "matching_new_logic(#{q.object.id}, 1);" %>
           </td>
           <td>
-            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified_plus %>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified_plus,false, onclick: "matching_new_logic(#{q.object.id}, 2);" %>
           </td>
+
+          <td>
+          <%= check_box_tag "questions[#{q.object.id}][set_q_p]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
+          %>
+        </td>
+
+          <td>
+
+          <%= check_box_tag "questions[#{q.object.id}][set_q_v]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
+          %>
+        </td>
+          <td>
+
+          <%= check_box_tag "questions[#{q.object.id}][set_i_p]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
+          %>
+        </td>
+
+          <td>
+
+          <%= check_box_tag "questions[#{q.object.id}][set_i_l]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
+          %>
+        </td>
+
+          <td>
+
+          <%= check_box_tag "questions[#{q.object.id}][set_a_p]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
+          %>
+        </td>
+
+          <td>
+
+          <%= check_box_tag "questions[#{q.object.id}][set_a_v]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
+          %>
+        </td>
+
+          <td>
+
+          <%= check_box_tag "questions[#{q.object.id}][set_a_o]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
+          %>
+        </td>
+
+          <td>
+
+          <%= check_box_tag "questions[#{q.object.id}][set_a_t]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
+          %>
+        </td>
+
+          <td>
+
+          <%= check_box_tag "questions[#{q.object.id}][set_o]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
+          %>
+        </td>
+
         </tr>
       </table>
 

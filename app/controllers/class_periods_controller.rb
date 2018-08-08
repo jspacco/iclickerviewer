@@ -27,6 +27,16 @@ class ClassPeriodsController < ApplicationController
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
       if matching_question_id
         match_type = params[:questions][question.id.to_s][:match_type]
+        set_q_p = params[:questions][question.id.to_s][:set_q_p]
+        set_q_v = params[:questions][question.id.to_s][:set_q_v]
+        set_i_p = params[:questions][question.id.to_s][:set_i_p]
+        set_i_l = params[:questions][question.id.to_s][:set_i_l]
+        set_a_p = params[:questions][question.id.to_s][:set_a_p]
+        set_a_v = params[:questions][question.id.to_s][:set_a_v]
+        set_a_o = params[:questions][question.id.to_s][:set_a_o]
+        set_a_t = params[:questions][question.id.to_s][:set_o]
+        set_o = params[:questions][question.id.to_s][:set_q_p]
+        
         if match_type == 'identical'
           match_type = 0
         elsif match_type == 'modified'
@@ -39,6 +49,14 @@ class ClassPeriodsController < ApplicationController
         mq = MatchingQuestion.find_or_create_by(question_id: question.id,
           matching_question_id: matching_question_id,
           match_type: match_type,
+          changed_question_phrasing: set_q_p,
+          changed_question_values: set_q_v,
+          changed_info_phrasing: set_i_p,
+          changed_info_layout: set_i_l,
+          changed_answers_phrasing: set_a_p,
+          changed_answers_values: set_a_v,
+          changed_answers_order: set_a_o,
+          changed_other: set_o,
           is_match: 1)
       end
 
