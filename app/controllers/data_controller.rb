@@ -48,18 +48,20 @@ class DataController < ApplicationController
 
     csv = header.to_csv
     results.each do |row|
-      # Compute normalized gain. It's easier to compute here than in the
-      #   database with SQL.
-      if clusters.has_key?(row['q1id'].to_i) || clusters.has_key?(row['q2id'].to_i)
-        row['match_cluster'] = clusters[row['q1id'].to_i]
+      # Use match clusters
+      if clusters.has_key?(row['q1id'])
+        row['match_cluster'] = clusters[row['q1id']]
+      elsif clusters.has_key?(row['q2id'])
+        row['match_cluster'] = clusters[row['q2id']]
       else
         row['match_cluster'] = -1
       end
+      # Compute normalized gain. It's easier to compute here than in the
+      #   database with SQL.
       row['normalized_gain'] = -1
       if row['question_type'] == 3
         pct1st = row['pct1st_correct'].to_f
         pct2nd = row['pct2nd_correct'].to_f
-        #row['normalized_gain'] = (pct2nd - pct1st) / (1 - pct1st)
         row['normalized_gain'] = ng(pct1st, pct2nd)
       end
       # Holy crap, I'm combing the splat (*) operator with
@@ -127,7 +129,6 @@ private
   # FIXME Figure out how to make this an actual variable.
   # XXX This sql query cannot have comments with semicolons in it! We are
   #   splitting this query as a string using the semicolons as delimiters.
-  # FIXME Handle questions with more than one correct answer!
   def csvsql
 return %q{
 -- delete the temp table, if it exists
