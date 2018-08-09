@@ -521,59 +521,14 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <td>
             <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified_plus,false, onclick: "matching_new_logic(#{q.object.id}, 2);" %>
           </td>
-
+          <!-- for loop to create checkboxes for modified+ matches -->
+          <% ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o'].each do |key| %>
+            <td>
+              <%= check_box_tag "questions[#{q.object.id}][set_#{key}]",
+                "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');" %>
+            </td>
+          <% end %>
           <td>
-          <%= check_box_tag "questions[#{q.object.id}][set_q_p]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
-          %>
-        </td>
-
-          <td>
-
-          <%= check_box_tag "questions[#{q.object.id}][set_q_v]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
-          %>
-        </td>
-          <td>
-
-          <%= check_box_tag "questions[#{q.object.id}][set_i_p]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
-          %>
-        </td>
-
-          <td>
-
-          <%= check_box_tag "questions[#{q.object.id}][set_i_l]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
-          %>
-        </td>
-
-          <td>
-
-          <%= check_box_tag "questions[#{q.object.id}][set_a_p]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
-          %>
-        </td>
-
-          <td>
-
-          <%= check_box_tag "questions[#{q.object.id}][set_a_v]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
-          %>
-        </td>
-
-          <td>
-
-          <%= check_box_tag "questions[#{q.object.id}][set_a_o]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
-          %>
-        </td>
-
-          <td>
-
-          <%= check_box_tag "questions[#{q.object.id}][set_a_t]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
-          %>
-        </td>
-
-          <td>
-
-          <%= check_box_tag "questions[#{q.object.id}][set_o]", "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');"
-          %>
-        </td>
-
         </tr>
       </table>
 
