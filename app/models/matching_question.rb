@@ -12,7 +12,6 @@ class MatchingQuestion < ApplicationRecord
   attr_readonly :question_id
   attr_readonly :matching_question_id
 
-  # TODO Cascades on create/update/delete
   after_create :add_mirror
   after_update :update_mirror
   after_destroy :destroy_mirror
@@ -32,12 +31,15 @@ class MatchingQuestion < ApplicationRecord
 
   def update_mirror
     if self.saved_changes?
-      # XXX apparently changing mirror does not trigger after_update, so there's
-      #   no infinite loop. Not entirely sure how ActiveRecord works here.
+      # First, find the mirrored record
       mirror = self.class.find_by(question: matched_question, matched_question: question)
-      # TODO copy everything except question/matched_question from self to mirror
-      mirror.is_match = self.is_match
-      mirror.match_type = self.match_type
+      # Only copy fields other than id, question_id, matching_question_id
+      # Probably not the best or most elegant solution, but this loop through
+      # all the fields except the ones we don't want works fine.
+      copy_fields = MatchingQuestion.new.attributes.keys - ['id', 'question_id', 'matching_question_id']
+      copy_fields.each do |field|
+        mirror[field] = self[field]
+      end
       mirror.save
    end
   end
