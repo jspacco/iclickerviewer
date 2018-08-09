@@ -87,15 +87,15 @@ Rails.application.configure do
   end
   config.action_mailer.delivery_method = :smtp
 
-  EMAIL_PASSWORD = ENV['EMAIL_PASSWORD']
-  config.action_mailer.smtp_settings = {
-    address:  'smtp.gmail.com',
-    port: 587,
-    domain: 'iclickerviewer.herokuapp.com',
-    user_name:  'iclickerviewer',
-    password:   EMAIL_PASSWORD,
-    authentication: 'plain',
-    enable_starttls_auto: true }
+  # EMAIL_PASSWORD = ENV['EMAIL_PASSWORD']
+  # config.action_mailer.smtp_settings = {
+  #   address:  'smtp.gmail.com',
+  #   port: 587,
+  #   domain: 'iclickerviewer.herokuapp.com',
+  #   user_name:  'iclickerviewer',
+  #   password:   EMAIL_PASSWORD,
+  #   authentication: 'plain',
+  #   enable_starttls_auto: true }
 
   #}
   # Do not dump schema after migrations.
