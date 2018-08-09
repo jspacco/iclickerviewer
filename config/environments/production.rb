@@ -85,8 +85,8 @@ Rails.application.configure do
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
-  config.action_mailer.delivery_method = :smtp
 
+  # config.action_mailer.delivery_method = :smtp
   # EMAIL_PASSWORD = ENV['EMAIL_PASSWORD']
   # config.action_mailer.smtp_settings = {
   #   address:  'smtp.gmail.com',
