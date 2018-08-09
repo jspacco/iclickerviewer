@@ -72,6 +72,33 @@ class ClassPeriodsController < ApplicationController
           mq.match_type = match_type
           mq.save
         end
+
+        # check for changes to modified+ expanded match categories
+        {'changed_question_phrasing'   => 'q_p',
+         'changed_question_values'     => 'q_v',
+         'changed_info_phrasing'       => 'i_p',
+         'changed_info_layout'         => 'i_l',
+         'changed_answers_phrasing'    => 'a_p',
+         'changed_answers_values'      => 'a_v',
+         'changed_answers_order'       => 'a_o',
+         'changed_answers_type'        => 'a_t',
+         'changed_other'               => 'o'
+       }.each do |field_name, field_code|
+         puts "updating #{field_name} for #{field_code}"
+         changed_field = params[:questions][question.id.to_s]["set_changed_#{field_code}"]
+         if changed_field
+           puts changed_field
+           changed_field.each do |id, changed_val|
+             mq = MatchingQuestion.find_by(question_id: question.id,
+               matching_question_id: id)
+             mq[field_name] = Integer(changed_val)
+             if(changed_val == 1)
+               mq.match_type = 2;
+             end
+             mq.save
+           end
+         end
+       end
       end
 
       # Delete any matching questions that are to be deleted.
@@ -84,124 +111,6 @@ class ClassPeriodsController < ApplicationController
             matching_question_id: delete_matching_question_id).destroy
         end
       end
-
-      changed_question_phrasing = params[:questions][question.id.to_s][:set_changed_q_p]
-      if changed_question_phrasing
-        changed_question_phrasing.each do |changed_question_phrasing_id, changed_val|
-        mq=  MatchingQuestion.find_by(question_id: question.id,
-          matching_question_id: changed_question_phrasing_id)
-        mq.changed_question_phrasing = Integer(changed_val)
-        if(changed_val == 1)
-          mq.match_type = 2;
-        end
-        mq.save
-        end
-      end
-
-      changed_question_values = params[:questions][question.id.to_s][:set_changed_q_v]
-      if changed_question_values
-        changed_question_values.each do |changed_question_values_id, changed_val|
-        mq=  MatchingQuestion.find_by(question_id: question.id,
-          matching_question_id: changed_question_values_id)
-        mq.changed_question_values = Integer(changed_val)
-        if(changed_val == 1)
-          mq.match_type = 2;
-        end
-        mq.save
-        end
-      end
-
-      changed_info_phrasing = params[:questions][question.id.to_s][:set_changed_i_p]
-      if changed_info_phrasing
-        changed_info_phrasing.each do |changed_info_phrasing_id, changed_val|
-        mq=  MatchingQuestion.find_by(question_id: question.id,
-          matching_question_id: changed_info_phrasing_id)
-        mq.changed_info_phrasing = Integer(changed_val)
-        if(changed_val == 1)
-          mq.match_type = 2;
-        end
-        mq.save
-        end
-      end
-
-      changed_info_layout = params[:questions][question.id.to_s][:set_changed_i_l]
-      if changed_info_layout
-        changed_info_layout.each do |changed_info_layout_id, changed_val|
-        mq=  MatchingQuestion.find_by(question_id: question.id,
-          matching_question_id: changed_info_layout_id)
-        mq.changed_info_layout = Integer(changed_val)
-        if(changed_val == 1)
-          mq.match_type = 2;
-        end
-        mq.save
-        end
-      end
-
-      changed_answers_phrasing = params[:questions][question.id.to_s][:set_changed_a_p]
-      if changed_answers_phrasing
-        changed_answers_phrasing.each do |changed_answers_phrasing_id, changed_val|
-        mq=  MatchingQuestion.find_by(question_id: question.id,
-          matching_question_id: changed_answers_phrasing_id)
-        mq.changed_answers_phrasing = Integer(changed_val)
-        if(changed_val == 1)
-          mq.match_type = 2;
-        end
-        mq.save
-        end
-      end
-
-      changed_answers_values = params[:questions][question.id.to_s][:set_changed_a_v]
-      if changed_answers_values
-        changed_answers_values.each do |changed_answers_values_id, changed_val|
-        mq=  MatchingQuestion.find_by(question_id: question.id,
-          matching_question_id: changed_answers_values_id)
-        mq.changed_answers_values = Integer(changed_val)
-        if(changed_val == 1)
-          mq.match_type = 2;
-        end
-        mq.save
-        end
-      end
-
-      changed_answers_order = params[:questions][question.id.to_s][:set_changed_a_o]
-      if changed_answers_order
-        changed_answers_order.each do |changed_answers_order_id, changed_val|
-        mq=  MatchingQuestion.find_by(question_id: question.id,
-          matching_question_id: changed_answers_order_id)
-        mq.changed_answers_order = Integer(changed_val)
-        if(changed_val == 1)
-          mq.match_type = 2;
-        end
-        mq.save
-        end
-      end
-
-      changed_answers_type = params[:questions][question.id.to_s][:set_changed_a_t]
-      if changed_answers_type
-        changed_answers_type.each do |changed_answers_type_id, changed_val|
-        mq=  MatchingQuestion.find_by(question_id: question.id,
-          matching_question_id: changed_answers_type_id)
-        mq.changed_answers_type = Integer(changed_val)
-        if(changed_val == 1)
-          mq.match_type = 2;
-        end
-        mq.save
-        end
-      end
-
-      changed_other = params[:questions][question.id.to_s][:set_changed_o]
-      if changed_other
-        changed_other.each do |changed_other_id, changed_val|
-        mq=  MatchingQuestion.find_by(question_id: question.id,
-          matching_question_id: changed_other_id)
-        mq.changed_other = Integer(changed_val)
-        if(changed_val == 1)
-          mq.match_type = 2;
-        end
-        mq.save
-        end
-      end
-
 
       #----------------------------------------------------------
 
