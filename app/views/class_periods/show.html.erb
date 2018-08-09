@@ -345,22 +345,14 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
             <%= mq.matching_question_id %>
           </td>
           <!-- identical -->
-          <% if mq.match_type == 0 %>
-          <td class="bghicol">
-          <% else %>
-          <td>
-          <% end %>
+          <td class="<%= "bghicol" if mq.match_type == 0 %>">
             <%# identical: %>
             <%= radio_button_tag  "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
             "0",false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 0);"
             %>
           </td>
           <!-- modified -->
-          <% if mq.match_type == 1 %>
-          <td class="bghicol">
-          <% else %>
-          <td>
-          <% end %>
+          <td class="<%= "bghicol" if mq.match_type == 1 %>">
             <%# modified %>
             <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
               "1",false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 1);"
@@ -368,11 +360,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           </td>
 
           <!-- modified+ -->
-          <% if mq.match_type == 2 %>
-          <td class="bghicol">
-          <% else %>
-          <td>
-          <% end %>
+          <td class="<%= "bghicol" if mq.match_type == 2 %>">
             <%# modified+ %>
             <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
               "2",false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 2);"
