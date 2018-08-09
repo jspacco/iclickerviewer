@@ -369,127 +369,32 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
 
           <!-- modified types -->
-
-          <% if mq.changed_question_phrasing == 1 %> <!-- changed_question_phrasing -->
-          <td class="bghicol">
-            <% q_p_val = "0" %>
-          <% else %>
-          <td>
-            <% q_p_val = "1" %>
-          <% end %>
-          <%= check_box_tag "questions[#{q.object.id}][set_changed_q_p][#{mq.matching_question_id}]",
-            q_p_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
-          %>
-        </td>
-          <% if mq.changed_question_values == 1 %> <!-- changed_question_values -->
-          <td class="bghicol">
-            <% q_v_val = "0" %>
-
-          <% else %>
-          <td>
-            <% q_v_val = "1" %>
-          <% end %>
-          <%= check_box_tag "questions[#{q.object.id}][set_changed_q_v][#{mq.matching_question_id}]",
-            q_v_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
-          %>
-        </td>
-          <% if mq.changed_info_phrasing == 1 %> <!-- changed_info_phrasing -->
-          <td class="bghicol">
-            <% i_p_val = "0" %>
-
-          <% else %>
-          <td>
-            <% i_p_val = "1" %>
-
-          <% end %>
-          <%= check_box_tag "questions[#{q.object.id}][set_changed_i_p][#{mq.matching_question_id}]",
-            i_p_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
-          %>
-        </td>
-          <% if mq.changed_info_layout == 1 %> <!-- changed_info_layout -->
-          <td class="bghicol">
-            <% i_l_val = "0" %>
-
-          <% else %>
-          <td>
-            <% i_l_val = "1" %>
-
-          <% end %>
-          <%= check_box_tag "questions[#{q.object.id}][set_changed_i_l][#{mq.matching_question_id}]",
-            i_l_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
-          %>
-        </td>
-          <% if mq.changed_answers_phrasing == 1 %> <!-- changed_answers_phrasing -->
-          <td class="bghicol">
-            <% a_p_val = "0" %>
-
-          <% else %>
-          <td>
-            <% a_p_val = "1" %>
-
-          <% end %>
-          <%= check_box_tag "questions[#{q.object.id}][set_changed_a_p][#{mq.matching_question_id}]",
-            a_p_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
-          %>
-        </td>
-          <% if mq.changed_answers_values == 1 %> <!-- changed_answers_values -->
-          <td class="bghicol">
-            <% a_v_val = "0" %>
-
-          <% else %>
-          <td>
-            <% a_v_val = "1" %>
-
-          <% end %>
-          <%= check_box_tag "questions[#{q.object.id}][set_changed_a_v][#{mq.matching_question_id}]",
-            a_v_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
-          %>
-        </td>
-          <% if mq.changed_answers_order == 1 %> <!-- changed_answers_order -->
-          <td class="bghicol">
-            <% a_o_val = "0" %>
-
-          <% else %>
-          <td>
-            <% a_o_val = "1" %>
-
-          <% end %>
-          <%= check_box_tag "questions[#{q.object.id}][set_changed_a_o][#{mq.matching_question_id}]",
-            a_o_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
-          %>
-        </td>
-          <% if mq.changed_answers_type == 1 %> <!-- changed_answers_type -->
-          <td class="bghicol">
-            <% a_t_val = "0" %>
-
-          <% else %>
-          <td>
-            <% a_t_val = "1" %>
-
-          <% end %>
-          <%= check_box_tag "questions[#{q.object.id}][set_changed_a_t][#{mq.matching_question_id}]",
-            a_t_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
-          %>
-        </td>
-          <% if mq.changed_other == 1 %> <!-- changed_other -->
-          <td class="bghicol">
-            <% o_val = "0" %>
-
-          <% else %>
-          <td>
-            <% o_val = "1" %>
-          <% end %>
-          <%= check_box_tag "questions[#{q.object.id}][set_changed_o][#{mq.matching_question_id}]",
-            o_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
-          %>
-        </td>
+          <% # iterate through a hash from names of the modified+ match fields to their short codes
+             {'changed_question_phrasing'   => 'q_p',
+              'changed_question_values'     => 'q_v',
+              'changed_info_phrasing'       => 'i_p',
+              'changed_info_layout'         => 'i_l',
+              'changed_answers_phrasing'    => 'a_p',
+              'changed_answers_values'      => 'a_v',
+              'changed_answers_order'       => 'a_o',
+              'changed_answers_type'        => 'a_t',
+              'changed_other'               => 'o'
+            }.each do |field_name, field_code| %>
+            <td class="<%= "bghicol" if mq[field_name] == 1%>">
+              <%= check_box_tag "questions[#{q.object.id}][set_changed_#{field_code}][#{mq.matching_question_id}]",
+                # toggle: we are sending 1 if the checkbox is currently unchecked, and 0 if it's currently checked
+                mq[field_name] == 1 ? 0 : 1,
+                false,
+                onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"%>
+            </td>
+          <% end # {}.each do |field_name, field_code| %>
           <td>
             <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
               mq.matching_question_id, false,
-              {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}", onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 'delete');"} %>
+              { :id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}", onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 'delete');" } %>
           </td>
         </tr>
-        <% end # matching_questions do |mq| %>
+        <% end # matching_questions.each do |mq| %>
         <!--
         Last row of the table is for the UI to add a new matching question.
         -->
@@ -500,18 +405,18 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
               :placeholder => 'add' %>
           </td>
           <td>
-            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical,false, onclick: "matching_new_logic(#{q.object.id}, 0);" %>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical, false, onclick: "matching_new_logic(#{q.object.id}, 0);" %>
           </td>
           <td>
             <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified, false, onclick: "matching_new_logic(#{q.object.id}, 1);" %>
           </td>
           <td>
-            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified_plus,false, onclick: "matching_new_logic(#{q.object.id}, 2);" %>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified_plus, false, onclick: "matching_new_logic(#{q.object.id}, 2);" %>
           </td>
           <!-- for loop to create checkboxes for modified+ matches -->
-          <% ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o'].each do |key| %>
+          <% ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o'].each do |field_code| %>
             <td>
-              <%= check_box_tag "questions[#{q.object.id}][set_#{key}]",
+              <%= check_box_tag "questions[#{q.object.id}][set_#{field_code}]",
                 "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');" %>
             </td>
           <% end %>
