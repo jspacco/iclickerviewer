@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :questions, :only => [:index, :show, :update]
   resources :data, :only => [:index]
   resources :admin, :only => [:index]
+  resources :clusters, :only => [:show]
   patch '/admin', to: 'admin#update'
   get    '/update_course_hash/:id', to: 'class_periods#update_course_hash'
 end
