@@ -181,7 +181,7 @@ class ClassPeriodsController < ApplicationController
         changed_answers_type.each do |changed_answers_type_id, changed_val|
         mq=  MatchingQuestion.find_by(question_id: question.id,
           matching_question_id: changed_answers_type_id)
-        mq.changed_answer_type = Integer(changed_val)
+        mq.changed_answers_type = Integer(changed_val)
         if(changed_val == 1)
           mq.match_type = 2;
         end
