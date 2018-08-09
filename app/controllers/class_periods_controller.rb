@@ -27,16 +27,16 @@ class ClassPeriodsController < ApplicationController
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
       if matching_question_id
         match_type = params[:questions][question.id.to_s][:match_type]
-        set_q_p = params[:questions][question.id.to_s][:set_q_p]
-        set_q_v = params[:questions][question.id.to_s][:set_q_v]
-        set_i_p = params[:questions][question.id.to_s][:set_i_p]
-        set_i_l = params[:questions][question.id.to_s][:set_i_l]
-        set_a_p = params[:questions][question.id.to_s][:set_a_p]
-        set_a_v = params[:questions][question.id.to_s][:set_a_v]
-        set_a_o = params[:questions][question.id.to_s][:set_a_o]
-        set_a_t = params[:questions][question.id.to_s][:set_o]
-        set_o = params[:questions][question.id.to_s][:set_q_p]
-        
+        set_q_p = params[:questions][question.id.to_s][:set_q_p] == '1' ? 1 : 0
+        set_q_v = params[:questions][question.id.to_s][:set_q_v] == '1' ? 1 : 0
+        set_i_p = params[:questions][question.id.to_s][:set_i_p] == '1' ? 1 : 0
+        set_i_l = params[:questions][question.id.to_s][:set_i_l] == '1' ? 1 : 0
+        set_a_p = params[:questions][question.id.to_s][:set_a_p] == '1' ? 1 : 0
+        set_a_v = params[:questions][question.id.to_s][:set_a_v] == '1' ? 1 : 0
+        set_a_o = params[:questions][question.id.to_s][:set_a_o] == '1' ? 1 : 0
+        set_a_t = params[:questions][question.id.to_s][:set_a_t] == '1' ? 1 : 0
+        set_o = params[:questions][question.id.to_s][:set_o] ==     '1' ? 1 : 0
+
         if match_type == 'identical'
           match_type = 0
         elsif match_type == 'modified'
