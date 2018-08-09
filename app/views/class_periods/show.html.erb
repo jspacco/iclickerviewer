@@ -290,7 +290,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         possibly in a big chain of links?
       TODO: Could this be its own partial ERB view element?
       %>
-      <% if is_verified?(current_user, 1) %>
+<% if is_verified?(current_user, 1) %>
       <table border="1">
         <tr align="center">
           <th class = "mytooltip"> qid
@@ -501,8 +501,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
               {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}", onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 'delete');"} %>
           </td>
         </tr>
-        <% end %>
-        <% end %>
+        <% end # matching_questions do |mq| %>
         <!--
         Last row of the table is for the UI to add a new matching question.
         -->
@@ -528,27 +527,22 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
                 "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');" %>
             </td>
           <% end %>
-          <td>
         </tr>
       </table>
+<% end # if is_verified? %>
 
       <%= button_tag "use quick preview",
       { :type => "button",
         :onclick => "use_quick_preview(#{q.object.id})" } %>
-        <% end %>
+        <%# end # no match %>
     </td>
-<!-- Commenting out last 3 columns for suggested matches.
-    <td> <%# @matches[question.id] %> </td>
-    <td> <%# @possible_matches[question.id] %> </td>
-    <td> <%# @nonmatches[question.id] %> </td>
--->
   </tr>
-  <%# end %>
-  <% end %>
+  <% end # question.each do |question| (maybe?) %>
+  <% end # form_field |q| (maybe?) %>
 </table>
 <% if current_user && current_user.verification >0 %>
 <%= submit_tag 'Update data', class: "updatebutton" %>
 <% end %>
-<% end %>
+<% end # form_tag do %>
 
 <%= render 'modal_image' %>
