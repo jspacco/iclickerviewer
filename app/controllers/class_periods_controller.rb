@@ -72,6 +72,35 @@ class ClassPeriodsController < ApplicationController
           mq.match_type = match_type
           mq.save
 
+          # XXX The HTML parameters are not the cleanest or most intuitive
+          # way to express changes to modified+, but this all works perfectly!
+=begin
+"questions": {
+      "8635": {
+         "question_type": "2",
+         "question_pair": "",
+         "correct_a": "0",
+         "correct_b": "0",
+         "correct_c": "0",
+         "correct_d": "1",
+         "correct_e": "0",
+         "keywords": "",
+         "edit_matching_questions": {
+            "11": "2",
+            "22": "2"
+         },
+         "set_changed_q_p": {
+            "11": "1",
+            "22": "0"
+         },
+         "set_changed_q_v": {
+            "11": "0",
+            "22": "0"
+         },
+         "matching_questions": ""
+      },
+      etc.
+=end
           if match_type == 2
             # check for changes to modified+ expanded match categories
             {'changed_question_phrasing'   => 'q_p',
