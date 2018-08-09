@@ -20,7 +20,14 @@ class MatchingQuestion < ApplicationRecord
   private
 
   def add_mirror
-    self.class.find_or_create_by(question: matched_question, matched_question: question)
+    # Create mirrored record if it doesn't already exist.
+    # Necessary to prevent infinite loops.
+    if !MatchingQuestion.find_by(question: self.matched_question, matched_question: self.question)
+      mirror = self.dup
+      mirror.question_id = self.matched_question.id
+      mirror.matching_question_id = self.question.id
+      mirror.save
+    end
   end
 
   def update_mirror
@@ -28,6 +35,7 @@ class MatchingQuestion < ApplicationRecord
       # XXX apparently changing mirror does not trigger after_update, so there's
       #   no infinite loop. Not entirely sure how ActiveRecord works here.
       mirror = self.class.find_by(question: matched_question, matched_question: question)
+      # TODO copy everything except question/matched_question from self to mirror
       mirror.is_match = self.is_match
       mirror.match_type = self.match_type
       mirror.save
