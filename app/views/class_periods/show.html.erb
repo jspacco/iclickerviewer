@@ -64,6 +64,11 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     $("#old_dynamic_course_selected").val("<%=j @old_dynamic_course_selected%>");
     $("#old_dynamic_class_period_selected").val("<%=j @old_dynamic_class_period_selected%>");
     $("#old_dynamic_question_selected").val("<%=j @old_dynamic_question_selected%>");
+    // autocomplete
+    var keywords = <%= raw @keywords %>;
+    $( ".keyword_input" ).autocomplete({
+      source: keywords
+    });
   });
 
   var course_hash = <%=raw @course_hash %>;
@@ -72,7 +77,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 <% end %>
 
 
-<%= form_tag(class_period_path(@class_period), method: :patch) do %>
+<%= form_tag(class_period_path(@class_period), :method => :patch, :autocomplete => 'off') do %>
 <input type="hidden" id="old_dynamic_course_selected" name="old_dynamic_course_selected" value=""/>
 <input type="hidden" id="old_dynamic_class_period_selected" name="old_dynamic_class_period_selected" value=""/>
 <input type="hidden" id="old_dynamic_question_selected" name="old_dynamic_question_selected" value=""/>
@@ -111,6 +116,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     <th class="mytooltip"> correct<br> answer(s)
       <span class="tooltiptext"> TODO </span>
     </th>
+<!--
     <th class="mytooltip"> start
       <span class="tooltiptext"> TODO </span>
     </th>
@@ -123,20 +129,21 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     <th class="mytooltip"> correct<br> %
       <span class="tooltiptext">Percent of answers that were correct</span>
     </th>
-    <th class="mytooltip"> matching<br>question
-      <span class="tooltiptext">Matching versions of this question
-        from other courses. Enter the question ID (database
-        primary key) of the matching question. You can use the "quick preview
-        viewer" above to find a question, and then use the button in this column
-        to say that these two questions are the same.
-      </span>
-    </th>
+-->
     <!-- TODO tags may be clickable?
     bolded tags you agree with, while
     non-bold tags you haven't clicked on yet.
     -->
     <th class="mytooltip"> keyword<br>tags
       <span class="tooltiptext"> Keyword tags for this question.
+      </span>
+    </th>
+    <th class="mytooltip"> matching<br>question
+      <span class="tooltiptext">Matching versions of this question
+        from other courses. Enter the question ID (database
+        primary key) of the matching question. You can use the "quick preview
+        viewer" above to find a question, and then use the button in this column
+        to say that these two questions are the same.
       </span>
     </th>
     <%#
@@ -188,7 +195,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
     <td>
 <%# HACK: creating this.old_question_pair in the DOM to store the previously selected value %>
-<% if current_user && current_user.verification >0 %>
+<% if is_verified?(current_user, 1) %>
       <%= q.select :question_pair, question_pair_options(q.object, @questions),
         { include_blank: true },
         { onclick: "this.old_question_pair = $(this).val();",
@@ -224,25 +231,46 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         %>
 
         <tr>
-          <th> <%= q.label :correct_a, "A" %> </th>
-          <th> <%= q.label :correct_b, "B" %> </th>
-          <th> <%= q.label :correct_c, "C" %> </th>
-          <th> <%= q.label :correct_d, "D" %> </th>
-          <th> <%= q.label :correct_e, "E" %> </th>
+          <th> <%= q.label :correct_a, "A", :ondblclick => "select_all_inverse('#{q.object.id}', 'a');" %> </th>
+          <th> <%= q.label :correct_b, "B", :ondblclick => "select_all_inverse('#{q.object.id}', 'b');" %> </th>
+          <th> <%= q.label :correct_c, "C", :ondblclick => "select_all_inverse('#{q.object.id}', 'c');" %> </th>
+          <th> <%= q.label :correct_d, "D", :ondblclick => "select_all_inverse('#{q.object.id}', 'd');" %> </th>
+          <th> <%= q.label :correct_e, "E", :ondblclick => "select_all_inverse('#{q.object.id}', 'e');" %> </th>
         </tr>
         <tr>
-          <td> <%= q.check_box :correct_a, { :disabled => disable_correctness_checkbox } %> </td>
-          <td> <%= q.check_box :correct_b, { :disabled => disable_correctness_checkbox } %> </td>
-          <td> <%= q.check_box :correct_c, { :disabled => disable_correctness_checkbox } %> </td>
-          <td> <%= q.check_box :correct_d, { :disabled => disable_correctness_checkbox } %> </td>
-          <td> <%= q.check_box :correct_e, { :disabled => disable_correctness_checkbox } %> </td>
+          <td> <%= q.check_box :correct_a, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'a');" } %> </td>
+          <td> <%= q.check_box :correct_b, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'b');"  } %> </td>
+          <td> <%= q.check_box :correct_c, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'c');"  } %> </td>
+          <td> <%= q.check_box :correct_d, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'd');"  } %> </td>
+          <td> <%= q.check_box :correct_e, { :disabled => disable_correctness_checkbox, :ondblclick => "select_all_inverse('#{q.object.id}', 'e');"  } %> </td>
         </tr>
       </table>
+      <button type="button" class="navbar-btn" onclick="reset_correct_checkboxes('<%= "#{q.object.id}" %>')">
+        reset
+      </button>
     </td>
+<!--
     <td> <%= question.start %> </td>
     <td> <%= question.stop %> </td>
     <td> <%= question.num_seconds %> </td>
     <td> <%= correct_pct(question) %> </td>
+-->
+    <td>
+      <%= @question_keywords[q.object.id.to_s].join(', ') %>
+      <% if is_verified?(current_user, 1) %>
+        <div class="ui-widget">
+        <%=
+          q.text_field :keywords,
+            :value => '',
+            :placeholder => 'add keyword',
+            :class => 'keyword_input'
+        %>
+        </div>
+      <% end %>
+    </td>
+
+
+
     <td>
       <%#
       Compact table for adding, deleting, and editing matching_questions.
@@ -262,31 +290,72 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         possibly in a big chain of links?
       TODO: Could this be its own partial ERB view element?
       %>
-      <% if current_user && current_user.verification >0 %>
+      <% if is_verified?(current_user, 1) %>
       <table border="1">
         <tr align="center">
-          <th> qid </th>
-          <th> identical </th>
-          <th> modified </th>
-          <th> delete? </th>
+          <th class = "mytooltip"> qid
+            <span class = "tooltiptext" > The question id of the matching question. </span>
+          </th>
+
+          <th class = "mytooltip"> identical
+            <span class = "tooltiptext" > Mark this if the question is identical. </span>
+          </th>
+          <th class = "mytooltip"> modified
+            <span class = "tooltiptext" > Mark this if the question is modified, but you're not sure how. </span>
+          </th>
+          <th class = "mytooltip"> modified+
+            <span class = "tooltiptext" > Mark this if the question is modified in a specific way. </span>
+          </th>
+          <th class = "mytooltip"> q_p
+            <span class = "tooltiptext" > Question Phrasing Changed. </span>
+          </th>
+          <th class = "mytooltip"> q_v
+            <span class = "tooltiptext" > Question Values Changed. </span>
+          </th>
+          <th class = "mytooltip"> i_p
+            <span class = "tooltiptext" > Info Phrasing Changed. </span>
+          </th>
+          <th class = "mytooltip">i_l
+            <span class = "tooltiptext" > Info Layout Changed. </span>
+          </th>
+          <th class = "mytooltip"> a_p
+            <span class = "tooltiptext" > Answers Phrasing Changed. </span>
+          </th>
+          <th class = "mytooltip"> a_v
+            <span class = "tooltiptext" > Answer Values Changed. </span>
+          </th>
+          <th class = "mytooltip"> a_o
+            <span class = "tooltiptext" > Answer Order Changed. </span>
+          </th>
+          <th class = "mytooltip"> a_t
+            <span class = "tooltiptext" > Answer Type Changed (from true false to anota, etc). </span>
+          </th>
+          <th class = "mytooltip"> other
+            <span class = "tooltiptext" > There is a specific change made that we don't have a category for yet.. </span>
+          </th>
+          <th class = "mytooltip"> delete?
+            <span class = "tooltiptext" > Delete this matching question record from the database. </span>
+          </th>
         </tr>
-        <% MatchingQuestion.where(question_id: q.object.id, is_match: 1).each do |mq| %>
+        <% MatchingQuestion.where(question_id: q.object.id, :is_match => [1,2]).each do |mq| %>
+
+
         <tr align="center">
           <td>
             <%= mq.matching_question_id %>
           </td>
-
+          <!-- identical -->
           <% if mq.match_type == 0 %>
           <td class="bghicol">
           <% else %>
           <td>
           <% end %>
             <%# identical: %>
-            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
-              "0"
+            <%= radio_button_tag  "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
+            "0",false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 0);"
             %>
           </td>
-
+          <!-- modified -->
           <% if mq.match_type == 1 %>
           <td class="bghicol">
           <% else %>
@@ -294,15 +363,145 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
           <% end %>
             <%# modified %>
             <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
-              "1"
+              "1",false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 1);"
             %>
           </td>
+
+          <!-- modified+ -->
+          <% if mq.match_type == 2 %>
+          <td class="bghicol">
+          <% else %>
+          <td>
+          <% end %>
+            <%# modified+ %>
+            <%= radio_button_tag "questions[#{q.object.id}][edit_matching_questions][#{mq.matching_question_id}]",
+              "2",false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 2);"
+            %>
+          </td>
+
+
+          <!-- modified types -->
+
+          <% if mq.changed_question_phrasing == 1 %> <!-- changed_question_phrasing -->
+          <td class="bghicol">
+            <% q_p_val = "0" %>
+          <% else %>
+          <td>
+            <% q_p_val = "1" %>
+          <% end %>
+          <%= check_box_tag "questions[#{q.object.id}][set_changed_q_p][#{mq.matching_question_id}]",
+            q_p_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
+          %>
+        </td>
+          <% if mq.changed_question_values == 1 %> <!-- changed_question_values -->
+          <td class="bghicol">
+            <% q_v_val = "0" %>
+
+          <% else %>
+          <td>
+            <% q_v_val = "1" %>
+          <% end %>
+          <%= check_box_tag "questions[#{q.object.id}][set_changed_q_v][#{mq.matching_question_id}]",
+            q_v_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
+          %>
+        </td>
+          <% if mq.changed_info_phrasing == 1 %> <!-- changed_info_phrasing -->
+          <td class="bghicol">
+            <% i_p_val = "0" %>
+
+          <% else %>
+          <td>
+            <% i_p_val = "1" %>
+
+          <% end %>
+          <%= check_box_tag "questions[#{q.object.id}][set_changed_i_p][#{mq.matching_question_id}]",
+            i_p_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
+          %>
+        </td>
+          <% if mq.changed_info_layout == 1 %> <!-- changed_info_layout -->
+          <td class="bghicol">
+            <% i_l_val = "0" %>
+
+          <% else %>
+          <td>
+            <% i_l_val = "1" %>
+
+          <% end %>
+          <%= check_box_tag "questions[#{q.object.id}][set_changed_i_l][#{mq.matching_question_id}]",
+            i_l_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
+          %>
+        </td>
+          <% if mq.changed_answers_phrasing == 1 %> <!-- changed_answers_phrasing -->
+          <td class="bghicol">
+            <% a_p_val = "0" %>
+
+          <% else %>
+          <td>
+            <% a_p_val = "1" %>
+
+          <% end %>
+          <%= check_box_tag "questions[#{q.object.id}][set_changed_a_p][#{mq.matching_question_id}]",
+            a_p_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
+          %>
+        </td>
+          <% if mq.changed_answers_values == 1 %> <!-- changed_answers_values -->
+          <td class="bghicol">
+            <% a_v_val = "0" %>
+
+          <% else %>
+          <td>
+            <% a_v_val = "1" %>
+
+          <% end %>
+          <%= check_box_tag "questions[#{q.object.id}][set_changed_a_v][#{mq.matching_question_id}]",
+            a_v_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
+          %>
+        </td>
+          <% if mq.changed_answers_order == 1 %> <!-- changed_answers_order -->
+          <td class="bghicol">
+            <% a_o_val = "0" %>
+
+          <% else %>
+          <td>
+            <% a_o_val = "1" %>
+
+          <% end %>
+          <%= check_box_tag "questions[#{q.object.id}][set_changed_a_o][#{mq.matching_question_id}]",
+            a_o_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
+          %>
+        </td>
+          <% if mq.changed_answers_type == 1 %> <!-- changed_answers_type -->
+          <td class="bghicol">
+            <% a_t_val = "0" %>
+
+          <% else %>
+          <td>
+            <% a_t_val = "1" %>
+
+          <% end %>
+          <%= check_box_tag "questions[#{q.object.id}][set_changed_a_t][#{mq.matching_question_id}]",
+            a_t_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
+          %>
+        </td>
+          <% if mq.changed_other == 1 %> <!-- changed_other -->
+          <td class="bghicol">
+            <% o_val = "0" %>
+
+          <% else %>
+          <td>
+            <% o_val = "1" %>
+          <% end %>
+          <%= check_box_tag "questions[#{q.object.id}][set_changed_o][#{mq.matching_question_id}]",
+            o_val,false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"
+          %>
+        </td>
           <td>
             <%= check_box_tag "questions[#{q.object.id}][delete_matching_questions][]",
               mq.matching_question_id, false,
-              {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}"} %>
+              {:id => "questions_#{q.object.id}_delete_matching_questions__#{mq.matching_question_id}", onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 'delete');"} %>
           </td>
         </tr>
+        <% end %>
         <% end %>
         <!--
         Last row of the table is for the UI to add a new matching question.
@@ -314,11 +513,22 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
               :placeholder => 'add' %>
           </td>
           <td>
-            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical %>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :identical,false, onclick: "matching_new_logic(#{q.object.id}, 0);" %>
           </td>
           <td>
-            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified %>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified, false, onclick: "matching_new_logic(#{q.object.id}, 1);" %>
           </td>
+          <td>
+            <%= radio_button_tag "questions[#{q.object.id}][match_type]", :modified_plus,false, onclick: "matching_new_logic(#{q.object.id}, 2);" %>
+          </td>
+          <!-- for loop to create checkboxes for modified+ matches -->
+          <% ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o'].each do |key| %>
+            <td>
+              <%= check_box_tag "questions[#{q.object.id}][set_#{key}]",
+                "1", false, onclick: "matching_new_logic(#{q.object.id}, '+');" %>
+            </td>
+          <% end %>
+          <td>
         </tr>
       </table>
 
@@ -327,23 +537,13 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         :onclick => "use_quick_preview(#{q.object.id})" } %>
         <% end %>
     </td>
-    <td>
-      <%= @question_keywords[q.object.id.to_s].join(', ') %>
-      <% if is_verified?(current_user, 1) %>
-        <%=
-          q.text_field :keywords,
-            :value => '',
-            :placeholder => 'add keyword'
-        %>
-      <% end %>
-    </td>
 <!-- Commenting out last 3 columns for suggested matches.
     <td> <%# @matches[question.id] %> </td>
     <td> <%# @possible_matches[question.id] %> </td>
     <td> <%# @nonmatches[question.id] %> </td>
 -->
   </tr>
-  <% end %>
+  <%# end %>
   <% end %>
 </table>
 <% if current_user && current_user.verification >0 %>

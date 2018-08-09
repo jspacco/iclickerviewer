@@ -8,6 +8,10 @@
               toggle quick preview
             </button>
           </li>
+          <li class="nav-item">
+            <%# link_to "Reload Course Hash", update_course_hash_path(@class_period), method: :get %>
+            <%= button_to "Reload Course Hash", "/update_course_hash/#{@class_period.id}", method: :get, class: 'navbar-btn' %>
+          </li>
         <% end %>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -25,7 +29,7 @@
         <% end %>
         <% if defined?(@course) %>
           <li class="nav-item">
-            <span class="navbar-text"> <%= @course.name %> (<%= @course.folder_name %>) </span>
+            <%= link_to "#{@course.name} (#{@course.folder_name})", @course %>
           </li>
         <% end %>
         <li><%= link_to "Home", root_path %></li>

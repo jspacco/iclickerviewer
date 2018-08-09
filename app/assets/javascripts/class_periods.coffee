@@ -166,3 +166,91 @@ root.toggle_quick_preview =() ->
     $('.topdiv').hide()
   else
     $('.topdiv').show()
+
+#
+# helper function
+#
+html_id =(id, ch) ->
+  return "questions_#{id}_correct_#{ch}"
+
+edit_matching_id =(qid, mqid, button) ->
+  return "questions_#{qid}_edit_matching_questions_#{mqid}_#{button}"
+
+edit_delete_id =(qid,mqid)->
+  return "questions_#{qid}_delete_matching_questions__#{mqid}"
+
+edit_match_option_id =(qid, mqid, type)->
+  return "questions_#{qid}_set_changed_#{type}_#{mqid}"
+
+new_matching_id =(qid, button)->
+  #console.log("#{qid} is qid from inside new_matching_id. button is #{button}")
+  return "questions_#{qid}_match_type_#{button}"
+
+new_match_option_id =(qid,type)->
+  return "questions_#{qid}_set_#{type}"
+
+
+#
+# When we double-click a correctness checkbox, select
+# all of the ones we didn't click.
+#
+# This is used for "A or not A" questions, which are sort
+# of like "true/false" questions, except instead of A/B
+# it's "A for true, not A for false"
+#
+root.select_all_inverse =(id, clicked_letter) ->
+  # labels and checkboxes are of the form:
+  # questions_12345_correct_a
+  # We are given the id, which is 12345 in the example above,
+  # and the letter of the id, which is 'a' in the example above.
+  # Using this information and JQuery,
+  # check all the checkboxes except the one that was
+  # double-clicked, which will be left unchecked.
+  clicked = html_id(id, clicked_letter)
+  for letter in ['a', 'b', 'c', 'd', 'e']
+    current = html_id(id, letter)
+    if clicked == current
+      $("##{current}").prop("checked", false)
+    else
+      $("##{current}").prop("checked", true)
+  return 0
+
+#
+# reset the correctness checkboxes that match the given html id
+#
+root.reset_correct_checkboxes =(id) ->
+  for letter in ['a', 'b', 'c', 'd', 'e']
+    id_tag = html_id(id, letter)
+    $("##{id_tag}").prop("checked", false)
+  return 0
+
+root.matching_logic =(qid, mqid, clicked_box) ->
+  delete_id = edit_delete_id(qid, mqid)
+  edit_match_id = edit_matching_id(qid, mqid, '2')
+  if clicked_box in [0,1] #what to do with edit options
+    $("##{delete_id}").prop("checked", false)
+    for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o']
+      match_type_id = edit_match_option_id(qid,mqid,modifier_type)
+      $("##{match_type_id}").prop("checked", false)
+  if clicked_box in ['+'] #what to do with mod types
+      $("##{delete_id}").prop("checked", false)
+      $("##{edit_match_id}").prop("checked", true)
+  if clicked_box in ['delete']
+    for nums in [0,1,2]
+      eddie = edit_match_option_id(qid,mqid,nums)
+      $("##{eddie}").prop("checked", false)
+    for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o']
+      match_type_id = edit_match_option_id(qid,mqid,modifier_type)
+      $("##{match_type_id}").prop("checked", false)
+    return 0
+
+root.matching_new_logic = (qid, clicked_box) ->
+  edit_match_id = new_matching_id(qid,'modified_plus')
+  #console.log("#{edit_match_id} is our edit_match_id, our qid is #{qid} and our clicked_box is #{clicked_box}")
+  if clicked_box in [0,1]
+    for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o']
+      match_type_id = new_match_option_id(qid,modifier_type)
+      $("##{match_type_id}").prop("checked", false)
+  if clicked_box in ['+']
+    $("##{edit_match_id}").prop("checked", true)
+return 0

@@ -10,6 +10,8 @@ class ClassPeriodsController < ApplicationController
 
     get_keyword_hash(params[:id])
 
+    get_question_keyword_list
+
     # get_match_stats(ClassPeriod.find_by(id: params[:id]))
   end
 
@@ -25,16 +27,36 @@ class ClassPeriodsController < ApplicationController
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
       if matching_question_id
         match_type = params[:questions][question.id.to_s][:match_type]
+        set_q_p = params[:questions][question.id.to_s][:set_q_p]
+        set_q_v = params[:questions][question.id.to_s][:set_q_v]
+        set_i_p = params[:questions][question.id.to_s][:set_i_p]
+        set_i_l = params[:questions][question.id.to_s][:set_i_l]
+        set_a_p = params[:questions][question.id.to_s][:set_a_p]
+        set_a_v = params[:questions][question.id.to_s][:set_a_v]
+        set_a_o = params[:questions][question.id.to_s][:set_a_o]
+        set_a_t = params[:questions][question.id.to_s][:set_o]
+        set_o = params[:questions][question.id.to_s][:set_q_p]
+        
         if match_type == 'identical'
           match_type = 0
         elsif match_type == 'modified'
           match_type = 1
+        elsif match_type == 'modified_plus'
+          match_type = 2
         else
           match_type = nil
         end
         mq = MatchingQuestion.find_or_create_by(question_id: question.id,
           matching_question_id: matching_question_id,
           match_type: match_type,
+          changed_question_phrasing: set_q_p,
+          changed_question_values: set_q_v,
+          changed_info_phrasing: set_i_p,
+          changed_info_layout: set_i_l,
+          changed_answers_phrasing: set_a_p,
+          changed_answers_values: set_a_v,
+          changed_answers_order: set_a_o,
+          changed_other: set_o,
           is_match: 1)
       end
 
@@ -63,10 +85,130 @@ class ClassPeriodsController < ApplicationController
         end
       end
 
+      changed_question_phrasing = params[:questions][question.id.to_s][:set_changed_q_p]
+      if changed_question_phrasing
+        changed_question_phrasing.each do |changed_question_phrasing_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_question_phrasing_id)
+        mq.changed_question_phrasing = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_question_values = params[:questions][question.id.to_s][:set_changed_q_v]
+      if changed_question_values
+        changed_question_values.each do |changed_question_values_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_question_values_id)
+        mq.changed_question_values = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_info_phrasing = params[:questions][question.id.to_s][:set_changed_i_p]
+      if changed_info_phrasing
+        changed_info_phrasing.each do |changed_info_phrasing_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_info_phrasing_id)
+        mq.changed_info_phrasing = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_info_layout = params[:questions][question.id.to_s][:set_changed_i_l]
+      if changed_info_layout
+        changed_info_layout.each do |changed_info_layout_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_info_layout_id)
+        mq.changed_info_layout = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_answers_phrasing = params[:questions][question.id.to_s][:set_changed_a_p]
+      if changed_answers_phrasing
+        changed_answers_phrasing.each do |changed_answers_phrasing_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_answers_phrasing_id)
+        mq.changed_answers_phrasing = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_answers_values = params[:questions][question.id.to_s][:set_changed_a_v]
+      if changed_answers_values
+        changed_answers_values.each do |changed_answers_values_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_answers_values_id)
+        mq.changed_answers_values = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_answers_order = params[:questions][question.id.to_s][:set_changed_a_o]
+      if changed_answers_order
+        changed_answers_order.each do |changed_answers_order_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_answers_order_id)
+        mq.changed_answers_order = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_answers_type = params[:questions][question.id.to_s][:set_changed_a_t]
+      if changed_answers_type
+        changed_answers_type.each do |changed_answers_type_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_answers_type_id)
+        mq.changed_answer_type = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+      changed_other = params[:questions][question.id.to_s][:set_changed_o]
+      if changed_other
+        changed_other.each do |changed_other_id, changed_val|
+        mq=  MatchingQuestion.find_by(question_id: question.id,
+          matching_question_id: changed_other_id)
+        mq.changed_other = Integer(changed_val)
+        if(changed_val == 1)
+          mq.match_type = 2;
+        end
+        mq.save
+        end
+      end
+
+
+      #----------------------------------------------------------
+
       # TODO more elegant way to create self-referential many-to-many.
       # Delete the matching_questions key from params, now that we've already
       #   used it. This allows us to use update_attributes without getting
-      #   an error for "Unpermitted paramter".
+      #   an error for "Unpermitted parameter".
       params[:questions][question.id.to_s].delete(:matching_questions)
 
       # Handle keyword tags
@@ -77,6 +219,7 @@ class ClassPeriodsController < ApplicationController
           user_id: current_user.id.to_s,
           question: question)
       end
+
 
       params[:questions][question.id.to_s].delete(:keywords)
 
@@ -99,10 +242,6 @@ class ClassPeriodsController < ApplicationController
   end
 
   private
-
-  def current_time
-    return Time.now.to_f
-  end
 
   # -------------------------------------------------------------
   def get_keyword_hash(class_period_id)
@@ -209,6 +348,11 @@ class ClassPeriodsController < ApplicationController
     @questions = Question.where(class_period_id: @class_period.id).order(:question_index)
     # Look up a hash from course_name => session_code (class_period) => question_index => question_id
 
+    #TODO can this work? Issue is we have to call it for each question but it's good form to keep db queries out of the view right?
+    #@matching_questions = MatchingQuestion.where(question_id: q.object.id, :is_match => 1)
+
+
+
     start_hash = current_time
     if CourseHash.first != nil
       # read cached version, if it exists
@@ -229,5 +373,13 @@ class ClassPeriodsController < ApplicationController
     end
     @avg_time = (total_time / num_questions).round(0)
 
+  end
+
+  # --------------------------------------------------------------------
+  def get_question_keyword_list
+    @keywords = []
+    Keyword.all.each do |keyword|
+      @keywords << keyword.keyword.downcase
+    end
   end
 end

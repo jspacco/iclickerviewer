@@ -29,7 +29,16 @@
     <td> <%= link_to sess.session_code, class_period_path(sess) %> </td>
     <td> <%# @each_class_stats[sess.id][:num_questions] %> </td>
     <td> <%# @each_class_stats[sess.id][:avg_time].round(1) %> </td>
-    <% if @question_updated_counts[sess.session_code][0] > 0 %>
+    <%
+    # really hacky way to check that there are questions left to be updated.
+    # @question_updated_counts is a map from session_code (i.e. L1709120920)
+    # to the array [num_updated_questions, num_questions].
+    # So subtracting the number of questions from the num updated questions
+    # and getting more than 0 means that there is work left to be done.
+    # TODO Maybe refactor this so that there are two different maps:
+    #     questions_updated, and total_questions, or something like that.
+      if @question_updated_counts[sess.session_code][1] -
+          @question_updated_counts[sess.session_code][0] > 0 %>
     <td class="todo">
     <% else %>
     <td>
