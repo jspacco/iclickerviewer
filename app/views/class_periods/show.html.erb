@@ -177,7 +177,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
       <%= link_to question.id, cluster_path(question) %>
     </td>
     <td align="center">
-      <b> <%= link_to question.question_index, question_path(question) %> </b>
+      <b> <%= link_to question.question_index, question_path(question), :id => question.question_index %> </b>
     </td>
     <td>
       <%= if current_user && current_user.verification >0
@@ -342,7 +342,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
         <tr align="center">
           <td>
-            <%= link_to mq.matching_question_id, class_period_path(mq.matched_question.class_period.id) %>
+            <%= link_to mq.matching_question_id, class_period_path(mq.matched_question.class_period.id, :anchor => mq.matched_question.question_index) %>
           </td>
           <!-- identical -->
           <td class="<%= "bghicol" if mq.match_type == 0 %>">
