@@ -342,7 +342,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
 
         <tr align="center">
           <td>
-            <%= mq.matching_question_id %>
+            <%= link_to mq.matching_question_id, class_period_path(mq.matched_question.class_period.id) %>
           </td>
           <!-- identical -->
           <td class="<%= "bghicol" if mq.match_type == 0 %>">
