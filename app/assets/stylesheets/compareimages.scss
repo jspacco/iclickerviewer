@@ -1,0 +1,20 @@
+.compare_images {
+  top: 0;
+  padding-top: 60px;
+  position: fixed;
+  background: #ffffff;
+  opacity: 1.0;
+  border: 2px;
+  z-index: 1;
+  display: none;
+}
+
+.cmpimg {
+  width: 600px;
+}
+
+/* resize images */
+.cmpimg img {
+  width: 100%;
+  height: auto;
+}

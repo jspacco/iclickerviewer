@@ -159,6 +159,23 @@ root.next_class_button_handler = (url) ->
   window.location.href = addr
 
 #
+# show/hide image match comparison
+#selected_compare_img
+root.compare_images =(imgsrc) ->
+  if $('.compare_images').is(':visible')
+    $('.compare_images').hide()
+  else
+    $('#selected_compare_image').attr('src', imgsrc)
+    $('#preview_compare_image').attr('src', $('#dynamic_image').prop('src'))
+    $('.compare_images').show()
+
+#
+# close the compare images panel
+#
+root.close_compare_images =() ->
+  $('.compare_images').hide()
+
+#
 # show/hide the quick preview
 #
 root.toggle_quick_preview =() ->

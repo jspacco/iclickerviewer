@@ -1,12 +1,14 @@
 <% content_for :title, @class_period.session_code %>
-<div style="display:none">
+<div class="compare_images">
   <!-- Giant panel for 2 images -->
-  <table>
+  <%= button_tag "X", :onclick => "close_compare_images()" %>
+  <table class="compare_images_table" onclick="close_compare_images()">
     <tr>
-      <td> <img id="preview_compare_img" src=""/> </td>
-      <td> <img id="selected_compare_img" src=""/> </td>
+      <td> <img class="cmpimg" id="preview_compare_image" /> </td>
+      <td> <img class="cmpimg" id="selected_compare_image" /> </td>
     </tr>
   </table>
+
 </div>
 <div class="topdiv" style="display:none">
 <table frame=box rules=none>
@@ -223,6 +225,9 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
         [@course.folder_name, @class_period.session_code, question.question_index]
       %>
       <%= image_tag(question_img_url, :class => "myImg") %>
+      <%= button_tag "cmpimg",
+      { :type => "button",
+        :onclick => "compare_images('#{question_img_url}')" } %>
     </td>
     <td class="imagecolumn">
       <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
