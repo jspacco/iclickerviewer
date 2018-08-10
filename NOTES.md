@@ -232,7 +232,7 @@ https://stackoverflow.com/questions/9033797/how-to-specify-conditions-on-joined-
 
   ~~NOTE: in parse.db, we need to specifically connect using DATABASE_URL because for some reason, rails doesn't pick up on this variable, and was still using the local database.~~
 
-* *OK folks*, an even simpler way to do this! For example:
+* *OK folks*, an even simpler way to do this! For example (not that this file needs to be committed and pushed to be available on Heroku):
   heroku run bin/rails runner cmdline/update_cached_stats.rb
 
 * Upgrading to hobby-basic (10M rows max) for the DB on heroku was not that difficult to do and works pretty well. We still aren't storing the votes on heroku, but we probably could, and it looks like parse can create them from folder_name/SessionData without too much trouble.
