@@ -283,6 +283,8 @@ class ClassPeriodsController < ApplicationController
     # TODO CACHE should we cache this? probably not worth it.
     @next_class_period = ClassPeriod.where("session_code > ? and course_id = ?",
       @class_period.session_code, @class_period.course_id).first
+    @prev_class_period = ClassPeriod.where("session_code < ? and course_id = ?",
+      @class_period.session_code, @class_period.course_id).first
     @course = Course.find_by(id: @class_period.course_id)
     @questions = Question.where(class_period_id: @class_period.id).order(:question_index)
     # Look up a hash from course_name => session_code (class_period) => question_index => question_id

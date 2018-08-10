@@ -1,4 +1,13 @@
 <% content_for :title, @class_period.session_code %>
+<div style="display:none">
+  <!-- Giant panel for 2 images -->
+  <table>
+    <tr>
+      <td> <img id="preview_compare_img" src=""/> </td>
+      <td> <img id="selected_compare_img" src=""/> </td>
+    </tr>
+  </table>
+</div>
 <div class="topdiv" style="display:none">
 <table frame=box rules=none>
 <tr>
@@ -43,17 +52,23 @@
   Average time per clicker question:<br> <%= @avg_time %> seconds
 </h2>
 
-<%# NEXT CLASS link for quick navigation %>
-<% if @next_class_period != nil %>
-<div class="nextlink">
-  <%= button_tag "> NEXT CLASS #{@next_class_period.session_code} >",
-  { :type => "button",
-      :onclick => "next_class_button_handler('#{class_period_path(@next_class_period)}')" } %>
-<% else %>
-<div class="lastclassperiod">
-  Last class period for this course, yay!
+<%# PREV/NEXT CLASS link for quick navigation %>
+<% if @prev_class_period != nil %>
+  <div class="nextlink">
+    <%= button_tag "< PREV CLASS #{@prev_class_period.session_code} <",
+    { :type => :button,
+      :onclick => "next_class_button_handler('#{class_period_path(@prev_class_period)}')" } %>
+  </div>
+  <br/>
 <% end %>
-</div>
+<% if @next_class_period != nil %>
+  <div class="nextlink">
+    <%= button_tag "> NEXT CLASS #{@next_class_period.session_code} >",
+    { :type => "button",
+        :onclick => "next_class_button_handler('#{class_period_path(@next_class_period)}')" } %>
+  </div>
+<% end %>
+
 
 <%# TODO: Make course_hash an AJAX call.
 Currently we cache the @course_hash in a course_hash table, which is ugly.
