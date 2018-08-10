@@ -45,7 +45,7 @@ TODO: back button back to class period, next question buttons
   <% @questions.each do |question| %>
   <%= fields_for "questions[]", question do |q| %>
   <tr>
-    <td align="center"> <b> <%= question.id %> </b> </td>
+    <td align="center"> <b> <%= link_to question.id, cluster_path(question.id) %> </b> </td>
     <td align="center"> <%= link_to @course.folder_name, course_path(question.class_period.course.id) %>  </td>
     <td align="center"> <%= link_to @class_period.session_code, class_period_path(question.class_period.id) %>  </td>
     <td align="center"> <b> <%= question.question_index %> </b> </td>
