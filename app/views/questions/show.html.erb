@@ -46,8 +46,8 @@ TODO: back button back to class period, next question buttons
   <%= fields_for "questions[]", question do |q| %>
   <tr>
     <td align="center"> <b> <%= question.id %> </b> </td>
-    <td align="center"> <%= @course.folder_name %> TODO: LINK </td>
-    <td align="center"> <%= @class_period.session_code %> TODO: LINK </td>
+    <td align="center"> <%= link_to @course.folder_name, course_path(question.class_period.course.id) %>  </td>
+    <td align="center"> <%= link_to @class_period.session_code, class_period_path(question.class_period.id) %>  </td>
     <td align="center"> <b> <%= question.question_index %> </b> </td>
     <td class="imagecolumn">
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
