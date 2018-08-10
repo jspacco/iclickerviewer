@@ -1,4 +1,7 @@
-ActiveRecord::Base.logger.level = 1
+#ActiveRecord::Base.logger.level = 1
+old_logger = ActiveRecord::Base.logger
+ActiveRecord::Base.logger = nil
+
 count = 0
 MatchingQuestion.where(is_match: 1).each do |mq|
     MatchingQuestion.where(question_id: mq.matching_question_id, matching_question_id: mq.question_id, is_match: nil).each do |mq2|
