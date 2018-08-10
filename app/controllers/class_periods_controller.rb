@@ -34,9 +34,9 @@ class ClassPeriodsController < ApplicationController
         set_a_p = params[:questions][question.id.to_s][:set_a_p]
         set_a_v = params[:questions][question.id.to_s][:set_a_v]
         set_a_o = params[:questions][question.id.to_s][:set_a_o]
-        set_a_t = params[:questions][question.id.to_s][:set_o]
-        set_o = params[:questions][question.id.to_s][:set_q_p]
-        
+        set_a_t = params[:questions][question.id.to_s][:set_a_t]
+        set_o = params[:questions][question.id.to_s][:set_o]
+
         if match_type == 'identical'
           match_type = 0
         elsif match_type == 'modified'
