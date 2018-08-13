@@ -166,7 +166,14 @@ class ClassPeriodsController < ApplicationController
       question.update_attributes(question_params(question))
     end
 
-    redirect_to action: :show, id: params[:id]
+    if params[:old_dynamic_course_selected]
+      redirect_to action: :show, id: params[:id],
+        old_dynamic_course_selected: params[:old_dynamic_course_selected],
+        old_dynamic_class_period_selected: params[:old_dynamic_class_period_selected],
+        old_dynamic_question_selected: params[:old_dynamic_question_selected]
+    else
+      redirect_to action: :show, id: params[:id]
+    end
   end
 
   def update_course_hash
