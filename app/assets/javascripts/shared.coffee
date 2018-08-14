@@ -18,6 +18,7 @@ class Shared
       modal = $("#myModal")
       modal.on "click", ->
         modal.css('display', 'none')
+        modal.css('z-index', -1)
         return 0
       # Get the image and insert it inside the modal
       modalImg = $("#img01")
@@ -25,6 +26,7 @@ class Shared
         # Basically, if an image with class myImg is clicked,
         # set it to the src of the modal image and display it.
         modal.css('display', 'block')
+        $("#myModal").css('z-index', 3)
         modalImg.attr('src', this.src)
         return 0
       )
