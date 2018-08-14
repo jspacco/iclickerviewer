@@ -30,10 +30,9 @@ class MatchingQuestion < ApplicationRecord
   end
 
   def update_mirror
-    puts "Updating #{self.id}, question_id #{self.question_id}, matching_question_id #{self.matching_question_id}"
-    # FIXME On Heroku, this method leads to an infinite loop if we edit existing records.
-    # Cannot replicate the error locally. Going to use JS as a temporary fix.
-    if self.saved_changes?
+    changes = self.saved_changes
+    changes.delete('updated_at')
+    if changes.size > 0
       # First, find the mirrored record
       mirror = self.class.find_by(question: matched_question, matched_question: question)
       # Only copy fields other than id, question_id, matching_question_id
