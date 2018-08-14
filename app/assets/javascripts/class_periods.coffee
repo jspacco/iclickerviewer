@@ -164,16 +164,19 @@ root.next_class_button_handler = (url) ->
 root.compare_images =(imgsrc) ->
   if $('.compare_images').is(':visible')
     $('.compare_images').hide()
+    $('.compare_images').css('z-index', -1)
   else
     $('#selected_compare_image').attr('src', imgsrc)
     $('#preview_compare_image').attr('src', $('#dynamic_image').prop('src'))
     $('.compare_images').show()
+    $('.compare_images').css('z-index', 2)
 
 #
 # close the compare images panel
 #
 root.close_compare_images =() ->
   $('.compare_images').hide()
+  $('.compare_images').css('z-index', -1)
 
 #
 # show/hide the quick preview
@@ -181,8 +184,10 @@ root.close_compare_images =() ->
 root.toggle_quick_preview =() ->
   if $('.topdiv').is(':visible')
     $('.topdiv').hide()
+    $('.topdiv').css('z-index', -1)
   else
     $('.topdiv').show()
+    $('.topdiv').css('z-index', 2)
 
 #
 # helper function
