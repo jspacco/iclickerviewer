@@ -141,6 +141,7 @@ root.dynamic_image_handler =(course_hash, first_load) ->
 #
 root.use_quick_preview =(question_id) ->
   $("#questions_#{question_id}_matching_questions").val(root.question_id)
+  $("#questions_#{question_id}_match_type_identical").prop('checked', true)
   return 0
 
 #
