@@ -159,13 +159,19 @@ class ClassPeriodsController < ApplicationController
           question: question)
       end
 
-
       params[:questions][question.id.to_s].delete(:keywords)
 
       # Updates the actual question
       question.update_attributes(question_params(question))
     end
 
+    # Update cache stats for this course
+    start = current_time
+    update_class_period_cache(ClassPeriod.find_by(id: params[:id]))
+    total = current_time - start
+    puts "total time to update class_period_cache: #{total}"
+
+    # use quick preview parameters
     if params[:old_dynamic_course_selected]
       redirect_to action: :show, id: params[:id],
         old_dynamic_course_selected: params[:old_dynamic_course_selected],
@@ -205,6 +211,8 @@ class ClassPeriodsController < ApplicationController
   end
 
   # -------------------------------------------------------------
+  # XXX We aren't calling this method anymore because it's too slow!
+  # This code is now in match_controller.rb
   def get_match_stats(class_period)
     @matches = Hash.new
     class_period.questions.each do |q|
@@ -264,7 +272,7 @@ class ClassPeriodsController < ApplicationController
   end
 
   # -------------------------------------------------------------
-  def get_questions_course_class_period
+    def get_questions_course_class_period
     # puts "course: #{params['old_dynamic_course_selected']}"
     # puts "class: #{params['old_dynamic_class_period_selected']}"
     # puts "question: #{params['old_dynamic_question_selected']}"
@@ -329,5 +337,51 @@ class ClassPeriodsController < ApplicationController
     Keyword.all.each do |keyword|
       @keywords << keyword.keyword.downcase
     end
+  end
+
+  # --------------------------------------------------------------------
+  # Update the course_cache and class_period_cache,
+  # but only for the course for this class_period.
+  # --------------------------------------------------------------------
+  def update_class_period_cache(class_period)
+    total_time_course = 0.0
+    total_questions_course = 0.0
+    num_classes_updated = 0
+    total_classes = 0
+    classes = ClassPeriod.where(course_id: class_period.course_id)
+    classes.each do |class_period|
+      total_time_class_period = 0.0
+      num_questions_updated = 0
+      total_questions_class_period = 0
+      questions = Question.where(class_period_id: class_period.id)
+      questions.each do |question|
+        if data_entered?(question)
+          num_questions_updated += 1
+        end
+        total_questions_course += 1
+        total_questions_class_period += 1
+        total_time_course += question.num_seconds
+        total_time_class_period += question.num_seconds
+      end
+      if num_questions_updated == total_questions_class_period
+        num_classes_updated += 1
+      end
+      total_classes += 1
+
+      class_period_cache = ClassPeriodCache.find_or_create_by(id: class_period.id)
+      class_period_cache.course_id = class_period.course_id
+      class_period_cache.session_code = class_period.session_code
+      class_period_cache.num_questions = total_questions_class_period
+      class_period_cache.avg_secs_question = total_time_class_period / total_questions_class_period
+      class_period_cache.num_questions_updated = num_questions_updated
+      class_period_cache.total_class_periods = questions.length
+      class_period_cache.save
+    end
+    course_cache = CourseCache.find_or_create_by(id: class_period.course_id)
+    course_cache.avg_questions_class = total_questions_course / classes.length
+    course_cache.avg_secs_question = total_time_course / total_questions_course
+    course_cache.num_classes_updated = num_classes_updated
+    course_cache.total_classes = total_classes
+    course_cache.save
   end
 end
