@@ -170,7 +170,7 @@ root.compare_images =(imgsrc) ->
     $('#selected_compare_image').attr('src', imgsrc)
     $('#preview_compare_image').attr('src', $('#dynamic_image').prop('src'))
     $('.compare_images').show()
-    $('.compare_images').css('z-index', 2)
+    $('.compare_images').css('z-index', 3)
 
 #
 # close the compare images panel
