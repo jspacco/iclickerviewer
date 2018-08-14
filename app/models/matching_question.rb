@@ -30,7 +30,7 @@ class MatchingQuestion < ApplicationRecord
   end
 
   def update_mirror
-    #puts "Updating #{self.id}, question_id #{self.question_id}, matching_question_id #{self.matching_question_id}"
+    puts "Updating #{self.id}, question_id #{self.question_id}, matching_question_id #{self.matching_question_id}"
     # FIXME On Heroku, this method leads to an infinite loop if we edit existing records.
     # Cannot replicate the error locally. Going to use JS as a temporary fix.
     if self.saved_changes?
@@ -44,7 +44,9 @@ class MatchingQuestion < ApplicationRecord
         mirror[field] = self[field]
       end
       mirror.save
-   end
+    else
+      puts "No saved changes detected for #{self.id}, question_id #{self.question_id}, matching_question_id #{self.matching_question_id}"
+    end
   end
   #
   def destroy_mirror
