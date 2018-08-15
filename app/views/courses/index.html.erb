@@ -1,5 +1,9 @@
 <%= link_to "download data", '/data' %>
 
+<%= javascript_tag do %>
+  window.onload = course_index_load();
+<% end %>
+
 <table border=1>
   <tr>
     <th> Course Code </th>
@@ -36,10 +40,9 @@
       <% end %>
         <%= to_s_fraction(@class_period_updated_counts[course.id]) %>
       </td>
-      <%# TODO: make a map from course_id to each of these values in courses_controller %>
-      <td> <%= @num_possible_matches[course.id] %> </td>
-      <td> <%= @num_matches[course.id] %> </td>
-      <td> <%= @num_nonmatches[course.id] %> </td>
+      <td id="match_<%="#{course.id}"%>"> </td>
+      <td id="possible_match_<%="#{course.id}"%>"> </td>
+      <td id="nonmatch_<%="#{course.id}"%>"> </td>
     </tr>
   <% end %>
 </table>

@@ -1,5 +1,7 @@
 <% content_for :title, @course.folder_name %>
-
+<%= javascript_tag do %>
+  window.onload = course_show_load(<%= @course.id %>);
+<% end %>
 <center>
   <h2>Courses#show</h2>
   <h1> <%= @course.folder_name %> </h1>
@@ -45,9 +47,9 @@
     <% end %>
       <%= to_s_fraction(@question_updated_counts[sess.session_code]) %>
     </td>
-    <td> <%# @num_matches[sess.id] %> </td>
-    <td> <%# @num_possible_matches[sess.id] %> </td>
-    <td> <%# @num_nonmatches[sess.id] %> </td>
+    <td id="match_<%="#{sess.id}"%>"> </td>
+    <td id="possible_match_<%="#{sess.id}"%>"> </td>
+    <td id="nonmatch_<%="#{sess.id}"%>"> </td>
   </tr>
   <% end %>
 </table>
