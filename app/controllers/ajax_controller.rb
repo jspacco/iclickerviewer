@@ -22,6 +22,9 @@ class AjaxController < ApplicationController
   # ----------------------------------------------------------------
   # Get mapping of course_id to counts of matches, possible matches,
   # and nonmatches.
+  # FIXME Huge performance bottleneck! Need to get everything with a
+  # huge join/include rather than look up the matching_question records
+  # each time.
   # ----------------------------------------------------------------
   def get_match_stats_all_courses
     matches = Hash.new
@@ -46,6 +49,9 @@ class AjaxController < ApplicationController
   # ----------------------------------------------------------------
   # Get match stats for one course. Map class_period_ids to counts of
   # matches, possible matches, nonmatches.
+  # FIXME Huge performance bottleneck! Need to get everything with a
+  # huge join/include rather than look up the matching_question records
+  # each time.
   # ----------------------------------------------------------------
   def get_match_stats_course(course_id)
     matches = Hash.new
