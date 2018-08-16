@@ -80,14 +80,28 @@ class DataController < ApplicationController
 private
 
   def match_clusters
+    # FIXME: Handle pairs
+    # Store all mqs in a local hash to save DB lookups
+    qhash = Hash.new
+    mqhash = Hash.new
+    MatchingQuestion.where(is_match: 1).each do |mq|
+      qhash[mq.question_id] = mq
+      mqhash[mq.matching_question_id] = mq
+    end
+
     result = Hash.new
     cluster = 1
-    MatchingQuestion.all.each do |mq|
+    MatchingQuestion.includes(:question, :matched_question).where(matching_questions: {is_match: 1} ).each do |mq|
+      question = mq.question
+      matched_question = mq.matched_question
+      # skip matches to questions that are marked as errors
+      next if question.question_type == 5 || matched_question.question_type == 5
+      # if a question is paired, find its partner
       qid = mq.question_id
       mqid = mq.matching_question_id
       if !result.has_key?(qid) && !result.has_key?(mqid)
         # We have not seen either of these question ids
-        # Create a new clsuter for each of them!
+        # Create a new cluster for each of them!
         result[qid] = cluster
         result[mqid] = cluster
         cluster += 1
@@ -102,6 +116,46 @@ private
       end
       # Final possibility is that we have already seen both qid and mqid,
       # and assigned them to a cluster. If so, don't change anything.
+
+=begin
+      Now handle pairs, if any. If the current match refers to a question
+      that is paired, then we need to pair everything off.
+
+      Suppose question 50 matches question 90, so we have:
+
+      mq1.qid = 50
+      mq1.mqid = 90
+
+      mq2.qid = 90
+      mq2.mqid = 50
+
+      Suppose question 50 is also paired with question 51
+      That means that we should infer that 51 matches 90
+
+      Suppose question 90 is paired with question 91
+      Then we should infer that 91 matches 50
+=end
+      qpair = Question.find_by(class_period_id: question.class_period_id,
+        question_index: question.question_pair)
+      if qpair
+        # question (qid) is 50, qpair is 51, mqid is 90
+        # this means that 51 is in the same cluster as 50, and will match 90
+        result[qpair.id] = result[qid]
+      end
+      if question.question_type == 3 && qpair == nil
+        logger.warn "question record has non-existent match #{matched_question.id} is type 3 but has no partner"
+      end
+
+      mqpair = Question.find_by(class_period_id: matched_question.class_period_id,
+        question_index: matched_question.question_pair)
+      if mqpair
+        # matched_question (mqid) is 90, mqpair is 91, qid is 50
+        # this means that 91 is in the same cluster as 90, and will match 50
+        result[mqpair.id] = result[mqid]
+      end
+      if matched_question.question_type == 3 && mqpair == nil
+        logger.warn "mquestion record has non-existent match #{matched_question.id} is type 3 but has no partner"
+      end
     end
     return result
   end
