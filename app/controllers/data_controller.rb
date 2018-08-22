@@ -80,6 +80,7 @@ class DataController < ApplicationController
   # ------------------------------------------------------------------------
   # GET /data/match
   # Gets the matching data, where we put things onto one line
+  # We match paired questions with matching paired questions
   #
   def match_data
     # Look up hash from question_id to hash of question
@@ -109,11 +110,13 @@ class DataController < ApplicationController
     ]
     csv = header.to_csv
 
-    MatchingQuestion.where(is_match: 1).each do |mq|
+    MatchingQuestion.where(is_match: 1).where("question_id < matching_question_id").each do |mq|
       q1 = questions[mq.question_id]
       q2 = questions[mq.matching_question_id]
       if q1 == nil || q2 == nil
-        logger.warn "NIL question: q1 #{mq.question_id} nil? #{q1==nil}, q2 #{mq.matching_question_id} #{q2==nil}; check if one of these questions was marked 'error'"
+        q1type = q1 != nil ? q1['question_type'] : Question.find_by(id: mq.question_id).question_type
+        q2type = q2 != nil ? q2['question_type'] : Question.find_by(id: mq.matching_question_id).question_type
+        logger.warn "q1 #{mq.question_id} matches q2 #{mq.matching_question_id} but q1 type = #{q1type} q2 type = #{q2type}"
         next
       end
       if q2['class_code'] < q1['class_code']
@@ -281,13 +284,14 @@ private
     ActiveRecord::Base.connection.exec_query(queries[5])
 
     # https://stackoverflow.com/questions/39066365/smartly-converting-array-of-hashes-to-csv-in-ruby
-    header = ['match_cluster','course_id', 'course_name', 'instructor', 'class_id', 'class_code',
-    'q1id', 'q2id', 'question_index', 'question_type',
-    'num_correct_answers', 'num1st', 'num2nd',
-    'num1st_correct', 'num2nd_correct',
-    'pct1st_correct', 'pct2nd_correct',
-    'seconds_1st', 'seconds_2nd',
-    'normalized_gain']
+    header = ['match_cluster','course_id', 'course_name',
+      'instructor', 'class_id', 'class_code',
+      'q1id', 'q2id', 'question_index', 'question_type',
+      'num_correct_answers', 'num1st', 'num2nd',
+      'num1st_correct', 'num2nd_correct',
+      'pct1st_correct', 'pct2nd_correct',
+      'seconds_1st', 'seconds_2nd',
+      'normalized_gain']
 
     clusters = match_clusters
 
