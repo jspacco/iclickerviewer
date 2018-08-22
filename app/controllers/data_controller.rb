@@ -77,8 +77,85 @@ class DataController < ApplicationController
     # We can't redirect here because send_data is an http response
   end
 
+  # ------------------------------------------------------------------------
+  # GET /data/match
+  # Gets the matching data, where we put things onto one line
+  #
+  def match_data
+    # Look up hash from question_id to hash of question
+    questions = get_paired_data
+
+    # csv file header
+    header = ['match_cluster', 'match_type',
+      'course_id.1',            'course_id.2',
+      'course_name.1',          'course_name.2',
+      'instructor.1',           'instructor.2',
+      'class_id.1',             'class_id.2',
+      'class_code.1',           'class_code.2',
+      'q1id.1',                 'q1id.2',
+      'q2id.1',                 'q2id.2',
+      'question_type.1',        'question_type.2',
+      'num_correct_answers.1',  'num_correct_answers.2',
+      'num1st.1',               'num1st.2',
+      'num2nd.1',               'num2nd.2',
+      'num1st_correct.1',       'num1st_correct.2',
+      'num2nd_correct.1',       'num2nd_correct.2',
+      'pct1st_correct.1',       'pct1st_correct.2',
+      'pct2nd_correct.1',       'pct2nd_correct.2',
+      'seconds_1st.1',          'seconds_1st.2',
+      'seconds_2nd.1',          'seconds_2nd.2',
+      'normalized_gain.1',      'normalized_gain.2',
+      'qp', 'qv', 'ip', 'il', 'ap', 'av', 'ao', 'at', 'o'
+    ]
+    csv = header.to_csv
+
+    MatchingQuestion.where(is_match: 1).each do |mq|
+      q1 = questions[mq.question_id]
+      q2 = questions[mq.matching_question_id]
+      if q1 == nil || q2 == nil
+        logger.warn "NIL question: q1 #{mq.question_id} nil? #{q1==nil}, q2 #{mq.matching_question_id} #{q2==nil}; check if one of these questions was marked 'error'"
+        next
+      end
+      if q2['class_code'] < q1['class_code']
+        q1, q2 = q2, q1
+      end
+      # Now q1 is the first question chronologically, and q2 is the 2nd question
+
+      # Create each row, first with the cluster number, match type,
+      # and modified+ categories (modified+ categories only matter
+      # when match_type is 2)
+      row = Hash.new
+      row['match_cluster'] = q1['match_cluster']
+      row['match_type'] = mq.match_type
+      row['qp'] = mq.changed_question_phrasing
+      row['qv'] = mq.changed_question_values
+      row['ip'] = mq.changed_info_phrasing
+      row['il'] = mq.changed_info_layout
+      row['ap'] = mq.changed_answers_phrasing
+      row['av'] = mq.changed_answers_values
+      row['ao'] = mq.changed_answers_order
+      row['at'] = mq.changed_answers_type
+      row['o']  = mq.changed_other
+      # Fill in the values for the two matched questions,
+      # which may or may not be paired
+      q1.each do |key, val|
+        row[key + '.1'] = q1[key]
+        row[key + '.2'] = q2[key]
+      end
+      csv += row.values_at(*header).map{|s| s.to_s.strip}.to_csv
+    end
+
+    send_data csv,
+      filename: "matches.csv",
+      type: "text/plain; charset=us-ascii"
+  end
+
 private
 
+  # ------------------------------------------------------------------------
+  # Create a hash from question_id to match_cluster
+  # where match_cluster is just a number denoting the "cluster"
+  # that each id belongs to
   def match_clusters
     # FIXME: Handle pairs
     # Store all mqs in a local hash to save DB lookups
@@ -160,17 +237,86 @@ private
     return result
   end
 
+  # ------------------------------------------------------------------------
+  # Run a SQL query
   def query(sql)
     return ActiveRecord::Base.connection_pool.with_connection {
       |con| con.exec_query( sql )
     }
   end
 
+  # ------------------------------------------------------------------------
+  # compute normalized gain
   def ng(pre, post)
     if (post > pre)
       return (post - pre) / (1 - pre)
     end
     return (post - pre) / pre
+  end
+
+  # ------------------------------------------------------------------------
+  # Get a map from qid to a map from the header title to the values for that
+  # question. This will be paired data; if no 2nd vote is available (i.e.
+  # single vote question, quiz, non-mcq, etc) then we will simply fill the spots
+  # with -1
+  def get_paired_data
+    # I'm using raw SQL instead of ActiveRecord. Sue me.
+    #
+    # This is such a shit way to have to do this, but ActiveRecord doesn't have
+    #   any way to send more than one sql statement at a time, and I wanted to keep
+    #   all the statements in one big string that is easy to put into a SQL file
+    #   for testing against the DB from the command line.
+    #
+    # This split produces 6 queries
+    # query[0]: First, delete the temp table, if it exists
+    # query[1..4]: The next 3 queries create and populate the temp table
+    # query[4]: The 5th query does our select using the temp table we just created
+    # query[5]: Finally, the 6th and final query deletes the temp table.
+    queries = csvsql().split(';')
+
+    queries[0..4].each do |sql|
+      ActiveRecord::Base.connection.exec_query(sql)
+    end
+    results = ActiveRecord::Base.connection.exec_query(queries[4])
+    ActiveRecord::Base.connection.exec_query(queries[5])
+
+    # https://stackoverflow.com/questions/39066365/smartly-converting-array-of-hashes-to-csv-in-ruby
+    header = ['match_cluster','course_id', 'course_name', 'instructor', 'class_id', 'class_code',
+    'q1id', 'q2id', 'question_index', 'question_type',
+    'num_correct_answers', 'num1st', 'num2nd',
+    'num1st_correct', 'num2nd_correct',
+    'pct1st_correct', 'pct2nd_correct',
+    'seconds_1st', 'seconds_2nd',
+    'normalized_gain']
+
+    clusters = match_clusters
+
+    # Hash from question_id to the map from the headers to the values
+    questions = Hash.new
+    results.each do |row|
+      # Add a match cluster column
+      if clusters.has_key?(row['q1id'])
+        row['match_cluster'] = clusters[row['q1id']]
+      elsif clusters.has_key?(row['q2id'])
+        row['match_cluster'] = clusters[row['q2id']]
+      else
+        row['match_cluster'] = -1
+      end
+      # Compute normalized gain. It's easier to compute here than in the
+      #   database with SQL.
+      row['normalized_gain'] = -1
+      if row['question_type'] == 3
+        pct1st = row['pct1st_correct'].to_f
+        pct2nd = row['pct2nd_correct'].to_f
+        row['normalized_gain'] = ng(pct1st, pct2nd)
+      end
+      # Holy crap, I'm combing the splat (*) operator with
+      #   the map method and a block!
+      #q = row.values_at(*header).map{|s| s.to_s.strip}
+      questions[row['q1id']] = row
+      questions[row['q2id']] = row
+    end
+    return questions
   end
 
   # ------------------------------------------
@@ -185,9 +331,14 @@ private
   #   splitting this query as a string using the semicolons as delimiters.
   def csvsql
 return %q{
+-- This is 5 queries that are separated by semi-colons, so we
+-- cannot use semi-colons in any of the comments
+--
+-- Query #0
 -- delete the temp table, if it exists
 drop table if exists qtemp;
 --
+-- Query #1
 -- PAIRED QUESTIONS
 -- type 3 (paired)
 --
@@ -242,6 +393,7 @@ and q1.correct_a + q1.correct_b + q1.correct_c + q1.correct_d + q1.correct_e > 0
 and q1.id < q2.id;
 
 --
+-- Query #2
 -- SINGLE QUESTIONS
 -- type 1, 2 (quiz, single)
 --
@@ -278,6 +430,7 @@ and q1.correct_a + q1.correct_b + q1.correct_c + q1.correct_d + q1.correct_e > 0
 and q1.response_a + q1.response_b + q1.response_c + q1.response_d + q1.response_e > 0;
 
 --
+-- Query #3
 -- non-MCQ QUESTIONS
 -- type 4
 -- Using clicker as a timer or for confidence votes
@@ -304,6 +457,10 @@ q1.num_seconds as seconds_1st,
 from questions q1
 where q1.question_type = 4;
 
+--
+-- Query #4
+-- These are the results
+--
 select c.id as course_id, c.folder_name as course_name, c.instructor,
 cp.id as class_id, cp.session_code as class_code,
 q.id as q1id, qt.q2id as q2id, q.question_index, q.question_type,
@@ -315,6 +472,7 @@ where c.id = cp.course_id
 and cp.id = q.class_period_id
 and q.id = qt.q1id;
 
+-- Query #5
 -- delete temporary table
 drop table qtemp;
 }
