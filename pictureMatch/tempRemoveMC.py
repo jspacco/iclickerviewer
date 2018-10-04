@@ -6,9 +6,9 @@ import imutils
 
 # removes the multiple choice box from images
 def removeMCBox(pictureToEdit):
-  
+
   # make sure that the image is in the same directory
-  template = cv2.imread( "./grayMC.jpg",0) 
+  template = cv2.imread( "./mcBox/grayMC.jpg",0) 
   w, h = template.shape[::-1]
 
   # load the example image and convert it to grayscale

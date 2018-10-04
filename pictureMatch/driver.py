@@ -1,10 +1,10 @@
 import argparse
 import constructImageTable
-import naiveConstructPairs
+#import naiveConstructPairs
 
 
 def checkAnswers( imageTable, folderName ):
-  
+
     left_ = folderName.find("_")
     right_ = folderName.rfind("_")
 
@@ -18,12 +18,12 @@ def checkAnswers( imageTable, folderName ):
       key = seperate[0]
       value = seperate[1]
       answersDict[key] = value
-    
-    
+
+
     answers.close()
-    
-    for key, value in answersDict.iteritems():
-      completeKey = folderName+key 
+
+    for key, value in answersDict.items():
+      completeKey = folderName+key
       completeValue = folderName+value
 
       print(completeKey),
@@ -57,16 +57,16 @@ def checkAnswers( imageTable, folderName ):
 # tier 2: matchNamesAdd union matchNamesRemove
 def printPotential( imageTable, key ):
   print('POTENTIAL MATCH NAMES:')
-  
+
   displayed = imageTable[key]["strictMatch"]
-  
+
   bestPotential = imageTable[key]["matchNamesAdd"] & imageTable[key]["matchNamesRemove"] - displayed
   print("\tTier 1:")
   for elem in bestPotential:
     print("\t"),
     print( elem )
   displayed = displayed | bestPotential
-  
+
   nextBest = imageTable[key]["matchNamesAdd"] - displayed
   print("\tTier 2:")
   for elem in nextBest:
@@ -85,8 +85,8 @@ def printPotential( imageTable, key ):
 # we will only print the matched names for now
 def printImageTable( imageTable ):
   print(len(imageTable))
-  
-  for key, elem in imageTable.iteritems():
+
+  for key, elem in imageTable.items():
     print( "KEY: %s" % key)
     print( 'STRICT MATCH NAMES:')
     for match in elem['strictMatch']:

@@ -7,9 +7,9 @@ def generatePairedTableOnlyOcr( imageTable ):
   foundOneMatch = False
   singular = []
   # used imagehashing to figure out pairs
-  for elemOneKey, elemOneValue in imageTable.iteritems():
+  for elemOneKey, elemOneValue in imageTable.items():
     one = elemOneValue["ocr_text"]
-    for elemTwoKey, elemTwoValue in imageTable.iteritems():
+    for elemTwoKey, elemTwoValue in imageTable.items():
       two = elemTwoValue["ocr_text"]
       if elemOneKey != elemTwoKey:
         ocrDiff = commonMethods.percentageEditDistance(one, two)

@@ -14,8 +14,8 @@ THRESH_OCR_DISTANCE_REMOVE = 0.16
 
 THRESH_HASH_DISTANCE_GRAPH = 0.009
 
-# compares elements from addlist to each other and 
-# checks if the distance from the key of the two elements is almost the 
+# compares elements from addlist to each other and
+# checks if the distance from the key of the two elements is almost the
 # same
 # if true then it adds those elements to the matchNamesAdd set of each other
 def experimentGraph( imageTable, key, addList ):
@@ -34,7 +34,7 @@ def findImagePairs( imageTable ):
 
   addList = [] # ( name, ocr_difference, hash_difference )
   removeList = []
-  for key, value in imageTable.iteritems():
+  for key, value in imageTable.items():
     # HERE
     # print("KEY :"),
     # print(key)
@@ -50,7 +50,7 @@ def findImagePairs( imageTable ):
       # image structure is within a 5 percent difference
       if diffHashDistance <= THRESH_HASH_DISTANCE_STRICT and diffOCRdistance <= THRESH_OCR_DISTANCE_STRICT:
         imageTable[key]['strictMatch'].add(matchKey)
-      
+
       # if image is imageDominant
       elif imageTable[key]["imageDominant"] or imageTable[matchKey]["imageDominant"]:
         if diffHashDistance < THRESH_HASH_DISTANCE_STRICT_IMAGE_DOMINANT:
@@ -59,7 +59,7 @@ def findImagePairs( imageTable ):
           removeList.append(matchKey)
 
       # if the picture is both not similar in image structure and writing
-      elif diffHashDistance > THRESH_HASH_DISTANCE_REMOVE and diffOCRdistance > THRESH_OCR_DISTANCE_REMOVE: 
+      elif diffHashDistance > THRESH_HASH_DISTANCE_REMOVE and diffOCRdistance > THRESH_OCR_DISTANCE_REMOVE:
         removeList.append(matchKey)
 
       # if not a strict match or needing to be removed checked it against
@@ -73,7 +73,7 @@ def findImagePairs( imageTable ):
     experimentGraph( imageTable, key, addList )
     # prune the matchNamesRemove
     commonMethods.removeItemsFromSet( imageTable, key, removeList )
-    
+
     removeList = []
     addList = []
 
@@ -87,11 +87,11 @@ def generatePairedTableRegular( imageTable ):
   foundOneMatch = False
   singular = []
 
-  for elemOneKey, elemOneValue in imageTable.iteritems():
+  for elemOneKey, elemOneValue in imageTable.items():
     one = elemOneValue["hash_value"]
-    for elemTwoKey, elemTwoValue in imageTable.iteritems():
+    for elemTwoKey, elemTwoValue in imageTable.items():
       two = elemTwoValue["hash_value"]
-      if elemOneKey != elemTwoKey: 
+      if elemOneKey != elemTwoKey:
         imageTable[elemOneKey]["matchNamesRemove"].add(elemTwoKey)
         foundOneMatch = True
 

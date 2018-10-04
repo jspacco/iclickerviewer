@@ -4,7 +4,7 @@ import pytesseract
 import cv2
 import os
 import numpy as np
-import removeMC #removes the multiple choice box in the picture
+#import removeMC #removes the multiple choice box in the picture
 import removeWriting  #removes all the non-black pixels in the picture
 
 # returns the number of changes required to make string 2 into string 1
@@ -17,7 +17,7 @@ def editDistDP( str1, str2):
   # Fill d[][] in bottom up manner
   for i in range(m+1):
     for j in range(n+1):
-      
+
       if i == 0:
         dp[i][j] = j
 
@@ -49,7 +49,7 @@ def editDistDP( str1, str2):
 #if True:
 #  gray = cv2.threshold(gray, 0, 255,
 #    cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-# 
+#
 ## write the grayscale image to disk as a temporary file so we can
 ## apply OCR to it
 #filename = "A14.png" #"{}.png".format(os.getpid())
