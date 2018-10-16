@@ -2,8 +2,12 @@ from __future__ import print_function
 import sys
 import time
 import glob
-import pureOcr
-from commonMethods import percentageEditDistance, percentageEditDistance
+import cv2
+import imagehash
+from PIL import Image
+import tempRemoveMC
+import imageToText
+from commonMethods import percentHashDifference, percentageEditDistance
 
 
 def eprint(*args, **kwargs):
@@ -23,7 +27,7 @@ THRESH_OCR_DISTANCE_REMOVE = 0.16
 THRESH_HASH_DISTANCE_GRAPH = 0.009
 
 
-class ImageFeature:
+class ImageFeatures:
     def __init__(self, filename, image_hash, text):
         self.filename = filename
         self.image_hash = image_hash
@@ -35,6 +39,9 @@ class ImageFeature:
     def __str__(self):
         return '{}: hash={} text={}'.format(filename, image_hash, text)
 
+    def is_image_dominant(self):
+        return len(self.text) < 75
+
 
 def constructImageTable2(directoryPathName, preProcess, templateChange):
     startTime = time.time()
@@ -43,7 +50,7 @@ def constructImageTable2(directoryPathName, preProcess, templateChange):
     # build the imagePq
     # also build a dictionary with the name of the image as the key
     for imagePath in glob.glob(directoryPathName + "/*.jpg"):
-        if imagePath.index('C') != -1:
+        if '_C' in imagePath:
             # skip files containing a C in them (these are the bar charts)
             continue
         image = cv2.imread(imagePath)
@@ -55,13 +62,13 @@ def constructImageTable2(directoryPathName, preProcess, templateChange):
         dotPosition = imagePath.rfind(".")
         slashPosition = imagePath.rfind("/")
         filename = "{}.jpg".format(imagePath[slashPosition + 1:dotPosition] + "_1")
-        print("filename: {}".format(filename))
+        #eprint("filename: {}".format(filename))
         # TODO shortpath should make these changes:
         # path/to/UIC.CS108F17/L1709011030_Q1.jpg
         # should be:
         # UIC.CS108F17/L1709011030_Q1.jpg
         shortpath = imagePath
-        print("imagePath: {}".format(imagePath))
+        #eprint("imagePath: {}".format(imagePath))
         cv2.imwrite(filename, image)
 
         # calculate the hashvalue of the pic using phash
@@ -83,12 +90,12 @@ def find_image_matches(table1, table2):
     for filename1, image1 in table1.items():
         for filename2, image2 in table2.items():
             diffOCRdistance = percentageEditDistance(image1.text, image2.text)
-            diffHashDistance = percentHashDifference(image1.hash, image2.hash)
+            diffHashDistance = percentHashDifference(image1.image_hash, image2.image_hash)
             if diffHashDistance <= THRESH_HASH_DISTANCE_STRICT and diffOCRdistance <= THRESH_OCR_DISTANCE_STRICT:
                 # a picture is a strict match if the ocr is within 3 percent and
                 # image structure is within a 5 percent difference
                 # strict match
-                result += "{}\t{}\t0".format(filename1, filename2)
+                result += "{}\t{}\t0\n".format(filename1, filename2)
             elif image1.is_image_dominant() or image2.is_image_dominant():
                 # if image is imageDominant
                 if diffHashDistance < THRESH_HASH_DISTANCE_STRICT_IMAGE_DOMINANT:
@@ -98,13 +105,13 @@ def find_image_matches(table1, table2):
                         or diffOCRdistance > THRESH_OCR_DISTANCE_REMOVE_IMAGE_DOMINANT:
                     # no match?
                     # removeList.append(matchKey)
-                    eprint("{} {} PASS remove image dominant".format(filename1, filename2))
+                    #eprint("{} {} PASS remove image dominant".format(filename1, filename2))
                     pass
                 elif diffHashDistance > THRESH_HASH_DISTANCE_REMOVE \
                         and diffOCRdistance > THRESH_OCR_DISTANCE_REMOVE:
                     # removeList.append(matchKey)
                     # no match?
-                    eprint("{} {} PASS remove".format(filename1, filename2))
+                    #eprint("{} {} PASS remove".format(filename1, filename2))
                     pass
             else:
                 # if not a strict match or needing to be removed checked it against
@@ -112,16 +119,13 @@ def find_image_matches(table1, table2):
                 # CAN BE DONE WITH removed elements also but for the time being
                 # have not checked the feasibility with all elements
                 # TODO what does the addList do?
-                print("addList?")
+                #eprint("addList?")
                 pass
                 # addList.append( ( matchKey, diffOCRdistance, diffHashDistance  ) )
     return result.rstrip()
 
 
-def main():
-    dir1 = 'test1'
-    dir2 = 'test2'
-
+def compare_courses(dir1, dir2):
     # None, thresh, blur (Default: None)
     preprocess = 'None'
 
@@ -132,7 +136,13 @@ def main():
 
     table2 = constructImageTable2(dir2, preprocess, templateChange)
 
-    result = find_image_matches(table1, table2)
+    return find_image_matches(table1, table2)
+
+def main():
+    dir1 = 'test1'
+    dir2 = 'test2'
+
+    result = compare_courses(dir1, dir2)
 
     print(result)
 
