@@ -22,6 +22,8 @@ def main():
             result = compare_courses(dir1, dir2)
             out = open('{}/{}-{}.txt'.format(outdir, dir1, dir2), 'w')
             out.write(result + "\n")
+            out.flush()
+            out.close()
             # if we compare dir1 to dir2,
             # then we don't need to compare dir2 to dir1
             done.add('{}-{}'.format(dir1, dir2))

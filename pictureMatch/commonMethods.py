@@ -1,4 +1,6 @@
-import editDistance
+# using fast implementation of Levenshtein
+# https://github.com/aflc/editdistance
+import editdistance
 
 # calculates the difference between two image's hash values
 def percentHashDifference( curVal, comparisonVal ):
@@ -7,21 +9,21 @@ def percentHashDifference( curVal, comparisonVal ):
   return retval
 
 # calculates the number of edits it takes to change one number
-# to another and returns percentage value using the length of the 
+# to another and returns percentage value using the length of the
 # original text
 def percentageEditDistance( originalText, comparisonText ):
   if len(originalText) == 0:
     return len( comparisonText )
   elif len(comparisonText) == 0:
     return len( originalText)
-  distance = editDistance.editDistDP( originalText, comparisonText )
+  distance = editdistance.eval(originalText, comparisonText)
   return float(distance)/len(originalText)
 
 # adds matches to image one to image two
 # imageTable holds all the images and meta data
 # nameOne and nameTwo are strings representing the keys of the two pics
 def addMatchesToEachOther(imageTable, nameOne, nameTwo ):
-  
+
   # add the current matches of nameTwo to each of the matches in nameOne
   # need to union with set([nameTwo]) because the matches of nameTwo will
   # not have nameTwo in the set
@@ -29,7 +31,7 @@ def addMatchesToEachOther(imageTable, nameOne, nameTwo ):
     imageTable[matches]["matchNamesRemove"] =imageTable[matches]["matchNamesRemove"] | \
                                       imageTable[nameTwo]["matchNamesRemove"] | set([nameTwo])
     imageTable[matches]["matchNamesRemove"].discard(matches) # in case the same element has been added to itselfas a match
-  
+
   # same as above but in the other order
   for matches in imageTable[nameTwo]["matchNamesRemove"]:
     imageTable[matches]["matchNamesRemove"] =imageTable[matches]["matchNamesRemove"] | \
@@ -66,12 +68,12 @@ def removeItemsFromSet( imageTable, key, removeList  ):
 # takes care of elements that do not have any matches
 # adds those elements to an element before or after and updates the
 # match list accordingly
-# singulars is a list of elements that have not found any preliminary 
+# singulars is a list of elements that have not found any preliminary
 # matches
 def addSingulars( imageTable, singulars ):
 
   for elem in singulars:
-    
+
     # isolate which number of the question
     name = elem
     qIndex = name.rfind("Q")
@@ -88,7 +90,7 @@ def addSingulars( imageTable, singulars ):
     # the closer one will be the one who you should add it to
     curImgText = imageTable[name]["ocr_text"]
 
-    # try blocks are if the imgNameBefore or After does not exist in the 
+    # try blocks are if the imgNameBefore or After does not exist in the
     # table
     # can be replaced with if statement and in keyword
     # calculate the editdistance and use the smaller of the two values
