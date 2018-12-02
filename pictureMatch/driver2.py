@@ -32,9 +32,9 @@ def main():
     cs141s = ['KnoxCS141W15', 'KnoxCS141F15-1', 'KnoxCS141F15-2', 'KnoxCS141W16',
         'KnoxCS141F16-1', 'KnoxCS141F16-2', 'KnoxCS141W17-2']
 
-    cse141s = ['UCSD.CSE141F15', 'UCSD.CSE141F4-A', 'UCSD.CSE141S17-1'
-        'UCSD.CSE141F16', 'UCSD.CSE141F4-B', 'UCSD.CSE141S17-2',
-        'KnoxCS201S15', 'KnoxCS201S16']
+    cse141s = ['KnoxCS201S15', 'KnoxCS201S16',
+        'UCSD.CSE141F15', 'UCSD.CSE141F14-A', 'UCSD.CSE141F14-B',
+        'UCSD.CSE141F16', 'UCSD.CSE141S17-1', 'UCSD.CSE141S17-2']
 
     process_classes(cse141s, outdir)
 
