@@ -49,7 +49,7 @@ class ImageFeatures:
     def is_image_dominant(self):
         return len(self.text) < 75
 
-def construct_image_table(directoryPathName, preProcess, templateChange):
+def construct_image_table(directoryPathName, preProcess='None', templateChange='n'):
     startTime = time.time()
     table = {}
 
@@ -57,13 +57,12 @@ def construct_image_table(directoryPathName, preProcess, templateChange):
     # if we have it, just read the file; don't bother recreating all of
     # the hash information, since it doesn't change
     if len(glob.glob(directoryPathName + '/' + 'HASHCACHE.txt')) > 0:
+        eprint("Try to use cached information for {}".format(directoryPathName))
         for line in open(directoryPathName + '/' + 'HASHCACHE.txt'):
-            line = line.rstrip()
-            if len(line) == 0:
-                continue
-            filename, hash_hex, text = line.rstrip().split('\t')
+            line = line.rstrip('\n ')
+            filename, hash_hex, text = line.split('\t')
+            # TODO remove non-ASCII chars from text?
             table[filename] = ImageFeatures(filename, imagehash.hex_to_hash(hash_hex), text)
-        eprint("using cached information for {}".format(directoryPathName))
         return table
 
     # build the imagePq
@@ -110,20 +109,31 @@ def construct_image_table(directoryPathName, preProcess, templateChange):
 
 # the main code that looks at each of the elements and add/removes the
 # respective pairs
-def find_image_matches(table1, table2):
+def find_image_matches(table1, table2, full=False):
     print("comparing {} with {}".format(len(table1), len(table2)))
+    compared = set()
     result = ''
+    full_result = ''
     # TODO speed up by not recomputing
     for filename1, image1 in table1.items():
         for filename2, image2 in table2.items():
+            key1 = "{}-{}".format(filename1, filename2)
+            key2 = "{}-{}".format(filename2, filename1)
+            if key1 in compared or key2 in compared:
+                continue
+            compared.add(key1)
+            compared.add(key2)
             diffOCRdistance = percentageEditDistance(image1.text, image2.text)
             diffHashDistance = percentHashDifference(image1.image_hash, image2.image_hash)
+            full_result += "{}\t{}\t{}\t{}\n".format(filename1, filename2, diffOCRdistance, diffHashDistance)
             if diffHashDistance <= THRESH_HASH_DISTANCE_STRICT or diffOCRdistance <= THRESH_OCR_DISTANCE_STRICT:
                 # a picture is a strict match if the ocr is within 3 percent and
                 # image structure is within a 5 percent difference
                 # strict match
                 result += "{}\t{}\t0\n".format(filename1, filename2)
             elif image1.is_image_dominant() or image2.is_image_dominant():
+                # image dominant means that the text is less than 75 chars
+                # not sure why Ravi picked that threshold?
                 # if image is imageDominant
                 if diffHashDistance < THRESH_HASH_DISTANCE_STRICT_IMAGE_DOMINANT:
                     # strict match
@@ -149,12 +159,13 @@ def find_image_matches(table1, table2):
                 #eprint("addList?")
                 pass
                 # addList.append( ( matchKey, diffOCRdistance, diffHashDistance  ) )
-    return result.rstrip()
+    if full:
+        return full_result.rstrip()
+    else:
+        return result.rstrip()
 
 
-def compare_courses(dir1, dir2, image_cache=None):
-    # TODO use image cache
-
+def compare_courses(dir1, dir2, full=False):
     # None, thresh, blur (Default: None)
     preprocess = 'None'
 
@@ -165,4 +176,4 @@ def compare_courses(dir1, dir2, image_cache=None):
 
     table2 = construct_image_table(dir2, preprocess, templateChange)
 
-    return find_image_matches(table1, table2)
+    return find_image_matches(table1, table2, full)

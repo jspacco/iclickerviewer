@@ -1,6 +1,6 @@
-from compareCourseImages import compare_courses
+from compareCourseImages import compare_courses, construct_image_table
 
-def process_classes(classes, outdir):
+def process_classes(classes, outdir, full=False):
     # image_comparator = ImageComparator()
     done = set()
     for dir1 in classes:
@@ -13,8 +13,12 @@ def process_classes(classes, outdir):
                 # then we don't need to compare dir2 to dir1
                 continue
             # send in the hash
-            result = compare_courses(dir1, dir2)
-            out = open('{}/{}-{}.txt'.format(outdir, dir1, dir2), 'w')
+            print('comparing {} to {}'.format(dir1, dir2))
+            result = compare_courses(dir1, dir2, full)
+            if full:
+                out = open('{}/{}-{}-FULL.txt'.format(outdir, dir1, dir2), 'w')
+            else:
+                out = open('{}/{}-{}.txt'.format(outdir, dir1, dir2), 'w')
             out.write(result + "\n")
             out.flush()
             out.close()
@@ -36,8 +40,32 @@ def main():
         'UCSD.CSE141F15', 'UCSD.CSE141F14-A', 'UCSD.CSE141F14-B',
         'UCSD.CSE141F16', 'UCSD.CSE141S17-1', 'UCSD.CSE141S17-2']
 
-    process_classes(cse141s, outdir)
+    all = ['KnoxCS141F15-1',
+        'KnoxCS141F15-2',
+        'KnoxCS141F16-1',
+        'KnoxCS141F16-2',
+        'KnoxCS141W15',
+        'KnoxCS141W16',
+        'KnoxCS141W17-2',
+        'KnoxCS201S15',
+        'KnoxCS201S16',
+        'UCSD.CSE141F14-A',
+        'UCSD.CSE141F14-B',
+        'UCSD.CSE141F15',
+        'UCSD.CSE141F16',
+        'UCSD.CSE141S17-1',
+        'UCSD.CSE141S17-2']
 
+    debug = ['KnoxCS201S15', 'UCSD.CSE141F16']
+    outdir = 'tmp'
+
+    full = True
+
+    process_classes(cs141s, outdir, full)
+    process_classes(cse141s, outdir, full)
+
+    #for d in all:
+    #    construct_image_table(d)
 
 if __name__ == '__main__':
     main()
