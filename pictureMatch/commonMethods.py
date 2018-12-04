@@ -17,19 +17,6 @@ def percentageEditDistance(original, comparison):
     #return (1 - float(distance)/float(maxlen))
     return float(distance)/float(maxlen)
 
-# XXX This original algorithm doesn't work very well
-# sometimes it returns whole numbers, sometimes it returns
-# a percentage.
-# calculates the number of edits it takes to change one number
-# to another and returns percentage value using the length of the
-# original text
-def percentageEditDistance2( originalText, comparisonText ):
-    if len(originalText) == 0:
-        return len( comparisonText )
-    elif len(comparisonText) == 0:
-        return len( originalText)
-    distance = editdistance.eval(originalText, comparisonText)
-    return float(distance) / len(originalText)
 
 # adds matches to image one to image two
 # imageTable holds all the images and meta data
