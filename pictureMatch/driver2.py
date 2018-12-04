@@ -1,32 +1,5 @@
-from compareCourseImages import compare_courses, construct_image_table
+from compareCourseImages import compare_courses, construct_image_table, process_classes
 
-def process_classes(classes, outdir, full=False):
-    # image_comparator = ImageComparator()
-    done = set()
-    for dir1 in classes:
-        for dir2 in classes:
-            if dir1 == dir2:
-                # don't compare directories to themselves
-                continue
-            if '{}-{}'.format(dir1, dir2) in done:
-                # if we compare dir1 to dir2,
-                # then we don't need to compare dir2 to dir1
-                continue
-            # send in the hash
-            print('comparing {} to {}'.format(dir1, dir2))
-            result = compare_courses(dir1, dir2, full)
-            if full:
-                out = open('{}/{}-{}-FULL.txt'.format(outdir, dir1, dir2), 'w')
-            else:
-                out = open('{}/{}-{}.txt'.format(outdir, dir1, dir2), 'w')
-            out.write(result + "\n")
-            out.flush()
-            out.close()
-            # if we compare dir1 to dir2,
-            # then we don't need to compare dir2 to dir1
-            done.add('{}-{}'.format(dir1, dir2))
-            done.add('{}-{}'.format(dir2, dir1))
-            print('Finished with {} and {}'.format(dir1, dir2))
 
 def main():
     outdir = 'output'
@@ -57,7 +30,7 @@ def main():
         'UCSD.CSE141S17-2']
 
     debug = ['KnoxCS201S15', 'UCSD.CSE141F16']
-    outdir = 'tmp'
+    #process_classes(debug, 'tmp', True)
 
     full = True
 

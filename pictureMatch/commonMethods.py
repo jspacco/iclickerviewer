@@ -4,6 +4,17 @@ import editdistance
 
 # calculates the difference between two image's hash values
 def percentHashDifference( curVal, comparisonVal ):
+    '''curVal and comparisonVal are of type imagehash.ImageHash
+This is basically an 8x8 grid of true/false values that can easily
+be converted into a 64-bit ints. Subtraction is defined, and it
+returns the bitwise difference between the 64 bit values.
+
+len(curVal.hash) returns 64, because curVal.hash is the actual
+8x8 grid, and its length is 8 (8 rows of 8 cols each).
+
+So this function just returns the most obvious thing, which is the
+percentage of bits that are changed between two 64-bit values.
+    '''
     retval = float((curVal - comparisonVal)) / len( curVal.hash )**2
     # retval = abs(retval)
     return retval
@@ -14,7 +25,8 @@ def percentHashDifference( curVal, comparisonVal ):
 def percentageEditDistance(original, comparison):
     distance = editdistance.eval(original, comparison)
     maxlen = max(len(original), len(comparison))
-    #return (1 - float(distance)/float(maxlen))
+    if maxlen == 0:
+        return 1
     return float(distance)/float(maxlen)
 
 

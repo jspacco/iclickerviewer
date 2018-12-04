@@ -124,7 +124,7 @@ def find_image_matches(table1, table2, full=False):
             done.add(key2)
             diffOCRdistance = percentageEditDistance(image1.text, image2.text)
             diffHashDistance = percentHashDifference(image1.image_hash, image2.image_hash)
-            full_result += "{}\t{}\t{}\t{}\n".format(filename1, filename2, diffOCRdistance, diffHashDistance)
+            full_result += "{}\t{}\t{:.2}\t{:.2}\n".format(filename1, filename2, float(diffOCRdistance), float(diffHashDistance))
             if diffHashDistance <= THRESH_HASH_DISTANCE_STRICT or diffOCRdistance <= THRESH_OCR_DISTANCE_STRICT:
                 # a picture is a strict match if the ocr is within 3 percent and
                 # image structure is within a 5 percent difference
@@ -162,6 +162,35 @@ def find_image_matches(table1, table2, full=False):
         return full_result.rstrip()
     else:
         return result.rstrip()
+
+def process_classes(classes, outdir, full=False):
+    '''Compare two courses.
+    '''
+    done = set()
+    for dir1 in classes:
+        for dir2 in classes:
+            if dir1 == dir2:
+                # don't compare directories to themselves
+                continue
+            if '{}-{}'.format(dir1, dir2) in done:
+                # if we compare dir1 to dir2,
+                # then we don't need to compare dir2 to dir1
+                continue
+            # send in the hash
+            print('comparing {} to {}'.format(dir1, dir2))
+            result = compare_courses(dir1, dir2, full)
+            filename = '{}/{}-{}.txt'.format(outdir, dir1, dir2)
+            if full:
+                filename = '{}/{}-{}-FULL.txt'.format(outdir, dir1, dir2)
+            out = open(filename, 'w')
+            out.write(result + "\n")
+            out.flush()
+            out.close()
+            # if we compare dir1 to dir2,
+            # then we don't need to compare dir2 to dir1
+            done.add('{}-{}'.format(dir1, dir2))
+            done.add('{}-{}'.format(dir2, dir1))
+            print('Finished with {} and {}'.format(dir1, dir2))
 
 
 def compare_courses(dir1, dir2, full=False):
