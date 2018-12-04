@@ -111,18 +111,17 @@ def construct_image_table(directoryPathName, preProcess='None', templateChange='
 # respective pairs
 def find_image_matches(table1, table2, full=False):
     print("comparing {} with {}".format(len(table1), len(table2)))
-    compared = set()
+    done = set()
     result = ''
     full_result = ''
-    # TODO speed up by not recomputing
     for filename1, image1 in table1.items():
         for filename2, image2 in table2.items():
             key1 = "{}-{}".format(filename1, filename2)
             key2 = "{}-{}".format(filename2, filename1)
-            if key1 in compared or key2 in compared:
+            if key1 in done or key2 in done:
                 continue
-            compared.add(key1)
-            compared.add(key2)
+            done.add(key1)
+            done.add(key2)
             diffOCRdistance = percentageEditDistance(image1.text, image2.text)
             diffHashDistance = percentHashDifference(image1.image_hash, image2.image_hash)
             full_result += "{}\t{}\t{}\t{}\n".format(filename1, filename2, diffOCRdistance, diffHashDistance)
