@@ -29,16 +29,17 @@ def main():
         'UCSD.CSE141S17-1',
         'UCSD.CSE141S17-2']
 
-    debug = ['KnoxCS201S15', 'UCSD.CSE141F16']
-    #process_classes(debug, 'tmp', True)
+    debug = ['KnoxCS201S15', 'KnoxCS201S16']
 
-    full = True
+    debug = {'KnoxCS141F15-1' : '/Users/jspacco/projects/clickers/data/KnoxCS141F15-1/Images',
+        'KnoxCS141F15-2' : '/Users/jspacco/projects/clickers/data/KnoxCS141F15-2/Images'}
 
-    process_classes(cs141s, outdir, full)
-    process_classes(cse141s, outdir, full)
+    process_classes(debug, 'tmp', True)
 
-    #for d in all:
-    #    construct_image_table(d)
+
+    #process_classes(cs141s, outdir, full)
+    #process_classes(cse141s, outdir, full)
+
 
 if __name__ == '__main__':
     main()
