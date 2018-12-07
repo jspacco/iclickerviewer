@@ -16,20 +16,9 @@ def eprint(*args, **kwargs):
 
 
 # CONSTANTS
-THRESH_HASH_DISTANCE_STRICT = 0.05
-THRESH_OCR_DISTANCE_STRICT = 0.03
-
-THRESH_HASH_DISTANCE_STRICT_IMAGE_DOMINANT = 0.01
-THRESH_HASH_DISTANCE_REMOVE_IMAGE_DOMINANT = 0.35
-THRESH_OCR_DISTANCE_REMOVE_IMAGE_DOMINANT = 1.999
-
-THRESH_HASH_DISTANCE_REMOVE = 0.1
-THRESH_OCR_DISTANCE_REMOVE = 0.16
-
-THRESH_HASH_DISTANCE_GRAPH = 0.009
-
-TEXT_THRESHOLD = 0.13
-PHASH_THRESHOLD = 0.13
+THRESHOLD_TEXT = 0.13
+THRESHOLD_PHASH = 0.13
+THRESHOLD_TEXT_WITH_PHASH = 0.4
 
 
 def folder_and_file(path):
@@ -150,6 +139,16 @@ def tohtml(msg, diff_text, diff_phash, class1, filename1, class2, filename2):
 
 def find_image_matches(class1, table1, class2, table2, htmlout=False):
     '''Match the images in class1 against the images from class2
+Returns either an HTML file for checking visually,
+or a
+
+For output, the matches show:
+course1/image1 course2/image2 match_score
+
+possible match_score values are:
+0 for high confidence match (both phash and text-ocr are below threshold)
+1 medium confidence match (phash and text at threshold 2, or text at threshold 1)
+anything else we leave it out.
     '''
     print("comparing {} with {}".format(len(table1), len(table2)))
     done = set()
@@ -170,22 +169,28 @@ def find_image_matches(class1, table1, class2, table2, htmlout=False):
             diff_text = percentageEditDistance(image1.text, image2.text)
             diff_phash = percentHashDifference(image1.image_hash, image2.image_hash)
             msg = '{:.2} {:.2} for {} and {}'.format(float(diff_text), float(diff_phash), filename1, filename2)
-            if diff_text < TEXT_THRESHOLD and diff_phash < PHASH_THRESHOLD:
+            if diff_text < THRESHOLD_TEXT and diff_phash < THRESHOLD_PHASH:
                 #print("both: {}".format(msg))
+                # BEST: both phash and ocr text indicate a match
                 both += 1
                 html += tohtml('both!', diff_text, diff_phash, class1, filename1, class2, filename2)
-            elif diff_phash < PHASH_THRESHOLD:
-                #print("phash: {}".format(msg))
-                phash += 1
-                html += tohtml('phash only', diff_text, diff_phash, class1, filename1, class2, filename2)
-            elif diff_text < TEXT_THRESHOLD:
+                result += "{}\t{}\t0\n".format(filename1, filename2)
+            elif diff_text < THRESHOLD_TEXT:
                 #print("text: {}".format(msg))
+                # second best: text matches
                 text += 1
                 html += tohtml('text only', diff_text, diff_phash, class1, filename1, class2, filename2)
+                result += "{}\t{}\t1\n".format(filename1, filename2)
+            elif diff_phash < THRESHOLD_PHASH and diff_text < THRESHOLD_TEXT_WITH_PHASH:
+                #print("phash: {}".format(msg))
+                # third best: phash matches, text is below a less strict threshold
+                phash += 1
+                html += tohtml('phash only', diff_text, diff_phash, class1, filename1, class2, filename2)
+                result += "{}\t{}\t2\n".format(filename1, filename2)
             else:
                 # print("neither: {}".format(msg))
                 neither += 1
-            result += "{}\t{}\t{:.2}\t{:.2}\n".format(filename1, filename2, float(diff_text), float(diff_phash))
+            # result += "{}\t{}\t{:.2}\t{:.2}\n".format(filename1, filename2, float(diff_text), float(diff_phash))
     print("both: {} phash: {} text: {} neither: {}".format(both, phash, text, neither))
     if htmlout:
         return '''
@@ -207,63 +212,6 @@ def find_image_matches(class1, table1, class2, table2, htmlout=False):
 '''.format(html)
     else:
         return result
-
-
-# the main code that looks at each of the elements and add/removes the
-# respective pairs
-def find_image_matches2(table1, table2, full=False):
-    print("comparing {} with {}".format(len(table1), len(table2)))
-    done = set()
-    result = ''
-    full_result = ''
-    for filename1, image1 in table1.items():
-        for filename2, image2 in table2.items():
-            key1 = "{}-{}".format(filename1, filename2)
-            key2 = "{}-{}".format(filename2, filename1)
-            if key1 in done or key2 in done:
-                continue
-            done.add(key1)
-            done.add(key2)
-            diffOCRdistance = percentageEditDistance(image1.text, image2.text)
-            diffHashDistance = percentHashDifference(image1.image_hash, image2.image_hash)
-            full_result += "{}\t{}\t{:.2}\t{:.2}\n".format(filename1, filename2, float(diffOCRdistance), float(diffHashDistance))
-            if diffHashDistance <= THRESH_HASH_DISTANCE_STRICT or diffOCRdistance <= THRESH_OCR_DISTANCE_STRICT:
-                # a picture is a strict match if the ocr is within 3 percent and
-                # image structure is within a 5 percent difference
-                # strict match
-                result += "{}\t{}\t0\n".format(filename1, filename2)
-            elif image1.is_image_dominant() or image2.is_image_dominant():
-                # image dominant means that the text is less than 75 chars
-                # not sure why Ravi picked that threshold?
-                # if image is imageDominant
-                if diffHashDistance < THRESH_HASH_DISTANCE_STRICT_IMAGE_DOMINANT:
-                    # strict match
-                    result += "{}\t{}\t0\n".format(filename1, filename2)
-                elif diffHashDistance > THRESH_HASH_DISTANCE_REMOVE_IMAGE_DOMINANT \
-                        or diffOCRdistance > THRESH_OCR_DISTANCE_REMOVE_IMAGE_DOMINANT:
-                    # no match?
-                    # removeList.append(matchKey)
-                    #eprint("{} {} PASS remove image dominant".format(filename1, filename2))
-                    pass
-                elif diffHashDistance > THRESH_HASH_DISTANCE_REMOVE \
-                        and diffOCRdistance > THRESH_OCR_DISTANCE_REMOVE:
-                    # removeList.append(matchKey)
-                    # no match?
-                    #eprint("{} {} PASS remove".format(filename1, filename2))
-                    pass
-            else:
-                # if not a strict match or needing to be removed checked it against
-                # other elements that also do not need to be removed
-                # CAN BE DONE WITH removed elements also but for the time being
-                # have not checked the feasibility with all elements
-                # TODO what does the addList do?
-                #eprint("addList?")
-                pass
-                # addList.append( ( matchKey, diffOCRdistance, diffHashDistance  ) )
-    if full:
-        return full_result.rstrip()
-    else:
-        return result.rstrip()
 
 
 def compare_courses(class1, dir1, class2, dir2, full=False):
