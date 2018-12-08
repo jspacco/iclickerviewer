@@ -46,7 +46,7 @@ class ImageFeatures:
         return len(self.text) < 75
 
 
-def construct_image_table(directoryPathName, preProcess='None', templateChange='n'):
+def construct_image_table(classname, directoryPathName, preProcess='None', templateChange='n'):
     '''Check pathname. If it's a file, assume it's a HASHCACHE file.
 If it's a directory, check for a HASHCACHE.txt file.
 If it's a directory with no HASHCACHE file, find the images and build the HASHCACHE.txt file.
@@ -81,7 +81,7 @@ If it's a directory with no HASHCACHE file, find the images and build the HASHCA
         # remove MC box
         image = tempRemoveMC.removeMCBox(image)
 
-        # imageName is in the format ./../something/L123123123_Q12.jpg
+        # imagePath is probably in the format /path/to/ClassName/Images/L123123123_Q12.jpg
         dotPosition = imagePath.rfind(".")
         slashPosition = imagePath.rfind("/")
         filename = "{}.jpg".format(imagePath[slashPosition + 1:dotPosition] + "_1")
@@ -90,7 +90,8 @@ If it's a directory with no HASHCACHE file, find the images and build the HASHCA
         # path/to/UIC.CS108F17/L1709011030_Q1.jpg
         # should be:
         # UIC.CS108F17/L1709011030_Q1.jpg
-        shortpath = folder_and_file(imagePath)
+        #shortpath = folder_and_file(imagePath)
+        shortpath = "{}/{}".format(classname, imagePath[imagePath.rfind('/') + 1 : ])
         #eprint("imagePath: {}".format(imagePath))
         cv2.imwrite(filename, image)
 
@@ -147,7 +148,8 @@ course1/image1 course2/image2 match_score
 
 possible match_score values are:
 0 for high confidence match (both phash and text-ocr are below threshold)
-1 medium confidence match (phash and text at threshold 2, or text at threshold 1)
+1 medium-high confidence (text match, but no phash match)
+2 medium confidence match (phash and text at threshold 2, or text at threshold 1)
 anything else we leave it out.
     '''
     print("comparing {} with {}".format(len(table1), len(table2)))
@@ -221,9 +223,9 @@ def compare_courses(class1, dir1, class2, dir2, full=False):
     # y/n (default: n)
     templateChange = 'n'
 
-    table1 = construct_image_table(dir1, preprocess, templateChange)
+    table1 = construct_image_table(class1, dir1, preprocess, templateChange)
 
-    table2 = construct_image_table(dir2, preprocess, templateChange)
+    table2 = construct_image_table(class2, dir2, preprocess, templateChange)
 
     return find_image_matches(class1, table1, class2, table2, full)
 
@@ -252,9 +254,10 @@ some standard.
             done.add(class1 + class2)
             done.add(class2 + class1)
             result = compare_courses(class1, dir1, class2, dir2, htmlout)
-            filename = '{}/{}-{}.txt'.format(outdir, class2, class2)
+            filename = '{}/{}-{}.txt'.format(outdir, class1, class2)
             if htmlout:
                 filename = '{}/{}-{}.html'.format(outdir, class1, class2)
+            print('output in {}'.format(filename))
             out = open(filename, 'w')
             out.write(result + "\n")
             out.flush()
