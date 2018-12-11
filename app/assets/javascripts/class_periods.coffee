@@ -247,6 +247,10 @@ root.reset_correct_checkboxes =(id) ->
     $("##{id_tag}").prop("checked", false)
   return 0
 
+#
+# when you click identical or modified, uncheck any modified+ categories
+# when you click a modified+ category, automatically select modified+
+#
 root.matching_logic =(qid, mqid, clicked_box) ->
   delete_id = edit_delete_id(qid, mqid)
   edit_match_id = edit_matching_id(qid, mqid, '2')
@@ -268,12 +272,15 @@ root.matching_logic =(qid, mqid, clicked_box) ->
     return 0
 
 root.matching_new_logic = (qid, clicked_box) ->
-  edit_match_id = new_matching_id(qid,'modified_plus')
+  edit_match_id = new_matching_id(qid, 'modified_plus')
   #console.log("#{edit_match_id} is our edit_match_id, our qid is #{qid} and our clicked_box is #{clicked_box}")
-  if clicked_box in [0,1]
+  if clicked_box in [0, 1, 'clear', '']
+    # uncheck modified+ categories if we picked identical, modified, clear, or unknown
     for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o']
-      match_type_id = new_match_option_id(qid,modifier_type)
+      match_type_id = new_match_option_id(qid, modifier_type)
+      #console.log("match_type_id is #{match_type_id}")
       $("##{match_type_id}").prop("checked", false)
   if clicked_box in ['+']
+    # any modified+ category checks modified+
     $("##{edit_match_id}").prop("checked", true)
 return 0

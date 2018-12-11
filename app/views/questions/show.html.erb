@@ -1,15 +1,4 @@
 <% content_for :title, "#{@questions[0].question_index} (#{@questions[0].id})" %>
-<div>
-TODO: next question
-</div>
-
-<div>
-TODO: quick preview
-</div>
-
-<div>
-TODO: back button back to class period, next question buttons
-</div>
 
 <%#
   TODO
@@ -39,7 +28,6 @@ TODO: back button back to class period, next question buttons
     <th> index </th>
     <th> image </th>
     <th> barchart </th>
-    <th> matched questions </th>
   </tr>
 </thead>
   <% @questions.each do |question| %>
@@ -61,7 +49,6 @@ TODO: back button back to class period, next question buttons
       %>
       <%= image_tag(barchart_img_url, :class => "myImg") %>
     </td>
-    <td> TODO: show definite matches using q (somehow) </td>
   </tr>
   <% end # fields_for %>
   <% end # foreach %>
@@ -70,19 +57,19 @@ TODO: back button back to class period, next question buttons
 
 <hr>
 <h1>
-Actual matches
-</h1>
-<%= render partial: 'match_table',
-  locals: {:potential_matches => @matched_questions,
-  :matches_array => 'matches'} %>
-
-<hr>
-<h1>
 Possible matches
 </h1>
 <%= render partial: 'match_table',
   locals: {:potential_matches => @possible_matches,
   :matches_array => 'possible_matches'} %>
+
+<hr>
+<h1>
+Actual matches
+</h1>
+<%= render partial: 'match_table',
+  locals: {:potential_matches => @matched_questions,
+  :matches_array => 'matches'} %>
 
 <hr>
 <h1>
