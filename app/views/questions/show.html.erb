@@ -30,7 +30,7 @@ TODO: back button back to class period, next question buttons
 %>
 
 <%= form_tag(question_path(@questions.first), {method: :patch}) do %>
-<%= submit_tag 'Update data (does not work yet)', class: "updatebutton"%>
+<%= submit_tag 'Update data', class: "updatebutton"%>
 <table border=1>
   <tr>
     <th> ID </th>
@@ -92,7 +92,7 @@ Nonmatching Questions
   locals: {:potential_matches => @nonmatching_questions,
   :matches_array => 'nonmatches'} %>
 
-
+<%= submit_tag 'Update data', class: "updatebutton"%>
 
 <% end # form_tag %>
 

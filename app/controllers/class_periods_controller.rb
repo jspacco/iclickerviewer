@@ -8,6 +8,7 @@ class ClassPeriodsController < ApplicationController
     get_questions_course_class_period
     total = current_time - start
 
+    # TODO do this with ActiveRecord
     results = ActiveRecord::Base.connection.exec_query(sqlmatchgroup)
     @question_hash = Hash.new
     results.each do |row|
