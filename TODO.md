@@ -3,20 +3,23 @@ Creating a more formal TODO list
 ---
 
 ## TODO (code)
+* Anytime an image cannot be loaded from AWS, note this in a log someplace, so that we can figure out which image uploads to AWS failed (this seems to happen on occasion, not sure why)
+* upload the HASHCACHE.txt files to AWS when they are produced (somehow?)
+* Automatically upload images to AWS when we have them (Ruby command line tools for AWS)
+* Sort the classes in the splash page by year and by semester/term
+* Leo's architecture courses are not matching very well; why?
 * multiple sessions from the same day are actually the same class period; happens for Toronto a few times and this messes up tracking paired questions if the questions straddle this artificial break
 * questions repeated within the same term (review sessions)
 * Tagging of classes (i.e. regular class period, review session, others?)
 * Time data for classes (days per week, minutes per class, number of weeks, total class periods scheduled)
-* It looks like some questions are actually tripled, not just paired
+* It looks like some questions are actually tripled, not just paired (how to handle this?)
 * automatically upload images to s3, and set stupid permissions correctly
   * http://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjectUsingRuby.html
 * JS disallow changing type when it is set to pair, or directly setting to pair
 * settings (hide/show spurious, etc)
-* more user accounts
 * matching_questions
   * mark identical VS modified from /class_periods/:id
   * transitive relationships for matches, and for identical/modified
-  * Improve potential matches using Phashion and/or OCR and/or slides
 * DB should question_type default to 0 instead of empty string?
 * (lowpri): auto mark correct answer when pairing
 * Update the column tooltips for sessions
@@ -41,15 +44,12 @@ Creating a more formal TODO list
 * fix full path needed in config/database.yml for sqlite3 when running cmdline
   * this may go away when we switch to mariadb or postgres
 * server-side logging for views (and controllers)
-* upload Dan Z's data
 * TODO: Fix helper methods so that they return values rather than
   set instance variables, in order to make testing easier
 * TODO: can this be made into a callback or method of some kind?
 q.matched_questions.where(:matching_questions => {:is_match => nil})
 
 ## TODO (logistics)
-*
-* IRB at Knox (awaiting response; ping Gabe and Andy again)
 * two 450s and classes from Prague are 361s16 (Kanich)
   * FIXME: which are the other Kanich questions?
 
