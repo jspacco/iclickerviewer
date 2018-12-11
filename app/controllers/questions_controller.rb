@@ -6,8 +6,6 @@ class QuestionsController < ApplicationController
   def update
     question = Question.find_by(id: params[:id])
 
-    # Edit matching questions where we set a different match_type
-    puts "CONTROLLER GO"
 =begin
 {"questions"=>
   {"6032"=>{"is_match"=>"1",
@@ -26,7 +24,7 @@ class QuestionsController < ApplicationController
           mq.is_match = is_match == '' ? nil : is_match
         end
         if to_edit.key? :match_type
-          match_type = to_edit[:match_type].to_i
+          match_type = int_or_nil(to_edit[:match_type])
           mq.match_type = match_type
           if match_type == 0 or match_type == 1
             # TODO should we turn off modified+ categories in this case?

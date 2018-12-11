@@ -30,6 +30,12 @@ module ApplicationHelper
     return value
   end
 
+  def int_or_nil(value)
+    value = nil_if_blank(value)
+    value = value.to_i if value
+    return value
+  end
+
 =begin
 Given a list of two values, return them as a string representation
 of a fraction. For example, [3, 10] would be "3 / 10"
