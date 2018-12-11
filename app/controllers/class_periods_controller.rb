@@ -4,13 +4,21 @@ class ClassPeriodsController < ApplicationController
   # GET /class_periods/1
   def show
     start = current_time
+
     get_questions_course_class_period
     total = current_time - start
-    puts "total time for class_periods#show is #{total}"
+
+    results = ActiveRecord::Base.connection.exec_query(sqlmatchgroup)
+    @question_hash = Hash.new
+    results.each do |row|
+      @question_hash[row['question_id']] = row['count']
+    end
 
     get_keyword_hash(params[:id])
 
     get_question_keyword_list
+
+    puts "total time for class_periods#show is #{total}"
 
     # get_match_stats(ClassPeriod.find_by(id: params[:id]))
   end
@@ -193,6 +201,9 @@ class ClassPeriodsController < ApplicationController
     redirect_to class_period_path params[:id]
   end
 
+  # -------------------------------------------------------------
+  # private helper methods
+  # -------------------------------------------------------------
   private
 
   # -------------------------------------------------------------
@@ -383,5 +394,15 @@ class ClassPeriodsController < ApplicationController
     course_cache.num_classes_updated = num_classes_updated
     course_cache.total_classes = total_classes
     course_cache.save
+  end
+
+  def sqlmatchgroup
+    return """
+SELECT mq.question_id as question_id, count(*) as count
+  FROM matching_questions mq, questions q
+  WHERE mq.match_type is NULL
+  AND mq.is_match is NULL
+  GROUP BY mq.question_id
+"""
   end
 end

@@ -193,7 +193,7 @@ http://railscasts.com/episodes/324-passing-data-to-javascript
     <td align="center">
       <%= link_to question.id, cluster_path(question) %>
     </td>
-    <td align="center">
+    <td align="center" <%= 'class=todo' if @question_hash.key? question.id %> >
       <b> <%= link_to question.question_index, question_path(question), :id => question.question_index %> </b>
     </td>
     <td>
