@@ -283,4 +283,15 @@ root.matching_new_logic = (qid, clicked_box) ->
   if clicked_box in ['+']
     # any modified+ category checks modified+
     $("##{edit_match_id}").prop("checked", true)
-return 0
+
+  # check the box for is_match if we selected match_type identical,
+  # modified, or modified+
+  # if we pick unknown for match_type, then also pick unknown for is_match
+  if clicked_box != ''
+    is_match = "questions_#{qid}_is_match_1"
+  else if clicked_box == ''
+    is_match = "questions_#{qid}_is_match_"
+  is_match_html = $("##{is_match}")
+  is_match_html.prop("checked", true)
+  console.log("is match HTML: #{is_match_html}")
+  return 0
