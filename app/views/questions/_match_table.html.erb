@@ -14,22 +14,14 @@
       <th> class <br>period<br> code </th>
       <th> index </th>
       <th> image </th>
-      <th> barchart </th>
-      <th> does this match? </th>
-      <th> type of match? </th>
+      <th> is match? </th>
+      <th> match type? </th>
     </tr>
   </thead>
-<%#
-TODO course, class_period, image index
-TODO filter out same image matches (if any)
-TODO option to mark "no match"
-TODO potential matches that we decided were not matches at the bottom
-TODO integrate /question/:id with class_periods/:id
-TODO all question view, possible with insanely long lists of possible matches?
-TODO class for the td elements
-%>
+
 <% potential_matches.each do |question| %>
 <%= fields_for "#{matches_array}[]", question do |q| %>
+<% mq = MatchingQuestion.find_by(question_id: params[:id], matching_question_id: question.id) %>
   <tr>
     <td align="center"> <b> <%= question.id %> </b> </td>
     <% class_period = ClassPeriod.find_by(id: question.class_period_id) %>
@@ -43,33 +35,130 @@ TODO class for the td elements
       %>
       <%= image_tag(question_img_url, :class => "myImg") %>
     </td>
-    <td class="imagecolumn">
-      <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
-        [course.folder_name, class_period.session_code, question.question_index]
-      %>
-      <%= image_tag(barchart_img_url, :class => "myImg") %>
+    <td>
+      <%# TODO fill these out based on data in the DB %>
+      <table border=1>
+        <tr><td>
+          <%= mq.question_id %><br>
+          <%= mq.matching_question_id %>
+        </td></tr>
+        <tr><td>
+          <%= label_tag "questions[#{mq.matching_question_id}][is_match]", 'unknown' %>
+          <%= radio_button_tag "questions[#{mq.matching_question_id}][is_match]", '',
+            checked = mq.is_match == nil %>
+        </td></tr>
+        <tr><td>
+          <%= label_tag "questions[#{mq.matching_question_id}][is_match]", 'no' %>
+          <%= radio_button_tag "questions[#{mq.matching_question_id}][is_match]", '0',
+            checked = mq.is_match == 0 %>
+        </td></tr>
+        <tr><td>
+          <%= label_tag "questions[#{mq.matching_question_id}][is_match]", 'yes' %>
+          <%= radio_button_tag "questions[#{mq.matching_question_id}][is_match]", '1',
+            checked = mq.is_match == 1 %>
+        </td></tr>
+      </table>
     </td>
-    <td> matches the question above?<br>
-      <%= label_tag "#{matches_array}[#{q.object.id}][is_match][]", 'unknown' %>
-      <%= radio_button_tag "#{matches_array}[#{q.object.id}][is_match]", '' %>
-      <br>
-      <%= label_tag "#{matches_array}[#{q.object.id}][is_match][0]", 'no' %>
-      <%= radio_button_tag "#{matches_array}[#{q.object.id}][is_match]", 0 %>
-      <br>
-      <%= label_tag "#{matches_array}[#{q.object.id}][is_match][1]", 'yes' %>
-      <%= radio_button_tag "#{matches_array}[#{q.object.id}][is_match]", 1 %>
-      <br>
-    </td>
-    <td> if a match, what kind of match?<br>
-      <%= label_tag "#{matches_array}[#{q.object.id}][match_type][]", 'unknown' %>
-      <%= radio_button_tag "#{matches_array}[#{q.object.id}][match_type]", '' %>
-      <br>
-      <%= label_tag "#{matches_array}[#{q.object.id}][match_type][0]", 'identical' %>
-      <%= radio_button_tag "#{matches_array}[#{q.object.id}][match_type]", 0 %>
-      <br>
-      <%= label_tag "#{matches_array}[#{q.object.id}][match_type][1]", 'modified' %>
-      <%= radio_button_tag "#{matches_array}[#{q.object.id}][match_type]", 1 %>
-      <br>
+    <td>
+      <table border="1">
+        <tr align="center">
+          <th class = "mytooltip"> unknown
+            <span class = "tooltiptext" > Mark this if the question match type is unknown. </span>
+          </th>
+          <th class = "mytooltip"> identical
+            <span class = "tooltiptext" > Mark this if the question is identical. </span>
+          </th>
+          <th class = "mytooltip"> modified
+            <span class = "tooltiptext" > Mark this if the question is modified, but you're not sure how. </span>
+          </th>
+          <th class = "mytooltip"> modified+
+            <span class = "tooltiptext" > Mark this if the question is modified in a specific way. </span>
+          </th>
+          <th class = "mytooltip"> q_p
+            <span class = "tooltiptext" > Question Phrasing Changed. </span>
+          </th>
+          <th class = "mytooltip"> q_v
+            <span class = "tooltiptext" > Question Values Changed. </span>
+          </th>
+          <th class = "mytooltip"> i_p
+            <span class = "tooltiptext" > Info Phrasing Changed. </span>
+          </th>
+          <th class = "mytooltip">i_l
+            <span class = "tooltiptext" > Info Layout Changed. </span>
+          </th>
+          <th class = "mytooltip"> a_p
+            <span class = "tooltiptext" > Answers Phrasing Changed. </span>
+          </th>
+          <th class = "mytooltip"> a_v
+            <span class = "tooltiptext" > Answer Values Changed. </span>
+          </th>
+          <th class = "mytooltip"> a_o
+            <span class = "tooltiptext" > Answer Order Changed. </span>
+          </th>
+          <th class = "mytooltip"> a_t
+            <span class = "tooltiptext" > Answer Type Changed (from true false to anota, etc). </span>
+          </th>
+          <th class = "mytooltip"> other
+            <span class = "tooltiptext" > There is a specific change made that we don't have a category for yet.. </span>
+          </th>
+        </tr>
+
+        <tr align="center">
+
+          <!-- unknown -->
+          <td class="<%= "bghicol" if mq.match_type == nil %>">
+            <%# identical: %>
+            <%= radio_button_tag  "questions[#{mq.matching_question_id}][match_type]",
+            "", false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '');"
+            %>
+          </td>
+          <!-- identical -->
+          <td class="<%= "bghicol" if mq.match_type == 0 %>">
+            <%# identical: %>
+            <%= radio_button_tag  "questions[#{mq.matching_question_id}][match_type]",
+            "0", false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 0);"
+            %>
+          </td>
+          <!-- modified -->
+          <td class="<%= "bghicol" if mq.match_type == 1 %>">
+            <%# modified %>
+            <%= radio_button_tag "questions[#{mq.matching_question_id}][match_type]",
+              "1", false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 1);"
+            %>
+          </td>
+
+          <!-- modified+ -->
+          <td class="<%= "bghicol" if mq.match_type == 2 %>">
+            <%# modified+ %>
+            <%= radio_button_tag "questions[#{mq.matching_question_id}][match_type]",
+              "2", false, onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, 2);"
+            %>
+          </td>
+
+
+          <!-- modified types -->
+          <% # iterate through a hash from names of the modified+ match fields to their short codes
+             {'changed_question_phrasing'   => 'q_p',
+              'changed_question_values'     => 'q_v',
+              'changed_info_phrasing'       => 'i_p',
+              'changed_info_layout'         => 'i_l',
+              'changed_answers_phrasing'    => 'a_p',
+              'changed_answers_values'      => 'a_v',
+              'changed_answers_order'       => 'a_o',
+              'changed_answers_type'        => 'a_t',
+              'changed_other'               => 'o'
+            }.each do |field_name, field_code| %>
+            <td class="<%= "bghicol" if mq[field_name] == 1%>">
+              <%= check_box_tag "questions[#{q.object.id}][set_changed_#{field_code}]",
+                # toggle: we are sending 1 if the checkbox is currently unchecked, and 0 if it's currently checked
+                mq[field_name] == 1 ? 0 : 1,
+                false,
+                onclick: "matching_logic(#{q.object.id}, #{mq.matching_question_id}, '+');"%>
+            </td>
+          <% end # {}.each do |field_name, field_code| %>
+        </tr>
+        <%# end # matching_questions.each do |mq| %>
+      </table>
     </td>
   </tr>
 <% end # foreach %>

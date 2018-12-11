@@ -6,9 +6,72 @@ class QuestionsController < ApplicationController
   def update
     question = Question.find_by(id: params[:id])
 
-    update_matches_question(:possible_matches)
-    update_matches_question(:nonmatches)
-    update_matches_question(:matches)
+    # Edit matching questions where we set a different match_type
+    puts "CONTROLLER GO"
+=begin
+{"questions"=>
+  {"6032"=>{"is_match"=>"1",
+          "match_type"=>"2",
+          "set_changed_q_p"=>"1"},
+  "6168"=>{"is_match"=>""}
+}
+=end
+    matches = MatchingQuestion.where(question_id: params[:id])
+    matches.each do |mq|
+      to_edit = params[:questions][mq.matching_question_id.to_s]
+      if to_edit
+        if to_edit.key? :is_match
+          # TODO update is_match in
+          is_match = to_edit[:is_match]
+          mq.is_match = is_match == '' ? nil : is_match
+        end
+        if to_edit.key? :match_type
+          match_type = to_edit[:match_type].to_i
+          mq.match_type = match_type
+          if match_type == 0 or match_type == 1
+            # TODO should we turn off modified+ categories in this case?
+            # {'changed_question_phrasing'   => 'q_p',
+            #  'changed_question_values'     => 'q_v',
+            #  'changed_info_phrasing'       => 'i_p',
+            #  'changed_info_layout'         => 'i_l',
+            #  'changed_answers_phrasing'    => 'a_p',
+            #  'changed_answers_values'      => 'a_v',
+            #  'changed_answers_order'       => 'a_o',
+            #  'changed_answers_type'        => 'a_t',
+            #  'changed_other'               => 'o'
+            # }.each do |field_name, field_code|
+            #   mq[field_code] = 0
+            # end
+          elsif match_type == 2
+            # check for changes to modified+ expanded match categories
+            {'changed_question_phrasing'   => 'q_p',
+             'changed_question_values'     => 'q_v',
+             'changed_info_phrasing'       => 'i_p',
+             'changed_info_layout'         => 'i_l',
+             'changed_answers_phrasing'    => 'a_p',
+             'changed_answers_values'      => 'a_v',
+             'changed_answers_order'       => 'a_o',
+             'changed_answers_type'        => 'a_t',
+             'changed_other'               => 'o'
+            }.each do |field_name, field_code|
+              changed_field = to_edit["set_changed_#{field_code}"]
+              if changed_field
+                puts changed_field
+                mq[field_name] = changed_field.to_i
+                if(changed_field.to_i == 1)
+                  # setting any modified+ features implies match_type modified+
+                  mq.match_type = 2;
+                end
+              else
+                # TODO is this the right value?
+                mq[field_name] = 0
+              end
+            end
+          end
+        end
+        mq.save
+      end
+    end
 
     redirect_to action: :show, id: params[:id]
   end
