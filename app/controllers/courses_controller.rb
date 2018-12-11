@@ -38,6 +38,15 @@ class CoursesController < ApplicationController
     # TODO sort class periods by date
     @classes = ClassPeriod.where(course_id: @course.id).order(:session_code)
 
+    # Look up using SQL aggregation (which I can't figure out how to do
+    # with ActiveRecord) session_code mapped to number of potential matches
+    # for this course
+    results = ActiveRecord::Base.connection.exec_query(sqlmatch(@course.id))
+    @session_code_hash = Hash.new
+    results.each do |row|
+      @session_code_hash[row['session_code']] = row['count']
+    end
+
     update_start = current_time
     get_updated_stats
     update_total = current_time - update_start
@@ -140,5 +149,18 @@ class CoursesController < ApplicationController
         increment(@num_nonmatches, q.class_period_id)
       end
     end
+  end
+
+  def sqlmatch(course_id)
+    return """
+SELECT cp.session_code as session_code, count(*) as count
+  FROM class_periods cp, questions q, matching_questions mq
+  WHERE cp.course_id = #{course_id}
+  AND q.class_period_id = cp.id
+  AND mq.question_id = q.id
+  AND mq.is_match is NULL
+  AND mq.match_type is NULL
+  GROUP BY cp.session_code
+"""
   end
 end
