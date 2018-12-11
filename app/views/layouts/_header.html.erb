@@ -24,7 +24,7 @@
         <% end %>
         <% if defined?(@class_period) %>
           <li class="nav-item">
-            <span class="navbar-text"> <%= @class_period.session_code %> </span>
+            <span class="navbar-text"> <%= link_to "#{@class_period.session_code}", @class_period %> </span>
           </li>
         <% end %>
         <% if defined?(@course) %>
