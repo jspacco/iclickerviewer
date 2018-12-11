@@ -1,10 +1,11 @@
 class CoursesController < ApplicationController
   include ApplicationHelper
   def index
-    @courses = Course.all.order(:folder_name)
-    # TODO avg number of CQs over all classes,
-    #   avg time per CQ,
-    #   pairing/individual stats???
+    # order courses by:
+    # school, course, year, term
+    # (sorting by descending order is a hack because winter, spring, fall
+    # sort correctly in reverse order)
+    @courses = Course.all.order(:institution, :name, :year, term: :desc)
 
     start = current_time
 
