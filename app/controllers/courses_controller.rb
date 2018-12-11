@@ -10,12 +10,13 @@ class CoursesController < ApplicationController
 
     get_all_class_stats
 
-    '''
-    @all_class_stats = Hash.new
-    @courses.each do |course|
-      @all_class_stats[course.id] = get_class_stats(course.id)
+    # Hash mapping course_id to number of possible matched questions
+    # that need to be processed
+    results = ActiveRecord::Base.connection.exec_query(sqlmatchcourse)
+    @course_match_hash = Hash.new
+    results.each do |row|
+      @course_match_hash[row['course_id']] = row['count']
     end
-    '''
 
     total = current_time - start
     puts "get_all_class_stats is #{total} seconds"
@@ -161,6 +162,17 @@ SELECT cp.session_code as session_code, count(*) as count
   AND mq.is_match is NULL
   AND mq.match_type is NULL
   GROUP BY cp.session_code
+"""
+  end
+
+  def sqlmatchcourse
+    return """
+SELECT cp.course_id as course_id, count(*) as count
+  FROM matching_questions mq, questions q, class_periods cp
+  WHERE (mq.match_type is NULL OR mq.is_match is NULL)
+  AND mq.question_id = q.id
+  AND q.class_period_id = cp.id
+  GROUP BY cp.course_id
 """
   end
 end

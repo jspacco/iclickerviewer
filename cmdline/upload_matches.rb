@@ -21,6 +21,9 @@ def get_question_and_pair(classname, session_code, question_index, sessions, que
     end
   end
   question = questions[session_code][question_index]
+  if question == nil
+    puts "OH NO! #{session_code} has no question_index #{question_index}"
+  end
   pair = nil
   if question.question_pair != nil
     pair = questions[session_code][question.question_pair]
@@ -82,7 +85,7 @@ def parse(filename)
           match_type: nil,
           # is_match nil means we are not sure if it's a match
           is_match: nil)
-        puts "created mq.id = #{mq.id} from #{}{q1.id} to #{q2.id}"
+        puts "created mq.id = #{mq.id} from #{q1.id} to #{q2.id}"
         num_added += 1
       else
         puts "already have a record for #{f1} and #{f2}"
@@ -96,6 +99,16 @@ def parse(filename)
 end
 
 if __FILE__ == $0
-  filename = '/Users/jspacco/projects/clickers/iclickerviewer/pictureMatch/output/KnoxCS142W15-KnoxCS142S15.txt'
-  parse(filename)
+  path = '/Users/jspacco/projects/clickers/iclickerviewer/pictureMatch/output'
+  filenames = [#'KnoxCS142W15-KnoxCS142S15.txt',
+    'KnoxCS142S15-KnoxCS142W16.txt',
+    'KnoxCS142W16-KnoxCS142S16.txt',
+    'KnoxCS142S16-KnoxCS142W17.txt',
+    'KnoxCS142W17-KnoxCS142S17.txt'
+  ]
+  for f in filenames
+    fullpath = path + '/' + f
+    parse(fullpath)
+  end
+
 end
