@@ -1,5 +1,15 @@
 <% content_for :title, "#{@questions[0].question_index} (#{@questions[0].id})" %>
 
+<div class="compare_images">
+  <!-- Giant panel for 2 images -->
+  <%= button_tag "X", :onclick => "close_compare_images()" %>
+  <table class="compare_images_table" onclick="close_compare_images()">
+    <tr>
+      <td> <img class="cmpimg" id="preview_compare_image" /> </td>
+      <td> <img class="cmpimg" id="selected_compare_image" /> </td>
+    </tr>
+  </table>
+</div>
 <%#
   TODO
   Show actual matches in DB
@@ -41,7 +51,8 @@
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
         [@course.folder_name, @class_period.session_code, question.question_index]
       %>
-      <%= image_tag(question_img_url, :class => "myImg") %>
+      <!-- Technically this is bad form because we may have TWO images with the same ID -->
+      <%= image_tag(question_img_url, {:class => "myImg", :id => "dynamic_image"}) %>
     </td>
     <td class="imagecolumn">
       <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %

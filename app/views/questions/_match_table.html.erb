@@ -34,6 +34,9 @@
         [course.folder_name, class_period.session_code, question.question_index]
       %>
       <%= image_tag(question_img_url, :class => "myImg") %>
+      <%= button_tag "cmpimg",
+        { :type => "button",
+          :onclick => "compare_images('#{question_img_url}')" } %>
     </td>
     <td>
       <%# TODO fill these out based on data in the DB %>
