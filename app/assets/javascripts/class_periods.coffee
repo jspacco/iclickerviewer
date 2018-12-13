@@ -161,14 +161,13 @@ root.next_class_button_handler = (url) ->
 
 #
 # show/hide image match comparison
-#selected_compare_img
-root.compare_images =(imgsrc) ->
+root.compare_images =(imgsrc, main_image='dynamic_image') ->
   if $('.compare_images').is(':visible')
     $('.compare_images').hide()
     $('.compare_images').css('z-index', -1)
   else
     $('#selected_compare_image').attr('src', imgsrc)
-    $('#preview_compare_image').attr('src', $('#dynamic_image').prop('src'))
+    $('#preview_compare_image').attr('src', $("##{main_image}").prop('src'))
     $('.compare_images').show()
     $('.compare_images').css('z-index', 3)
 

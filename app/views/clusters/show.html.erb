@@ -1,3 +1,14 @@
+<div class="compare_images">
+  <!-- Giant panel for 2 images -->
+  <%= button_tag "X", :onclick => "close_compare_images()" %>
+  <table class="compare_images_table" onclick="close_compare_images()">
+    <tr>
+      <td> <img class="cmpimg" id="preview_compare_image" /> </td>
+      <td> <img class="cmpimg" id="selected_compare_image" /> </td>
+    </tr>
+  </table>
+</div>
+
 Cluster including Question with ID <%= params[:id] %>
 <table border=1>
   <tr>
@@ -27,7 +38,7 @@ Cluster including Question with ID <%= params[:id] %>
     <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
       [question.class_period.course.folder_name, question.class_period.session_code, question.question_index]
     %>
-    <%= image_tag(question_img_url, :class => "myImg") %>
+    <%= image_tag(question_img_url, {:class => "myImg", :id => "#{question.id}"}) %>
   </td>
   <td>
     <% if !@cluster_hash[question.id].empty? %>
@@ -42,7 +53,7 @@ Cluster including Question with ID <%= params[:id] %>
         <% @cluster_hash[question.id].each do |match| %>
         <td> <%= match.id %> </td>
         <td>
-          <%= "#{match.class_period.course.term} #{match.class_period.course.year}" %>
+          <%= "#{match.matched_question.class_period.course.term} #{match.matched_question.class_period.course.year}" %>
         </td>
         <% end %>
       </tr>
@@ -50,9 +61,12 @@ Cluster including Question with ID <%= params[:id] %>
         <% @cluster_hash[question.id].each do |match| %>
           <td colspan="2" class="imagecolumn">
             <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
-              [match.class_period.course.folder_name, match.class_period.session_code, match.question_index]
+              [match.matched_question.class_period.course.folder_name, match.matched_question.class_period.session_code, match.matched_question.question_index]
             %>
             <%= image_tag(question_img_url, :class => "myImg") %>
+            <%= button_tag "cmpimg",
+              { :type => "button",
+                :onclick => "compare_images('#{question_img_url}', '#{match.question_id}')" } %>
           </td>
         <% end %>
       </tr>

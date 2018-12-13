@@ -9,8 +9,8 @@ class ClustersController < ApplicationController
     @cluster_hash = Hash.new
     for qid in ids
       @cluster_hash[qid] = []
-      MatchingQuestion.where(question_id: qid).each do |m|
-        @cluster_hash[qid] << m.matched_question
+      MatchingQuestion.where(question_id: qid, is_match: [1,2,nil]).each do |m|
+        @cluster_hash[qid] << m
       end
     end
   end
