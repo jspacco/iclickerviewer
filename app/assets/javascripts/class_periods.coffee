@@ -161,6 +161,11 @@ root.next_class_button_handler = (url) ->
 
 #
 # show/hide image match comparison
+#
+# the html id of the main image defaults to "dynamic_image"
+# since that's the name in the "quick preview"
+# but this name can be overridden with a parameter
+# so that it's easier to use this comparison panel in other places
 root.compare_images =(imgsrc, main_image='dynamic_image') ->
   if $('.compare_images').is(':visible')
     $('.compare_images').hide()
