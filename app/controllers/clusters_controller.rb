@@ -47,4 +47,17 @@ class ClustersController < ApplicationController
       end
     end
   end
+  def is_match_str(is_match)
+    case is_match
+    when nil
+      return "unknown"
+    when 0
+      return "no match"
+    when 1
+      return "match"
+    when 2
+      return "disorderly!"
+    end
+  end
+  helper_method :is_match_str
 end
