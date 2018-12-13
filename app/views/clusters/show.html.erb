@@ -1,12 +1,13 @@
-<%="Cluster including Question with ID #{@cluster.first}"  %>
+Cluster including Question with ID <%= params[:id] %>
 <table border=1>
   <tr>
     <th> ID </th>
     <th> Link to <br> Course </th>
-    <th> Link to <br> Class Period </th>
+    <th> Year <br> Term</th>
     <th> Question Index </th>
+    <th> Link to <br> Class Period </th>
     <th> Image </th>
-    <th> Barchart </th>
+    <th> Direct matches </th>
   </tr>
 </thead>
 
@@ -17,20 +18,55 @@
 <tr>
   <td align="center"> <b> <%= link_to question.id, question_path(question.id) %> </b> </td>
   <td align="center"> <%=link_to question.class_period.course.name, course_path(question.class_period.course.id)%>  </td>
-  <td align="center"> <%=link_to question.class_period.name, class_period_path(question.class_period.id)   %>  </td>
+  <td> <%= question.class_period.course.year %>
+       <%= question.class_period.course.term %>
+   </td>
   <td align="center"> <b> <%= question.question_index %> </b> </td>
+  <td align="center"> <%=link_to question.class_period.name, class_period_path(question.class_period.id)   %>  </td>
   <td class="imagecolumn">
     <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
       [question.class_period.course.folder_name, question.class_period.session_code, question.question_index]
     %>
     <%= image_tag(question_img_url, :class => "myImg") %>
   </td>
+  <td>
+    <% if !@cluster_hash[question.id].empty? %>
+    <table border=1>
+      <tr>
+        <% @cluster_hash[question.id].each do |match| %>
+          <th> QID </th>
+          <th> Year <br> Term </th>
+        <% end %>
+      </tr>
+      <tr>
+        <% @cluster_hash[question.id].each do |match| %>
+        <td> <%= match.id %> </td>
+        <td>
+          <%= "#{match.class_period.course.term} #{match.class_period.course.year}" %>
+        </td>
+        <% end %>
+      </tr>
+      <tr>
+        <% @cluster_hash[question.id].each do |match| %>
+          <td colspan="2" class="imagecolumn">
+            <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
+              [match.class_period.course.folder_name, match.class_period.session_code, match.question_index]
+            %>
+            <%= image_tag(question_img_url, :class => "myImg") %>
+          </td>
+        <% end %>
+      </tr>
+    </table>
+    <% end %>
+  </td>
+  <!--
   <td class="imagecolumn">
     <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
       [question.class_period.course.folder_name, question.class_period.session_code, question.question_index]
     %>
     <%= image_tag(barchart_img_url, :class => "myImg") %>
   </td>
+  -->
 </tr>
 <% end # fields_for %>
 <% end # foreach %>
