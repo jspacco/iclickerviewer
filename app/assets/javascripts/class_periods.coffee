@@ -293,5 +293,5 @@ root.matching_new_logic = (qid, clicked_box) ->
     is_match = "questions_#{qid}_is_match_"
   is_match_html = $("##{is_match}")
   is_match_html.prop("checked", true)
-  console.log("is match HTML: #{is_match_html}")
+  # console.log("is match HTML: #{is_match_html}")
   return 0

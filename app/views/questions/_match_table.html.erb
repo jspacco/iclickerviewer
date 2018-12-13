@@ -46,19 +46,24 @@
           <%= mq.matching_question_id %>
         </td></tr>
         <tr><td>
-          <%= label_tag "questions[#{mq.matching_question_id}][is_match]", 'unknown' %>
+          <%= label_tag "questions[#{mq.matching_question_id}][is_match][]", 'unknown' %>
           <%= radio_button_tag "questions[#{mq.matching_question_id}][is_match]", '',
             checked = mq.is_match == nil %>
         </td></tr>
         <tr><td>
-          <%= label_tag "questions[#{mq.matching_question_id}][is_match]", 'no' %>
+          <%= label_tag "questions[#{mq.matching_question_id}][is_match][0]", 'no' %>
           <%= radio_button_tag "questions[#{mq.matching_question_id}][is_match]", '0',
             checked = mq.is_match == 0 %>
         </td></tr>
         <tr><td>
-          <%= label_tag "questions[#{mq.matching_question_id}][is_match]", 'yes' %>
+          <%= label_tag "questions[#{mq.matching_question_id}][is_match][1]", 'yes' %>
           <%= radio_button_tag "questions[#{mq.matching_question_id}][is_match]", '1',
             checked = mq.is_match == 1 %>
+        </td></tr>
+        <tr><td>
+          <%= label_tag "questions[#{mq.matching_question_id}][is_match][2]", 'disorderly' %>
+          <%= radio_button_tag "questions[#{mq.matching_question_id}][is_match]", '2',
+            checked = mq.is_match == 2 %>
         </td></tr>
       </table>
     </td>

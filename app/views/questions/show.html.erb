@@ -10,23 +10,6 @@
     </tr>
   </table>
 </div>
-<%#
-  TODO
-  Show actual matches in DB
-  Show potential matches, probably from a text file stored in the cloud
-    that is computed offline and then stored
-  Handle the upload button
-
-  Information to show for matches:
-    Course
-    session (code and also as a date)
-    ID
-    question_index
-    image
-    barchart
-    identical or modified
-
-%>
 
 <%= form_tag(question_path(@questions.first), {method: :patch}) do %>
 <%= submit_tag 'Update data', class: "updatebutton"%>
@@ -81,6 +64,14 @@ Actual matches
 <%= render partial: 'match_table',
   locals: {:potential_matches => @matched_questions,
   :matches_array => 'matches'} %>
+
+  <hr>
+  <h1>
+  Disordered matches
+  </h1>
+  <%= render partial: 'match_table',
+    locals: {:potential_matches => @disorderly_matches,
+    :matches_array => 'disorderly_matches'} %>
 
 <hr>
 <h1>

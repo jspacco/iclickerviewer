@@ -142,6 +142,13 @@ class QuestionsController < ApplicationController
     @nonmatching_questions = question.matched_questions.where(:matching_questions => {:is_match => 0}).
       where.not(id: question_ids).
       where.not(class_period: @class_period)
+    # disorderly matches are matches that span terms or semesters
+    # a disorderly match would be a question from Winter 2015 that matches
+    # a question from spring 2017, when there is also a match
+    # from spring 2015
+    @disorderly_matches = question.matched_questions.where(:matching_questions => {:is_match => 2}).
+      where.not(id: question_ids).
+      where.not(class_period: @class_period)
 
     # TODO: pull information out of slides
   end
