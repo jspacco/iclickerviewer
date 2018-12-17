@@ -57,4 +57,21 @@ of a fraction. For example, [3, 10] would be "3 / 10"
     return Time.now.to_f
   end
 
+  def get_sql_aggregate_count(sql, col1, col2)
+    rows = ActiveRecord::Base.connection.exec_query(sql)
+    result = Hash.new
+    rows.each do |row|
+      result[row[col1]] = row[col2]
+    end
+    return result
+  end
+
+  def output_if_exists(hash, key)
+    if hash.key? key
+      return "#{hash[key]}"
+    else
+      return ''
+    end
+  end
+
 end
