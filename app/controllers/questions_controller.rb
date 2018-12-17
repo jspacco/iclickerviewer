@@ -6,9 +6,80 @@ class QuestionsController < ApplicationController
   def update
     question = Question.find_by(id: params[:id])
 
-    update_matches_question(:possible_matches)
-    update_matches_question(:nonmatches)
-    update_matches_question(:matches)
+=begin
+{"questions"=>
+  {"6032"=>{"is_match"=>"1",
+          "match_type"=>"2",
+          "set_q_p"=>"1"}, # or is it "set_changed_q_p" => "1"
+  "6168"=>{"is_match"=>""}
+}
+=end
+    matches = MatchingQuestion.where(question_id: params[:id])
+    matches.each do |mq|
+      to_edit = params[:questions][mq.matching_question_id.to_s]
+      if to_edit
+        if to_edit.key? :is_match
+          #puts "to_edit[:is_match] = #{to_edit[:is_match]}"
+          mq.is_match = int_or_nil(to_edit[:is_match])
+        end
+        if to_edit.key? :match_type
+          puts "to_edit[:match_type] = #{to_edit[:match_type]}"
+          case to_edit[:match_type].to_sym
+          when :unknown
+            mq.match_type = nil
+          when :identical
+            mq.match_type = 0
+          when :modified
+            mq.match_type = 1
+          when :modified_plus
+            mq.match_type = 2
+          end
+
+          # check for changes to modified+ expanded match categories
+          {'changed_question_phrasing'   => 'q_p',
+           'changed_question_values'     => 'q_v',
+           'changed_info_phrasing'       => 'i_p',
+           'changed_info_layout'         => 'i_l',
+           'changed_answers_phrasing'    => 'a_p',
+           'changed_answers_values'      => 'a_v',
+           'changed_answers_order'       => 'a_o',
+           'changed_answers_type'        => 'a_t',
+           'changed_other'               => 'o'
+          }.each do |field_name, field_code|
+            changed_field = to_edit["set_#{field_code}"]
+            if changed_field
+              #puts changed_field
+              mq[field_name] = changed_field.to_i
+              if(changed_field.to_i == 1)
+                # setting any modified+ features implies match_type modified+
+                mq.match_type = 2;
+              end
+            else
+              # TODO is this the right value?
+              mq[field_name] = 0
+            end
+          end
+        end
+        # if we clicked "clear" then we need to clear out all of the
+        # modified+ categories
+        if to_edit[:set_clear] == '1'
+          # clear all of the modified+ settings if clear is set to
+          for field_name in ['changed_question_phrasing',
+              'changed_question_values',
+              'changed_info_phrasing',
+              'changed_info_layout',
+              'changed_answers_phrasing',
+              'changed_answers_values',
+              'changed_answers_order',
+              'changed_answers_type',
+              'changed_other'
+            ]
+            mq[field_name] = 0
+          end
+        end
+        mq.save
+      end
+    end
 
     redirect_to action: :show, id: params[:id]
   end
@@ -69,6 +140,13 @@ class QuestionsController < ApplicationController
       where.not(id: question_ids).
       where.not(class_period: @class_period)
     @nonmatching_questions = question.matched_questions.where(:matching_questions => {:is_match => 0}).
+      where.not(id: question_ids).
+      where.not(class_period: @class_period)
+    # disorderly matches are matches that span terms or semesters
+    # a disorderly match would be a question from Winter 2015 that matches
+    # a question from spring 2017, when there is also a match
+    # from spring 2015
+    @disorderly_matches = question.matched_questions.where(:matching_questions => {:is_match => 2}).
       where.not(id: question_ids).
       where.not(class_period: @class_period)
 

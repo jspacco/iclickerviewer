@@ -1,26 +1,35 @@
 class ClustersController < ApplicationController
   def show
-    @cluster_show = Question.joins(:class_period).where(id: get_question_cluster).order('class_periods.date')
-
+    ids = get_question_cluster
+    @cluster_show = Question.joins(:class_period).where(id: ids).order('class_periods.date')
+    # Match and show QID mapped to its list of matches
+    # TODO find all the questions that this question matches
+    # then match everything to it
+    # then match everything to each of these
+    @cluster_hash = Hash.new
+    for qid in ids
+      @cluster_hash[qid] = []
+      MatchingQuestion.where(question_id: qid, is_match: [1,2,nil]).each do |m|
+        @cluster_hash[qid] << m
+      end
+    end
   end
 
 
   def get_question_cluster
     #build the cluster recursively, from start_spot
-    @cluster = Set.new #contains qid of all questions in cluster
-    @used = Set.new
-    make_cluster(@cluster, params[:id], @used)
-    @cluster.each do |q|
-      puts "#{q} is in the cluster of #{params[:id]}"
-    end
+    # the cluster is a set of the questions that match this one
+    cluster = Set.new #contains qid of all questions in cluster
+    make_cluster(cluster, params[:id], Set.new)
+    return cluster
   end
 
   def make_cluster(set, qid, used)
-    qid=qid.to_i #qid was a string from
+    qid = qid.to_i #qid was a string from
     set.add(qid)
     other_id = -1
-    matches = MatchingQuestion.where(question_id: qid).or(MatchingQuestion.where(matching_question_id: qid))
-    matches.each do |match|
+    #matches = MatchingQuestion.where(question_id: qid).or(MatchingQuestion.where(matching_question_id: qid))
+    MatchingQuestion.where(question_id: qid).each do |match|
       #puts "Question ID: #{match.question_id}"
       #puts "Matching QID: #{match.matching_question_id}"
       #puts "QID: #{qid}"
@@ -38,4 +47,17 @@ class ClustersController < ApplicationController
       end
     end
   end
+  def is_match_str(is_match)
+    case is_match
+    when nil
+      return "unknown"
+    when 0
+      return "no match"
+    when 1
+      return "match"
+    when 2
+      return "disorderly!"
+    end
+  end
+  helper_method :is_match_str
 end

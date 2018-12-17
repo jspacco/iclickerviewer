@@ -46,7 +46,7 @@
         <%= to_s_fraction(@class_period_updated_counts[course.id]) %>
       </td>
       <td id="match_<%="#{course.id}"%>"> </td>
-      <td id="possible_match_<%="#{course.id}"%>"> </td>
+      <td id="possible_match_<%="#{course.id}"%>"> <%= @course_match_hash[course.id] %> </td>
       <td id="nonmatch_<%="#{course.id}"%>"> </td>
     </tr>
   <% end %>

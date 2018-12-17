@@ -1,36 +1,18 @@
 <% content_for :title, "#{@questions[0].question_index} (#{@questions[0].id})" %>
-<div>
-TODO: next question
+
+<div class="compare_images">
+  <!-- Giant panel for 2 images -->
+  <%= button_tag "X", :onclick => "close_compare_images()" %>
+  <table class="compare_images_table" onclick="close_compare_images()">
+    <tr>
+      <td> <img class="cmpimg" id="preview_compare_image" /> </td>
+      <td> <img class="cmpimg" id="selected_compare_image" /> </td>
+    </tr>
+  </table>
 </div>
-
-<div>
-TODO: quick preview
-</div>
-
-<div>
-TODO: back button back to class period, next question buttons
-</div>
-
-<%#
-  TODO
-  Show actual matches in DB
-  Show potential matches, probably from a text file stored in the cloud
-    that is computed offline and then stored
-  Handle the upload button
-
-  Information to show for matches:
-    Course
-    session (code and also as a date)
-    ID
-    question_index
-    image
-    barchart
-    identical or modified
-
-%>
 
 <%= form_tag(question_path(@questions.first), {method: :patch}) do %>
-<%= submit_tag 'Update data (does not work yet)', class: "updatebutton"%>
+<%= submit_tag 'Update data', class: "updatebutton"%>
 <table border=1>
   <tr>
     <th> ID </th>
@@ -39,7 +21,6 @@ TODO: back button back to class period, next question buttons
     <th> index </th>
     <th> image </th>
     <th> barchart </th>
-    <th> matched questions </th>
   </tr>
 </thead>
   <% @questions.each do |question| %>
@@ -53,7 +34,8 @@ TODO: back button back to class period, next question buttons
       <% question_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_Q%d.jpg" %
         [@course.folder_name, @class_period.session_code, question.question_index]
       %>
-      <%= image_tag(question_img_url, :class => "myImg") %>
+      <!-- Technically this is bad form because we may have TWO images with the same ID -->
+      <%= image_tag(question_img_url, {:class => "myImg", :id => "dynamic_image"}) %>
     </td>
     <td class="imagecolumn">
       <% barchart_img_url = "https://s3.amazonaws.com/iclickerviewer/%s/Images/%s_C%d.jpg" %
@@ -61,20 +43,11 @@ TODO: back button back to class period, next question buttons
       %>
       <%= image_tag(barchart_img_url, :class => "myImg") %>
     </td>
-    <td> TODO: show definite matches using q (somehow) </td>
   </tr>
   <% end # fields_for %>
   <% end # foreach %>
 </table>
 <%= submit_tag 'Update data', class: "updatebutton" %>
-
-<hr>
-<h1>
-Actual matches
-</h1>
-<%= render partial: 'match_table',
-  locals: {:potential_matches => @matched_questions,
-  :matches_array => 'matches'} %>
 
 <hr>
 <h1>
@@ -86,13 +59,29 @@ Possible matches
 
 <hr>
 <h1>
+Actual matches
+</h1>
+<%= render partial: 'match_table',
+  locals: {:potential_matches => @matched_questions,
+  :matches_array => 'matches'} %>
+
+  <hr>
+  <h1>
+  Disordered matches
+  </h1>
+  <%= render partial: 'match_table',
+    locals: {:potential_matches => @disorderly_matches,
+    :matches_array => 'disorderly_matches'} %>
+
+<hr>
+<h1>
 Nonmatching Questions
 </h1>
 <%= render partial: 'match_table',
   locals: {:potential_matches => @nonmatching_questions,
   :matches_array => 'nonmatches'} %>
 
-
+<%= submit_tag 'Update data', class: "updatebutton"%>
 
 <% end # form_tag %>
 

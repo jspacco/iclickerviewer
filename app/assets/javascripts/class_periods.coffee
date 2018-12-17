@@ -161,14 +161,18 @@ root.next_class_button_handler = (url) ->
 
 #
 # show/hide image match comparison
-#selected_compare_img
-root.compare_images =(imgsrc) ->
+#
+# the html id of the main image defaults to "dynamic_image"
+# since that's the name in the "quick preview"
+# but this name can be overridden with a parameter
+# so that it's easier to use this comparison panel in other places
+root.compare_images =(imgsrc, main_image='dynamic_image') ->
   if $('.compare_images').is(':visible')
     $('.compare_images').hide()
     $('.compare_images').css('z-index', -1)
   else
     $('#selected_compare_image').attr('src', imgsrc)
-    $('#preview_compare_image').attr('src', $('#dynamic_image').prop('src'))
+    $('#preview_compare_image').attr('src', $("##{main_image}").prop('src'))
     $('.compare_images').show()
     $('.compare_images').css('z-index', 3)
 
@@ -247,6 +251,10 @@ root.reset_correct_checkboxes =(id) ->
     $("##{id_tag}").prop("checked", false)
   return 0
 
+#
+# when you click identical or modified, uncheck any modified+ categories
+# when you click a modified+ category, automatically select modified+
+#
 root.matching_logic =(qid, mqid, clicked_box) ->
   delete_id = edit_delete_id(qid, mqid)
   edit_match_id = edit_matching_id(qid, mqid, '2')
@@ -268,12 +276,26 @@ root.matching_logic =(qid, mqid, clicked_box) ->
     return 0
 
 root.matching_new_logic = (qid, clicked_box) ->
-  edit_match_id = new_matching_id(qid,'modified_plus')
+  edit_match_id = new_matching_id(qid, 'modified_plus')
   #console.log("#{edit_match_id} is our edit_match_id, our qid is #{qid} and our clicked_box is #{clicked_box}")
-  if clicked_box in [0,1]
+  if clicked_box in [0, 1, 'clear', '']
+    # uncheck modified+ categories if we picked identical, modified, clear, or unknown
     for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o']
-      match_type_id = new_match_option_id(qid,modifier_type)
+      match_type_id = new_match_option_id(qid, modifier_type)
+      #console.log("match_type_id is #{match_type_id}")
       $("##{match_type_id}").prop("checked", false)
   if clicked_box in ['+']
+    # any modified+ category checks modified+
     $("##{edit_match_id}").prop("checked", true)
-return 0
+
+  # check the box for is_match if we selected match_type identical,
+  # modified, or modified+
+  # if we pick unknown for match_type, then also pick unknown for is_match
+  if clicked_box != ''
+    is_match = "questions_#{qid}_is_match_1"
+  else if clicked_box == ''
+    is_match = "questions_#{qid}_is_match_"
+  is_match_html = $("##{is_match}")
+  is_match_html.prop("checked", true)
+  # console.log("is match HTML: #{is_match_html}")
+  return 0

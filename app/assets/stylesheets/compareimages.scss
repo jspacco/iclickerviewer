@@ -7,10 +7,15 @@
   border: 2px;
   z-index: 1;
   display: none;
+  // these don't work correctly
+  // I don't know how to put a horizontal scroll bar into this panel
+  overflow-x: scroll;
+  white-space: nowrap;
 }
 
 .cmpimg {
-  width: 600px;
+  //width: 600px;
+  width: 100%;
 }
 
 /* resize images */

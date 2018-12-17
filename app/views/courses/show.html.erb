@@ -50,7 +50,9 @@
       <%= to_s_fraction(@question_updated_counts[sess.session_code]) %>
     </td>
     <td id="match_<%="#{sess.id}"%>"> </td>
-    <td id="possible_match_<%="#{sess.id}"%>"> </td>
+    <td id="possible_match_<%="#{sess.id}"%>">
+      <%= @session_code_hash[sess.session_code] if @session_code_hash.key?(sess.session_code) %>
+    </td>
     <td id="nonmatch_<%="#{sess.id}"%>"> </td>
   </tr>
   <% end %>

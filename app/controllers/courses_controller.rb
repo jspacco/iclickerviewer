@@ -1,21 +1,23 @@
 class CoursesController < ApplicationController
   include ApplicationHelper
   def index
-    @courses = Course.all.order(:folder_name)
-    # TODO avg number of CQs over all classes,
-    #   avg time per CQ,
-    #   pairing/individual stats???
+    # order courses by:
+    # school, course, year, term
+    # (sorting by descending order is a hack because winter, spring, fall
+    # sort correctly in reverse order)
+    @courses = Course.all.order(:institution, :name, :year, term: :desc)
 
     start = current_time
 
     get_all_class_stats
 
-    '''
-    @all_class_stats = Hash.new
-    @courses.each do |course|
-      @all_class_stats[course.id] = get_class_stats(course.id)
+    # Hash mapping course_id to number of possible matched questions
+    # that need to be processed
+    results = ActiveRecord::Base.connection.exec_query(sqlmatchcourse)
+    @course_match_hash = Hash.new
+    results.each do |row|
+      @course_match_hash[row['course_id']] = row['count']
     end
-    '''
 
     total = current_time - start
     puts "get_all_class_stats is #{total} seconds"
@@ -37,6 +39,15 @@ class CoursesController < ApplicationController
     @course = Course.find(params[:id])
     # TODO sort class periods by date
     @classes = ClassPeriod.where(course_id: @course.id).order(:session_code)
+
+    # Look up using SQL aggregation (which I can't figure out how to do
+    # with ActiveRecord) session_code mapped to number of potential matches
+    # for this course
+    results = ActiveRecord::Base.connection.exec_query(sqlmatch(@course.id))
+    @session_code_hash = Hash.new
+    results.each do |row|
+      @session_code_hash[row['session_code']] = row['count']
+    end
 
     update_start = current_time
     get_updated_stats
@@ -140,5 +151,29 @@ class CoursesController < ApplicationController
         increment(@num_nonmatches, q.class_period_id)
       end
     end
+  end
+
+  def sqlmatch(course_id)
+    return """
+SELECT cp.session_code as session_code, count(*) as count
+  FROM class_periods cp, questions q, matching_questions mq
+  WHERE cp.course_id = #{course_id}
+  AND q.class_period_id = cp.id
+  AND mq.question_id = q.id
+  AND mq.is_match is NULL
+  AND mq.match_type is NULL
+  GROUP BY cp.session_code
+"""
+  end
+
+  def sqlmatchcourse
+    return """
+SELECT cp.course_id as course_id, count(*) as count
+  FROM matching_questions mq, questions q, class_periods cp
+  WHERE (mq.match_type is NULL OR mq.is_match is NULL)
+  AND mq.question_id = q.id
+  AND q.class_period_id = cp.id
+  GROUP BY cp.course_id
+"""
   end
 end
