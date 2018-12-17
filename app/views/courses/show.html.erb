@@ -23,7 +23,8 @@
     <th> avg # secs<br> / question </th>
     <th> # classes<br> to update <br> / num classes</th>
     <th> possible<br> matches </th>
-    <th> actual <br>matches </th>
+    <th> modified <br>matches </th>
+    <th> correct <br>matches </th>
     <th> skip <br>matches </th>
     <th> nonmatches </th>
   </tr>
@@ -53,8 +54,11 @@
     <td id="possible_match_<%="#{sess.id}"%>">
       <%= output_if_exists(@possible_match_hash, sess.session_code) %>
     </td>
-    <td id="match_<%="#{sess.id}"%>">
-      <%= output_if_exists(@actual_match_hash, sess.session_code) %>
+    <td id="modified_match_<%="#{sess.id}"%>">
+      <%= output_if_exists(@modified_match_hash, sess.session_code) %>
+    </td>
+    <td id="correct_match_<%="#{sess.id}"%>">
+      <%= output_if_exists(@correct_match_hash, sess.session_code) %>
     </td>
     <td id="skip_match_<%="#{sess.id}"%>">
       <%= output_if_exists(@skip_match_hash, sess.session_code) %>

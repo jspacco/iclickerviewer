@@ -20,8 +20,9 @@
     <th> avg num Qs<br> / class </th>
     <th> avg num secs<br> / question </th>
     <th> num classes<br> to update<br> / total classes </th>
-    <th> num<br> matches </th>
     <th> num<br> possible<br>matches </th>
+    <th> num<br> modified<br>matches </th>
+    <th> num<br> correct<br>matches </th>
     <th> num<br> nonmatches </th>
   </tr>
   <% @courses.each do |course| %>
@@ -45,9 +46,18 @@
       <% end %>
         <%= to_s_fraction(@class_period_updated_counts[course.id]) %>
       </td>
-      <td id="match_<%="#{course.id}"%>"> </td>
-      <td id="possible_match_<%="#{course.id}"%>"> <%= @course_match_hash[course.id] %> </td>
-      <td id="nonmatch_<%="#{course.id}"%>"> </td>
+      <td id="possible_match_<%="#{course.id}"%>">
+        <%= @possible_match_hash[course.id] %>
+      </td>
+      <td id="modified_match_<%="#{course.id}"%>">
+        <%= @modified_match_hash[course.id] %>
+      </td>
+      <td id="match_<%="#{course.id}"%>">
+        <%= @match_hash[course.id] %>
+      </td>
+      <td id="nonmatch_<%="#{course.id}"%>">
+        <%= @nonmatch_hash[course.id] %>
+      </td>
     </tr>
   <% end %>
 </table>

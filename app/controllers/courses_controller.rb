@@ -13,11 +13,10 @@ class CoursesController < ApplicationController
 
     # Hash mapping course_id to number of possible matched questions
     # that need to be processed
-    results = ActiveRecord::Base.connection.exec_query(sqlmatchcourse)
-    @course_match_hash = Hash.new
-    results.each do |row|
-      @course_match_hash[row['course_id']] = row['count']
-    end
+    @possible_match_hash = get_sql_aggregate_count(sqlmatchall, 'course_id', 'count')
+    @modified_match_hash = get_sql_aggregate_count(sqlmatchall(1, 1), 'course_id', 'count')
+    @match_hash = get_sql_aggregate_count(sqlmatchall(1, [0,2]), 'course_id', 'count')
+    @nonmatch_hash = get_sql_aggregate_count(sqlmatchall(0), 'course_id', 'count')
 
     total = current_time - start
     puts "get_all_class_stats is #{total} seconds"
@@ -43,10 +42,11 @@ class CoursesController < ApplicationController
     # Look up using SQL aggregation (which I can't figure out how to do
     # with ActiveRecord) session_code mapped to number of potential matches
     # for this course
-    @possible_match_hash = get_sql_aggregate_count(sqlmatch(@course.id), 'session_code', 'count')
-    @actual_match_hash = get_sql_aggregate_count(sqlmatch(@course.id, 1), 'session_code', 'count')
-    @skip_match_hash = get_sql_aggregate_count(sqlmatch(@course.id, 2), 'session_code', 'count')
-    @nonmatch_hash = get_sql_aggregate_count(sqlmatch(@course.id, 0), 'session_code', 'count')
+    @possible_match_hash = get_sql_aggregate_count(sqlmatchcourse(@course.id), 'session_code', 'count')
+    @modified_match_hash = get_sql_aggregate_count(sqlmatchcourse(@course.id, 1, 1), 'session_code', 'count')
+    @correct_match_hash = get_sql_aggregate_count(sqlmatchcourse(@course.id, 1, [0,2]), 'session_code', 'count')
+    @skip_match_hash = get_sql_aggregate_count(sqlmatchcourse(@course.id, 2), 'session_code', 'count')
+    @nonmatch_hash = get_sql_aggregate_count(sqlmatchcourse(@course.id, 0), 'session_code', 'count')
     puts @possible_match_hash
 
     update_start = current_time
@@ -153,12 +153,27 @@ class CoursesController < ApplicationController
     end
   end
 
-  def sqlmatch(course_id, is_match=nil)
+  def get_is_match(is_match)
     if is_match == nil
-      is_match = 'is null'
+      return 'is null'
     else
-      is_match = "= #{is_match}"
+      return "= #{is_match}"
     end
+  end
+
+  def get_match_type(match_type)
+    if match_type.kind_of?(Array)
+      return "AND mq.match_type in (#{match_type.join(',')})"
+    elsif match_type == nil
+      return ''
+    else
+      return "AND mq.match_type = #{match_type}"
+    end
+  end
+
+  def sqlmatchcourse(course_id, is_match=nil, match_type=nil)
+    is_match = get_is_match(is_match)
+    match_type = get_match_type(match_type)
     return """
 SELECT cp.session_code as session_code, count(*) as count
   FROM class_periods cp, questions q, matching_questions mq
@@ -166,17 +181,21 @@ SELECT cp.session_code as session_code, count(*) as count
   AND q.class_period_id = cp.id
   AND mq.question_id = q.id
   AND mq.is_match #{is_match}
+  #{match_type}
   GROUP BY cp.session_code
 """
   end
 
-  def sqlmatchcourse
+  def sqlmatchall(is_match=nil, match_type=nil)
+    is_match_str = get_is_match(is_match)
+    match_type = get_match_type(match_type)
     return """
 SELECT cp.course_id as course_id, count(*) as count
   FROM matching_questions mq, questions q, class_periods cp
-  WHERE (mq.match_type is NULL OR mq.is_match is NULL)
-  AND mq.question_id = q.id
+  WHERE mq.question_id = q.id
   AND q.class_period_id = cp.id
+  AND mq.is_match #{is_match_str}
+  #{match_type}
   GROUP BY cp.course_id
 """
   end
