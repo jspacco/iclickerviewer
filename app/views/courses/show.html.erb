@@ -22,8 +22,9 @@
     <th> num<br> questions </th>
     <th> avg # secs<br> / question </th>
     <th> # classes<br> to update <br> / num classes</th>
-    <th> matches </th>
     <th> possible<br> matches </th>
+    <th> actual <br>matches </th>
+    <th> skip <br>matches </th>
     <th> nonmatches </th>
   </tr>
   <% @classes.each do |sess| %>
@@ -49,11 +50,18 @@
     <% end %>
       <%= to_s_fraction(@question_updated_counts[sess.session_code]) %>
     </td>
-    <td id="match_<%="#{sess.id}"%>"> </td>
     <td id="possible_match_<%="#{sess.id}"%>">
-      <%= @session_code_hash[sess.session_code] if @session_code_hash.key?(sess.session_code) %>
+      <%= output_if_exists(@possible_match_hash, sess.session_code) %>
     </td>
-    <td id="nonmatch_<%="#{sess.id}"%>"> </td>
+    <td id="match_<%="#{sess.id}"%>">
+      <%= output_if_exists(@actual_match_hash, sess.session_code) %>
+    </td>
+    <td id="skip_match_<%="#{sess.id}"%>">
+      <%= output_if_exists(@skip_match_hash, sess.session_code) %>
+    </td>
+    <td id="nonmatch_<%="#{sess.id}"%>">
+      <%= output_if_exists(@nonmatch_hash, sess.session_code) %>
+    </td>
   </tr>
   <% end %>
 </table>

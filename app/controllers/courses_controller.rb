@@ -43,11 +43,11 @@ class CoursesController < ApplicationController
     # Look up using SQL aggregation (which I can't figure out how to do
     # with ActiveRecord) session_code mapped to number of potential matches
     # for this course
-    results = ActiveRecord::Base.connection.exec_query(sqlmatch(@course.id))
-    @session_code_hash = Hash.new
-    results.each do |row|
-      @session_code_hash[row['session_code']] = row['count']
-    end
+    @possible_match_hash = get_sql_aggregate_count(sqlmatch(@course.id), 'session_code', 'count')
+    @actual_match_hash = get_sql_aggregate_count(sqlmatch(@course.id, 1), 'session_code', 'count')
+    @skip_match_hash = get_sql_aggregate_count(sqlmatch(@course.id, 2), 'session_code', 'count')
+    @nonmatch_hash = get_sql_aggregate_count(sqlmatch(@course.id, 0), 'session_code', 'count')
+    puts @possible_match_hash
 
     update_start = current_time
     get_updated_stats
@@ -153,15 +153,19 @@ class CoursesController < ApplicationController
     end
   end
 
-  def sqlmatch(course_id)
+  def sqlmatch(course_id, is_match=nil)
+    if is_match == nil
+      is_match = 'is null'
+    else
+      is_match = "= #{is_match}"
+    end
     return """
 SELECT cp.session_code as session_code, count(*) as count
   FROM class_periods cp, questions q, matching_questions mq
   WHERE cp.course_id = #{course_id}
   AND q.class_period_id = cp.id
   AND mq.question_id = q.id
-  AND mq.is_match is NULL
-  AND mq.match_type is NULL
+  AND mq.is_match #{is_match}
   GROUP BY cp.session_code
 """
   end

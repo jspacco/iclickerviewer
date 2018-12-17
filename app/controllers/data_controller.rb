@@ -86,6 +86,13 @@ class DataController < ApplicationController
     # Look up hash from question_id to hash of question
     questions = get_paired_data
 
+    # TODO add breakdown, i.e. G1G2, G1B2, etc, as a column
+    # (once we have correct criteria for good vs bad; could also compute this
+    # information in R code after exporting data)
+    # TODO Is the chronological order of questions correct? Sort by year, then
+    # by term? Winter, Spring, Summer, Fall for sorting by course
+    # Or just sort by the class_code, i.e. by L1501091001, which
+    # encodes a date that we can use.
     # csv file header
     header = ['match_cluster', 'match_type',
       'course_id.1',            'course_id.2',
