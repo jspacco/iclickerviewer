@@ -231,7 +231,39 @@ def compare_courses(class1, dir1, class2, dir2, full=False):
 
 
 def process_classes(classes, outdir, htmlout=False):
-    '''Compare a list of courses, pair by pair.
+    '''Compare a list of courses, pair by pair, in order.
+So if we have [course1, course2, course3] we will compare
+course1 -> course2
+course2 -> course2
+
+Good news! As of Python 3.6, dictionaries preserve insertion order
+for iteration. This is supposedly an implementation detail but I assume
+they will keep it in.
+
+outdir: name of folder where the output file should be generated
+htmlout: True/False, should we generate "full" results, meaning we include
+all of the pairwise comparisons between the files in the output, or
+should we only list things that we are pretty sure match, according to
+some standard.
+    '''
+    done = set()
+    classlist = [(class1, dir1) for class1, dir1 in classes.items()]
+    for i in range(len(classlist)-1):
+        class1, dir1 = classlist[i]
+        class2, dir2 = classlist[i + 1]
+        result = compare_courses(class1, dir1, class2, dir2, htmlout)
+        filename = '{}/{}-{}.txt'.format(outdir, class1, class2)
+        if htmlout:
+            filename = '{}/{}-{}.html'.format(outdir, class1, class2)
+        print('output in {}'.format(filename))
+        out = open(filename, 'w')
+        out.write(result + "\n")
+        out.flush()
+        out.close()
+
+
+def process_classes_allpairs(classes, outdir, htmlout=False):
+    '''Compare a list of courses, pair by pair, and include all pairs
 classes: list of courses
 outdir: name of folder where the output file should be generated
 full: True/False, should we generate "full" results, meaning we include

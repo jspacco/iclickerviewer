@@ -23,15 +23,15 @@ def main():
         'KnoxCS141F16-2',
         'KnoxCS141W17-2'])
 
+    #'KnoxCS201S15',
+    #'KnoxCS201S16',
     cse141s = makemap(path,
-        ['KnoxCS201S15',
-        'KnoxCS201S16',
-        'UCSD.CSE141F15',
-        'UCSD.CSE141F14-A',
-        'UCSD.CSE141F14-B',
-        'UCSD.CSE141F16',
-        'UCSD.CSE141S17-1',
-        'UCSD.CSE141S17-2'])
+        ['UCSD.CSE141F14-A',
+         'UCSD.CSE141F14-B',
+         'UCSD.CSE141F15',
+         'UCSD.CSE141F16',
+         'UCSD.CSE141S17-1',
+         'UCSD.CSE141S17-2'])
 
     cs142s = makemap(path,
         ['KnoxCS142W15',
@@ -69,7 +69,7 @@ def main():
 
     #process_classes(cs141s, outdir, True)
     #process_classes(cse141s, outdir, True)
-    process_classes(cs142s, outdir, False)
+    process_classes(cse141s, outdir, False)
 
 
 if __name__ == '__main__':
