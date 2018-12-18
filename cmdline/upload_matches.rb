@@ -22,7 +22,7 @@ def get_question_and_pair(classname, session_code, question_index, sessions, que
   end
   question = questions[session_code][question_index]
   if question == nil
-    puts "OH NO! #{session_code} has no question_index #{question_index}"
+    return nil, nil
   end
   pair = nil
   if question.question_pair != nil
@@ -43,6 +43,8 @@ def parse(filename)
   sessions = Hash.new
   questions = Hash.new
   num_added = 0
+  errors = 0
+  existing = 0
   File.open(filename, "r").each_line do |line|
     next if line.strip == ''
     f1, f2, match_type = line.split
@@ -56,6 +58,19 @@ def parse(filename)
     class2, session_code2, question_num2 = get_facts(f2)
     q1, q1p = get_question_and_pair(class1, session_code1, question_num1, sessions, questions)
     q2, q2p = get_question_and_pair(class2, session_code2, question_num2, sessions, questions)
+    # check if we got back nil
+    # this can happen because sometimes the clicker system grabs images that
+    # don't show up in in the XML/CSV data files
+    if q1 == nil
+      puts "cannot find #{session_code1}-#{question_num1}"
+      errors += 1
+      next
+    end
+    if q2 == nil
+      puts "cannot find #{session_code2}-#{question_num2}"
+      errors += 1
+      next
+    end
     # get the pair of q2 if one exists
 
     # 4 possible ways to match:
@@ -78,29 +93,30 @@ def parse(filename)
     if match_type == '0' || match_type == '1'
       # near exact match, so put into the DB as a potential match
       if match1 == nil && match2 == nil && match3 == nil && match4 == nil
-        puts "create record for #{f1} #{f2}"
+        # puts "create record for #{f1} #{f2}"
         mq = MatchingQuestion.find_or_create_by(question_id: q1.id,
           matching_question_id: q2.id,
           # nil match_type means a possible match
           match_type: nil,
           # is_match nil means we are not sure if it's a match
           is_match: nil)
-        puts "created mq.id = #{mq.id} from #{q1.id} to #{q2.id}"
+        # puts "created mq.id = #{mq.id} from #{q1.id} to #{q2.id}"
         num_added += 1
       else
-        puts "already have a record for #{f1} and #{f2}"
+        # puts "already have a record for #{f1} and #{f2}"
+        existing += 1
       end
     elsif match_type == '2'
       # not sure what to do with this?
-      puts "possible match between #{f1} #{f2}"
+      # puts "possible match between #{f1} #{f2}"
     end
   end
-  puts "added a total of #{num_added} possible match records"
+  puts "#{File.basename(filename, ".*")}: added #{num_added} records, #{existing} already there, with #{errors} errors"
 end
 
 if __FILE__ == $0
   path = '/Users/jspacco/projects/clickers/iclickerviewer/pictureMatch/output'
-  filenames = [#'KnoxCS142W15-KnoxCS142S15.txt',
+  filenames = ['KnoxCS142W15-KnoxCS142S15.txt',
     'KnoxCS142S15-KnoxCS142W16.txt',
     'KnoxCS142W16-KnoxCS142S16.txt',
     'KnoxCS142S16-KnoxCS142W17.txt',
