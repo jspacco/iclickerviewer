@@ -1,6 +1,9 @@
 def get_session(session_code, classname, sessions)
   if !sessions.key? session_code
     c = Course.find_by(folder_name: classname)
+    if c == nil
+      puts "cannot find #{classname}"
+    end
     s = ClassPeriod.find_by(session_code: session_code, course_id: c.id)
     sessions[session_code] = s
   end
@@ -10,6 +13,11 @@ end
 def get_question_and_pair(classname, session_code, question_index, sessions, questions)
   question_index = question_index.to_i
   session = get_session(session_code, classname, sessions)
+  if session == nil
+    puts "Cannot find session #{session_code} for classname #{classname}. This should not happen!"
+    puts "Check the XML file #{classname}/SessionData/#{session_code}.xml and try to figure out what happened."
+    return nil, nil
+  end
   if !questions.key? session_code
     questions[session_code] = Hash.new
     found = false
@@ -34,6 +42,9 @@ end
 
 def get_facts(filecode)
   m = /(.*)\/(.*)_Q(\d+)\.(jpg|png)/.match(filecode)
+  if m == nil
+    return nil, nil, nil
+  end
   # classname, session_code, question_number
   return m[1], m[2], m[3]
 end
@@ -52,10 +63,23 @@ def parse(filename)
     '''
     Files in the form:
     KnoxCS142W15/L1501071005_Q1.jpg
+
+    We may have images that look like this:
+    KnoxCS142W15/L1501071005_Q3(1).jpg
+    These might match things, but these do not have entries
+    in the XML/CSV files, so we will never find the images.
     '''
     # classname, session_code, question_number
     class1, session_code1, question_num1 = get_facts(f1)
     class2, session_code2, question_num2 = get_facts(f2)
+    if class1 == nil
+      puts "Extra image file: #{f1}"
+      next
+    end
+    if class2 == nil
+      puts "Extra image file: #{f1}"
+      next
+    end
     q1, q1p = get_question_and_pair(class1, session_code1, question_num1, sessions, questions)
     q2, q2p = get_question_and_pair(class2, session_code2, question_num2, sessions, questions)
     # check if we got back nil
@@ -116,13 +140,24 @@ end
 
 if __FILE__ == $0
   path = '/Users/jspacco/projects/clickers/iclickerviewer/pictureMatch/output'
-  filenames = ['KnoxCS142W15-KnoxCS142S15.txt',
+  cs142 = ['KnoxCS142W15-KnoxCS142S15.txt',
     'KnoxCS142S15-KnoxCS142W16.txt',
     'KnoxCS142W16-KnoxCS142S16.txt',
     'KnoxCS142S16-KnoxCS142W17.txt',
-    'KnoxCS142W17-KnoxCS142S17.txt'
-  ]
-  for f in filenames
+    'KnoxCS142W17-KnoxCS142S17.txt']
+  cs141 = ['KnoxCS141F15-1-KnoxCS141F15-2.txt',
+    'KnoxCS141F15-2-KnoxCS141W16.txt',
+    'KnoxCS141F16-1-KnoxCS141F16-2.txt',
+    'KnoxCS141F16-2-KnoxCS141W17-2.txt',
+    'KnoxCS141W15-KnoxCS141F15-1.txt',
+    'KnoxCS141W16-KnoxCS141F16-1.txt']
+  cse141 = ['UCSD.CSE141F14-A-UCSD.CSE141F14-B.txt',
+    'UCSD.CSE141F14-B-UCSD.CSE141F15.txt',
+    'UCSD.CSE141F15-UCSD.CSE141F16.txt',
+    'UCSD.CSE141F16-UCSD.CSE141S17-1.txt',
+    'UCSD.CSE141S17-1-UCSD.CSE141S17-2.txt']
+
+  for f in cse141
     fullpath = path + '/' + f
     parse(fullpath)
   end
