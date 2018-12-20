@@ -260,7 +260,7 @@ root.matching_logic =(qid, mqid, clicked_box) ->
   edit_match_id = edit_matching_id(qid, mqid, '2')
   if clicked_box in [0,1] #what to do with edit options
     $("##{delete_id}").prop("checked", false)
-    for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o']
+    for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'i_a', 'a_p', 'a_v', 'a_o', 'a_t', 's_p', 'o']
       match_type_id = edit_match_option_id(qid,mqid,modifier_type)
       $("##{match_type_id}").prop("checked", false)
   if clicked_box in ['+'] #what to do with mod types
@@ -270,7 +270,7 @@ root.matching_logic =(qid, mqid, clicked_box) ->
     for nums in [0,1,2]
       eddie = edit_match_option_id(qid,mqid,nums)
       $("##{eddie}").prop("checked", false)
-    for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o']
+    for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'i_a', 'a_p', 'a_v', 'a_o', 'a_t', 's_p', 'o']
       match_type_id = edit_match_option_id(qid,mqid,modifier_type)
       $("##{match_type_id}").prop("checked", false)
     return 0
@@ -280,7 +280,7 @@ root.matching_new_logic = (qid, clicked_box) ->
   #console.log("#{edit_match_id} is our edit_match_id, our qid is #{qid} and our clicked_box is #{clicked_box}")
   if clicked_box in [0, 1, 'clear', '']
     # uncheck modified+ categories if we picked identical, modified, clear, or unknown
-    for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'a_p', 'a_v', 'a_o', 'a_t', 'o']
+    for modifier_type in ['q_p', 'q_v', 'i_p', 'i_l', 'i_a', 'a_p', 'a_v', 'a_o', 'a_t', 's_p', 'o']
       match_type_id = new_match_option_id(qid, modifier_type)
       #console.log("match_type_id is #{match_type_id}")
       $("##{match_type_id}").prop("checked", false)
