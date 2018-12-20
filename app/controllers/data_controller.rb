@@ -113,7 +113,7 @@ class DataController < ApplicationController
       'seconds_1st.1',          'seconds_1st.2',
       'seconds_2nd.1',          'seconds_2nd.2',
       'normalized_gain.1',      'normalized_gain.2',
-      'qp', 'qv', 'ip', 'il', 'ap', 'av', 'ao', 'at', 'o'
+      'qp', 'qv', 'ip', 'il', 'ia', 'ap', 'av', 'ao', 'at', 'sp', 'o'
     ]
     csv = header.to_csv
 
@@ -141,10 +141,12 @@ class DataController < ApplicationController
       row['qv'] = mq.changed_question_values
       row['ip'] = mq.changed_info_phrasing
       row['il'] = mq.changed_info_layout
+      row['ia'] = mq.changed_info_added
       row['ap'] = mq.changed_answers_phrasing
       row['av'] = mq.changed_answers_values
       row['ao'] = mq.changed_answers_order
       row['at'] = mq.changed_answers_type
+      row['sp'] = mq.changed_slide_presentation
       row['o']  = mq.changed_other
       # Fill in the values for the two matched questions,
       # which may or may not be paired

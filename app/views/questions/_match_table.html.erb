@@ -97,6 +97,9 @@
           <th class = "mytooltip">i_l
             <span class = "tooltiptext" > Info Layout Changed. </span>
           </th>
+          <th class = "mytooltip">i_a
+            <span class = "tooltiptext" > Info Added to Layout. </span>
+          </th>
           <th class = "mytooltip"> a_p
             <span class = "tooltiptext" > Answers Phrasing Changed. </span>
           </th>
@@ -108,6 +111,9 @@
           </th>
           <th class = "mytooltip"> a_t
             <span class = "tooltiptext" > Answer Type Changed (from true false to anota, etc). </span>
+          </th>
+          <th class = "mytooltip"> s_p
+            <span class = "tooltiptext" > Slide Presentation (theme, colors, background, font size, etc). </span>
           </th>
           <th class = "mytooltip"> other
             <span class = "tooltiptext" > There is a specific change made that we don't have a category for yet.. </span>
@@ -158,10 +164,12 @@
               'changed_question_values'     => 'q_v',
               'changed_info_phrasing'       => 'i_p',
               'changed_info_layout'         => 'i_l',
+              'changed_info_added'          => 'i_a',
               'changed_answers_phrasing'    => 'a_p',
               'changed_answers_values'      => 'a_v',
               'changed_answers_order'       => 'a_o',
               'changed_answers_type'        => 'a_t',
+              'changed_slide_presentation'  => 's_p',
               'changed_other'               => 'o'
             }.each do |field_name, field_code| %>
             <td class="<%= "bghicol" if mq[field_name] == 1%>">

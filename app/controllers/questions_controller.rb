@@ -40,10 +40,12 @@ class QuestionsController < ApplicationController
            'changed_question_values'     => 'q_v',
            'changed_info_phrasing'       => 'i_p',
            'changed_info_layout'         => 'i_l',
+           'changed_info_added'          => 'i_a',
            'changed_answers_phrasing'    => 'a_p',
            'changed_answers_values'      => 'a_v',
            'changed_answers_order'       => 'a_o',
            'changed_answers_type'        => 'a_t',
+           'changed_slide_presentation'  => 's_p',
            'changed_other'               => 'o'
           }.each do |field_name, field_code|
             changed_field = to_edit["set_#{field_code}"]
@@ -68,10 +70,12 @@ class QuestionsController < ApplicationController
               'changed_question_values',
               'changed_info_phrasing',
               'changed_info_layout',
+              'changed_info_added',
               'changed_answers_phrasing',
               'changed_answers_values',
               'changed_answers_order',
               'changed_answers_type',
+              'changed_slide_presentation',
               'changed_other'
             ]
             mq[field_name] = 0

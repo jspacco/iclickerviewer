@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_01_154712) do
+ActiveRecord::Schema.define(version: 2018_12_20_214505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(version: 2018_08_01_154712) do
     t.integer "changed_answers_order", default: 0
     t.integer "changed_answers_type", default: 0
     t.integer "changed_other", default: 0
+    t.integer "changed_slide_presentation", default: 0
+    t.integer "changed_info_added", default: 0
     t.index ["question_id", "matching_question_id"], name: "matching_question_index", unique: true
   end
 

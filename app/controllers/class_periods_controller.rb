@@ -40,10 +40,12 @@ class ClassPeriodsController < ApplicationController
         set_q_v = params[:questions][question.id.to_s][:set_q_v] == '1' ? 1 : 0
         set_i_p = params[:questions][question.id.to_s][:set_i_p] == '1' ? 1 : 0
         set_i_l = params[:questions][question.id.to_s][:set_i_l] == '1' ? 1 : 0
+        set_i_a = params[:questions][question.id.to_s][:set_i_a] == '1' ? 1 : 0
         set_a_p = params[:questions][question.id.to_s][:set_a_p] == '1' ? 1 : 0
         set_a_v = params[:questions][question.id.to_s][:set_a_v] == '1' ? 1 : 0
         set_a_o = params[:questions][question.id.to_s][:set_a_o] == '1' ? 1 : 0
         set_a_t = params[:questions][question.id.to_s][:set_a_t] == '1' ? 1 : 0
+        set_s_p = params[:questions][question.id.to_s][:set_s_p] == '1' ? 1 : 0
         set_o = params[:questions][question.id.to_s][:set_o] ==     '1' ? 1 : 0
 
         if match_type == 'identical'
@@ -62,9 +64,11 @@ class ClassPeriodsController < ApplicationController
           changed_question_values: set_q_v,
           changed_info_phrasing: set_i_p,
           changed_info_layout: set_i_l,
+          changed_info_added: set_i_a,
           changed_answers_phrasing: set_a_p,
           changed_answers_values: set_a_v,
           changed_answers_order: set_a_o,
+          changed_slide_presentation: set_s_p,
           changed_other: set_o,
           is_match: 1)
       end
@@ -116,10 +120,12 @@ class ClassPeriodsController < ApplicationController
              'changed_question_values'     => 'q_v',
              'changed_info_phrasing'       => 'i_p',
              'changed_info_layout'         => 'i_l',
+             'changed_info_added'          => 'i_a',
              'changed_answers_phrasing'    => 'a_p',
              'changed_answers_values'      => 'a_v',
              'changed_answers_order'       => 'a_o',
              'changed_answers_type'        => 'a_t',
+             'changed_slide_presentation'  => 's_p',
              'changed_other'               => 'o'
             }.each do |field_name, field_code|
               changed_field = params[:questions][question.id.to_s]["set_changed_#{field_code}"]
