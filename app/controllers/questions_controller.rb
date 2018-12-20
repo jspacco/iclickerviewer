@@ -36,18 +36,7 @@ class QuestionsController < ApplicationController
           end
 
           # check for changes to modified+ expanded match categories
-          {'changed_question_phrasing'   => 'q_p',
-           'changed_question_values'     => 'q_v',
-           'changed_info_phrasing'       => 'i_p',
-           'changed_info_layout'         => 'i_l',
-           'changed_info_added'          => 'i_a',
-           'changed_answers_phrasing'    => 'a_p',
-           'changed_answers_values'      => 'a_v',
-           'changed_answers_order'       => 'a_o',
-           'changed_answers_type'        => 'a_t',
-           'changed_slide_presentation'  => 's_p',
-           'changed_other'               => 'o'
-          }.each do |field_name, field_code|
+          get_modified_plus_category_hash.each do |field_name, field_code|
             changed_field = to_edit["set_#{field_code}"]
             if changed_field
               #puts changed_field
@@ -66,18 +55,7 @@ class QuestionsController < ApplicationController
         # modified+ categories
         if to_edit[:set_clear] == '1'
           # clear all of the modified+ settings if clear is set to
-          for field_name in ['changed_question_phrasing',
-              'changed_question_values',
-              'changed_info_phrasing',
-              'changed_info_layout',
-              'changed_info_added',
-              'changed_answers_phrasing',
-              'changed_answers_values',
-              'changed_answers_order',
-              'changed_answers_type',
-              'changed_slide_presentation',
-              'changed_other'
-            ]
+          for field_name in get_modified_plus_category_names
             mq[field_name] = 0
           end
         end

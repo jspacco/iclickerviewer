@@ -36,6 +36,7 @@ class ClassPeriodsController < ApplicationController
       matching_question_id = params[:questions][question.id.to_s][:matching_questions]
       if matching_question_id
         match_type = params[:questions][question.id.to_s][:match_type]
+        # TODO refactor if possible
         set_q_p = params[:questions][question.id.to_s][:set_q_p] == '1' ? 1 : 0
         set_q_v = params[:questions][question.id.to_s][:set_q_v] == '1' ? 1 : 0
         set_i_p = params[:questions][question.id.to_s][:set_i_p] == '1' ? 1 : 0
@@ -116,18 +117,7 @@ class ClassPeriodsController < ApplicationController
 =end
           if match_type == 2
             # check for changes to modified+ expanded match categories
-            {'changed_question_phrasing'   => 'q_p',
-             'changed_question_values'     => 'q_v',
-             'changed_info_phrasing'       => 'i_p',
-             'changed_info_layout'         => 'i_l',
-             'changed_info_added'          => 'i_a',
-             'changed_answers_phrasing'    => 'a_p',
-             'changed_answers_values'      => 'a_v',
-             'changed_answers_order'       => 'a_o',
-             'changed_answers_type'        => 'a_t',
-             'changed_slide_presentation'  => 's_p',
-             'changed_other'               => 'o'
-            }.each do |field_name, field_code|
+            get_modified_plus_category_hash.each do |field_name, field_code|
               changed_field = params[:questions][question.id.to_s]["set_changed_#{field_code}"]
               if changed_field
                 puts changed_field
@@ -404,6 +394,7 @@ class ClassPeriodsController < ApplicationController
   end
 
   def sqlmatchgroup
+    # TODO fix this, looks like a cross join!
     return """
 SELECT mq.question_id as question_id, count(*) as count
   FROM matching_questions mq, questions q

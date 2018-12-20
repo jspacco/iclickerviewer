@@ -74,4 +74,37 @@ of a fraction. For example, [3, 10] would be "3 / 10"
     end
   end
 
+  def get_modified_plus_category_hash
+    return {'changed_question_phrasing'   => 'q_p',
+     'changed_question_values'     => 'q_v',
+     'changed_info_phrasing'       => 'i_p',
+     'changed_info_layout'         => 'i_l',
+     'changed_info_added'          => 'i_a',
+     'changed_answers_phrasing'    => 'a_p',
+     'changed_answers_values'      => 'a_v',
+     'changed_answers_order'       => 'a_o',
+     'changed_answers_type'        => 'a_t',
+     'changed_slide_presentation'  => 's_p',
+     'changed_other'               => 'o'
+    }
+  end
+
+  def get_modified_plus_category_names
+    return ['changed_question_phrasing',
+        'changed_question_values',
+        'changed_info_phrasing',
+        'changed_info_layout',
+        'changed_info_added',
+        'changed_answers_phrasing',
+        'changed_answers_values',
+        'changed_answers_order',
+        'changed_answers_type',
+        'changed_slide_presentation',
+        'changed_other']
+  end
+
+  def get_modified_plus_category_shortcodes
+    return ['q_p', 'q_v', 'i_p', 'i_l', 'i_a', 'a_p', 'a_v', 'a_o', 'a_t', 's_p', 'o']
+  end
+
 end

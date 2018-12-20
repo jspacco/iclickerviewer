@@ -160,18 +160,7 @@
           </td>
           <!-- modified types -->
           <% # iterate through a hash from names of the modified+ match fields to their short codes
-             {'changed_question_phrasing'   => 'q_p',
-              'changed_question_values'     => 'q_v',
-              'changed_info_phrasing'       => 'i_p',
-              'changed_info_layout'         => 'i_l',
-              'changed_info_added'          => 'i_a',
-              'changed_answers_phrasing'    => 'a_p',
-              'changed_answers_values'      => 'a_v',
-              'changed_answers_order'       => 'a_o',
-              'changed_answers_type'        => 'a_t',
-              'changed_slide_presentation'  => 's_p',
-              'changed_other'               => 'o'
-            }.each do |field_name, field_code| %>
+             get_modified_plus_category_hash.each do |field_name, field_code| %>
             <td class="<%= "bghicol" if mq[field_name] == 1%>">
               <%= check_box_tag "questions[#{q.object.id}][set_#{field_code}]",
                 # toggle: we are sending 1 if the checkbox is currently unchecked, and 0 if it's currently checked
