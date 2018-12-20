@@ -4,16 +4,12 @@ class ClassPeriodsController < ApplicationController
   # GET /class_periods/1
   def show
     start = current_time
-
+    @class_period = ClassPeriod.find_by(id: params[:id])
     get_questions_course_class_period
     total = current_time - start
 
     # TODO do this with ActiveRecord
-    results = ActiveRecord::Base.connection.exec_query(sqlmatchgroup)
-    @question_hash = Hash.new
-    results.each do |row|
-      @question_hash[row['question_id']] = row['count']
-    end
+    @question_hash = get_sql_aggregate_count(sqlmatchgroup(@class_period), 'question_id', 'count')
 
     get_keyword_hash(params[:id])
 
@@ -393,13 +389,13 @@ class ClassPeriodsController < ApplicationController
     course_cache.save
   end
 
-  def sqlmatchgroup
-    # TODO fix this, looks like a cross join!
+  def sqlmatchgroup(class_period)
     return """
 SELECT mq.question_id as question_id, count(*) as count
   FROM matching_questions mq, questions q
-  WHERE mq.match_type is NULL
-  AND mq.is_match is NULL
+  WHERE mq.is_match is NULL
+  AND mq.question_id = q.id
+  AND q.class_period_id = #{class_period.id}
   GROUP BY mq.question_id
 """
   end
